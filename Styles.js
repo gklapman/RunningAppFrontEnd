@@ -1,0 +1,87 @@
+
+import React from 'react';
+import {
+  StyleSheet
+} from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    // display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'skyblue',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: 'black',
+    marginBottom: 5,
+  },
+  navigationBar: {
+    margin: 5,
+    paddingTop: 15,
+    flexDirection: 'row',
+    backgroundColor: 'grey',
+    position: 'absolute',
+    paddingTop: 0,
+    bottom: 5,
+    height: 64,
+    right: 0,
+    left: 0,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'white',
+  },
+  navButton: {
+    color: 'white',
+    textAlign: 'center',
+    margin: 15,
+    width: '17%',
+    // flexBasis: 'auto',
+  },
+  button: {
+    backgroundColor: 'blue',
+    color: 'white',
+    height: 30,
+    lineHeight: 30,
+    marginTop: 10,
+    textAlign: 'center',
+    width: 250
+  },
+  input: {
+    margin: 'auto',//CAN'T GET THIS TO CENTER NO MATTER WHAT
+    justifyContent: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    height: 37,
+    width: 250
+  },
+  mapcontainer: {
+    height: 600,
+    width: 400,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+    icon: {
+    width: 26,
+    height: 26,
+  },
+});
+
+export default styles
