@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
-import OurMap from './OurMap'
 import MapView from 'react-native-maps';
 
 
@@ -19,32 +18,38 @@ import MapView from 'react-native-maps';
 class Run extends Component {
   render() {
 
-    const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
+  	const { navigate } = this.props.navigation;
+    //const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
     const marker = {
     	latlng: {latitude: 37, longitude: -122},
     	title: 'test',
     	description: 'this is a test'
     }
 
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var initialPosition = JSON.stringify(position);
-        console.log('this is the initial', initialPosition)
-      }
-      )
+      })
+
+    const goToRouteMaker = () => {
+    	navigate('MakeRoute')
+   	}
+
+    const filter = () => {
+    	console.log('this will be for filters')
+    }
 
     return (
       <View>
 
         <View style={styles.mapcontainer}>
-       	 	<MapView style={styles.map}>
-       	 	 <MapView.Marker
-      			coordinate={marker.latlng}
-      			title={marker.title}
-      			description={marker.description}
-    		/>
-       	 	</MapView>
+        	<View style={styles.createRoute}>
+       	 		<Button onPress={goToRouteMaker} title="Create a Route"></Button>
+       	 		</View>
+       	 		<View style={styles.filter}>
+       	 		<Button onPress={filter} title="Filter Your Routes"></Button>
+       	 		</View>
+       	 	<MapView style={styles.map}/>
       	</View>
 
       </View>
@@ -53,6 +58,17 @@ class Run extends Component {
 }
 
 export default Run
+
+
+
+
+
+
+	    		/*<MapView.Marker
+      			coordinate={marker.latlng}
+      			title={marker.title}
+      			description={marker.description}
+    			/>*/
 
 //         <View>
 //           <Text onPress={gotoRouteSelect} style={styles.button}>Create a route</Text>

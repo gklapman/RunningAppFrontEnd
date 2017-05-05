@@ -24,6 +24,7 @@ import styles from './Styles'
 import Login from './Components/Login'
 import Stats from './Components/Stats'
 import Run from './Components/Run'
+import MakeRoute from './Components/MakeRoute'
 
 
 // export class ReactNativeMaps extends Component { 
@@ -112,6 +113,7 @@ why is the title not showing up?
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
+ 
   },
   {
   tabBarOptions: {
@@ -123,6 +125,7 @@ const OurApp = TabNavigator({
 const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
+  MakeRoute: {screen: MakeRoute},
 });
 
 
