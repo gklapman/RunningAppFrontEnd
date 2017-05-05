@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
-import OurMap from './OurMap'
 import MapView from 'react-native-maps';
 
 //added for react-redux
@@ -31,6 +30,9 @@ class Run extends Component {
 
   render() {
 
+
+  	const { navigate } = this.props.navigation;
+   
     console.log("this.state is", this.state)
     console.log("this.props is", this.props)
 
@@ -64,17 +66,33 @@ class Run extends Component {
 
     // const polyLineArr=[{latitude: 37, longitude: -122},{latitude: 36, longitude: -119}];  //example of something you can pass into Polyline as coordinates (as props)
 
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var initialPosition = JSON.stringify(position);
-        console.log('this is the initial', initialPosition)
-      }
-      )
+      })
+
+    const goToRouteMaker = () => {
+    	navigate('MakeRoute')
+   	}
+
+    const filter = () => {
+    	console.log('this will be for filters')
+    }
 
     return (
       <View>
 
         <View style={styles.mapcontainer}>
+
+        	<View style={styles.createRoute}>
+       	 		<Button onPress={goToRouteMaker} title="Create a Route"></Button>
+       	 		</View>
+       	 		<View style={styles.filter}>
+       	 		<Button onPress={filter} title="Filter Your Routes"></Button>
+       	 		</View>
+       	 	
+
        	 	<MapView style={styles.map}>
 
           {routesArr.map(routeObj=>{
@@ -102,6 +120,7 @@ class Run extends Component {
           })}
 
        	 </MapView>
+
       	</View>
 
       </View>
@@ -117,7 +136,9 @@ function mapStateToProps(state){
   }
 }
 
+
 var ConnectedRun = connect(mapStateToProps, mapDispatchToProps)(Run)
+
 
 export default ConnectedRun
 
