@@ -14,13 +14,25 @@ import {StackNavigator} from 'react-navigation';
 import OurMap from './OurMap'
 import MapView from 'react-native-maps';
 
+//added for react-redux
+import {connect} from 'react-redux'
+import {fetchRunnerCoords} from './storeAndReducer'
 
 
 class Run extends Component {
 
 
+  addRunnerCoords(evt){
+    console.log("EVT ON MAP", evt)
+    var coords = Math.floor(Math.random * 100)
+    this.props.fetchRunnerCoords(coords)
+  }
+
 
   render() {
+
+    console.log("this.state is", this.state)
+    console.log("this.props is", this.props)
 
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
 
@@ -52,7 +64,6 @@ class Run extends Component {
 
     // const polyLineArr=[{latitude: 37, longitude: -122},{latitude: 36, longitude: -119}];  //example of something you can pass into Polyline as coordinates (as props)
 
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var initialPosition = JSON.stringify(position);
@@ -68,7 +79,9 @@ class Run extends Component {
 
           {routesArr.map(routeObj=>{
             return(
+
               <View key={routeObj.id} >
+
                 <MapView.Polyline coordinates={routeObj.coords} strokeColor='green' strokeWidth= {2} />
 
                 <MapView.Marker
@@ -96,14 +109,15 @@ class Run extends Component {
   }
 }
 
-export default Run
+const mapDispatchToProps = {fetchRunnerCoords}
 
-//         <View>
-//           <Text onPress={gotoRouteSelect} style={styles.button}>Create a route</Text>
-//         </View>
+function mapStateToProps(state){
+  return {
+    runnerCoords: state.runnerCoords
+  }
+}
 
-      // <View>
-      //  		<Text onPress={gotoRouteSelect} style={styles.button}>Select a route</Text>
-      //  </View>
+var ConnectedRun = connect(mapStateToProps, mapDispatchToProps)(Run)
 
-      //  <Text>CAN YOU SEE THIS </Text>
+export default ConnectedRun
+

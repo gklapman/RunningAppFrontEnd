@@ -4,6 +4,10 @@
  * @flow
  */
 
+import {Provider, connect } from 'react-redux'
+import store from './Components/storeAndReducer'
+import { fetchRunnerCoords } from './Components/storeAndReducer'
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import {StackNavigator, TabNavigator} from 'react-navigation';
@@ -14,6 +18,7 @@ import {
   View,
   Button,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 
 
@@ -138,13 +143,78 @@ const OurApp = TabNavigator({
 
 });
 
+
+//IN DOCS, THIS IS CALLED "AppNavigator"
 const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
 });
 
-
-
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
 
-AppRegistry.registerComponent('ReactNativeMaps', () => ReactNativeMaps);
+
+
+const App = () => (
+  <Provider store={store}>
+    <ConnectedAppContainer />
+  </Provider>
+)
+// // //if in a different file, you have to import...
+// // import React, { Component } from 'react'
+// // import ReactNative from 'react-native'
+// // import { connect } from 'react-redux'
+// // import { bindActionCreators } from 'redux'
+//
+// //import { ReactNativeMaps }  from '../App'
+//
+// // //import actionCreators from store
+//
+// // const {
+// //   View,
+// //   Text,
+// // } = ReactNative
+//
+class AppContainer extends Component {
+
+  addRunnerCoordsOnStore(){
+    // console.log("FETCH RUNNER COORDS",this.props.fetchRunnerCoords)
+    console.log(this.state);
+    var randomVal = Math.floor(Math.random() * 100)
+    this.props.fetchRunnerCoords(randomVal)
+  }
+
+
+
+  render(){
+    // console.log("this.state is", this.state)
+    // console.log("this.props is", this.props)
+    return (
+      <View style={{flex: 1}}>
+        <ReactNativeMaps />
+
+        {/* <TouchableOpacity onPress={() => {this.addRunnerCoordsOnStore()}}>
+          <Text>test redux- add runner coords</Text>
+        </TouchableOpacity> */}
+      </View>
+    )
+  }
+}
+
+// function mapDispatchToProps(dispatch){
+//
+//   return bindActionCreators({fetchRunnerCoords}, dispatch)
+// }
+
+const mapDispatchToProps = {fetchRunnerCoords}
+
+function mapStateToProps(state){
+  return {
+    runnerCoords: state.runnerCoords
+  }
+}
+
+var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer)
+
+
+AppRegistry.registerComponent('ReactNativeMaps', () => App);
+
