@@ -70,6 +70,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    display: 'flex'
+
   },
   map: {
     position: 'absolute',
@@ -77,11 +79,50 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    display: 'flex',
+    zIndex: 0,
+
   },
     icon: {
     width: 26,
     height: 26,
   },
-});
+  createRoute: {
+    height: 50,
+    width: 100, 
+    backgroundColor: '#b0c4de',
+    zIndex: 1,
+    position: 'absolute',
+    top: 30,
+    right: 50,
+  },
+  filter: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 30,
+    left: 50,
+  },
+    timer: {
+    height: 50,
+    width: 100, 
+    backgroundColor: '#b0c4de',
+    zIndex: 1,
+    position: 'absolute',
+    top: 30,
+    right: 50,
+  },
+   startStop: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 30,
+    left: 50,
+  },
+  });
 
 export default styles

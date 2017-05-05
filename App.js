@@ -29,6 +29,7 @@ import styles from './Styles'
 import Login from './Components/Login'
 import Stats from './Components/Stats'
 import Run from './Components/Run'
+import MakeRoute from './Components/MakeRoute'
 
 
 // export class ReactNativeMaps extends Component {
@@ -51,6 +52,24 @@ why is the title not showing up?
 
 
 */
+
+// class HomeScreen extends React.Component {
+//   static navigationOptions = {
+//     title: 'Welcome',
+//   };
+//   render() {
+//     const { navigate } = this.props.navigation;
+//     return (
+//       <View>
+//         <Text>Hello, Chat App!</Text>
+//         <Button
+//           onPress={() => navigate('Chat', { user: 'Lucy' })}
+//           title="Chat with Lucy"
+//         />
+//       </View>
+//     );
+//   }
+// }
 
 // class HomeScreen extends React.Component {
 //   // static navigationOptions = {
@@ -117,6 +136,7 @@ why is the title not showing up?
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
+
   },
   {
   tabBarOptions: {
@@ -130,6 +150,7 @@ const OurApp = TabNavigator({
 const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
+  MakeRoute: {screen: MakeRoute},
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
@@ -196,6 +217,5 @@ function mapStateToProps(state){
 }
 
 var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer)
-
 
 AppRegistry.registerComponent('ReactNativeMaps', () => App);
