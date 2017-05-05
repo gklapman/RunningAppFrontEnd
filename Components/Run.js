@@ -21,11 +21,13 @@ import {fetchRunnerCoords} from './storeAndReducer'
 
 class Run extends Component {
 
+
   addRunnerCoords(evt){
     console.log("EVT ON MAP", evt)
     var coords = Math.floor(Math.random * 100)
     this.props.fetchRunnerCoords(coords)
   }
+
 
   render() {
 
@@ -77,7 +79,9 @@ class Run extends Component {
 
           {routesArr.map(routeObj=>{
             return(
-              <View key={routeObj.id}>
+
+              <View key={routeObj.id} >
+
                 <MapView.Polyline coordinates={routeObj.coords} strokeColor='green' strokeWidth= {2} />
 
                 <MapView.Marker
@@ -116,3 +120,4 @@ function mapStateToProps(state){
 var ConnectedRun = connect(mapStateToProps, mapDispatchToProps)(Run)
 
 export default ConnectedRun
+

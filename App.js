@@ -53,6 +53,24 @@ why is the title not showing up?
 */
 
 // class HomeScreen extends React.Component {
+//   static navigationOptions = {
+//     title: 'Welcome',
+//   };
+//   render() {
+//     const { navigate } = this.props.navigation;
+//     return (
+//       <View>
+//         <Text>Hello, Chat App!</Text>
+//         <Button
+//           onPress={() => navigate('Chat', { user: 'Lucy' })}
+//           title="Chat with Lucy"
+//         />
+//       </View>
+//     );
+//   }
+// }
+
+// class HomeScreen extends React.Component {
 //   // static navigationOptions = {
 //   //   tabBarLabel: 'Home',
 //   //   tabBarIcon: ({ tintColor }) => (
@@ -199,3 +217,4 @@ var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppCont
 
 
 AppRegistry.registerComponent('ReactNativeMaps', () => App);
+
