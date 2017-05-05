@@ -6,25 +6,66 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Image, 
+  Image,
   Button,
 } from 'react-native';
 import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
 
+//added for react-redux
+import {connect} from 'react-redux'
+import {fetchRunnerCoords} from './storeAndReducer'
 
 
 class Run extends Component {
+
+
+  addRunnerCoords(evt){
+    console.log("EVT ON MAP", evt)
+    var coords = Math.floor(Math.random * 100)
+    this.props.fetchRunnerCoords(coords)
+  }
+
+
   render() {
 
+
   	const { navigate } = this.props.navigation;
-    //const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
-    const marker = {
-    	latlng: {latitude: 37, longitude: -122},
-    	title: 'test',
-    	description: 'this is a test'
-    }
+   
+    console.log("this.state is", this.state)
+    console.log("this.props is", this.props)
+
+    const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
+
+
+    const testRoutesArr=//dummy data... delete this once we are able to get routes from props (and from backend)
+    [
+      {
+        id: 1,
+        coords: [{latitude: 37, longitude: -122},{latitude: 36.5, longitude: -121},{latitude: 36.25, longitude: -119.5}],//this is routes array
+        routetimes: [
+          {timesArr: [0,7,16,24], user: {username: 'Alyssa'}},//these are times arrays associated with routes, and the times arrays also have their associated user
+          {timesArr: [0,8,16,25], user: {username: 'Gabi'}},
+          {timesArr: [0,5,10,19], user: {username: 'Charles'}}
+        ],
+      },
+      {
+        id: 2,
+        coords: [{latitude: 35, longitude: -118},{latitude: 35.75, longitude: -119.75},{latitude: 35.5, longitude: -119.5}],//this is routes array
+        routetimes: [
+          {timesArr: [0,7,16,24], user: {username: 'Alyssa'}},
+          {timesArr: [0,8,16,25], user: {username: 'Gabi'}},
+          {timesArr: [0,5,10,19], user: {username: 'Charles'}}
+          ],
+      }
+    ]
+
+    const routesArr= testRoutesArr;
+    // const routesArr= navigation.state.params.routesArr; //uncomment this once we are able to get the routes from props
+
+    // const polyLineArr=[{latitude: 37, longitude: -122},{latitude: 36, longitude: -119}];  //example of something you can pass into Polyline as coordinates (as props)
+
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -43,13 +84,43 @@ class Run extends Component {
       <View>
 
         <View style={styles.mapcontainer}>
+
         	<View style={styles.createRoute}>
        	 		<Button onPress={goToRouteMaker} title="Create a Route"></Button>
        	 		</View>
        	 		<View style={styles.filter}>
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
-       	 	<MapView style={styles.map}/>
+       	 	
+
+       	 	<MapView style={styles.map}>
+
+          {routesArr.map(routeObj=>{
+            return(
+
+              <View key={routeObj.id} >
+
+                <MapView.Polyline coordinates={routeObj.coords} strokeColor='green' strokeWidth= {2} />
+
+                <MapView.Marker
+                  coordinate={routeObj.coords[0]}
+                  pinColor='red'
+                  title='Start'
+                  description={routeObj.routetimes.map(routetime=>{
+                    return routetime.user.username+', time: '+routetime.timesArr[routetime.timesArr.length-1];
+                  }).join(', ')}
+                />
+                <MapView.Marker
+                  coordinate={routeObj.coords[routeObj.coords.length-1]}
+                  pinColor='blue'
+                  title='End'
+                />
+              </View>
+            )
+          })}
+
+       	 </MapView>
+
       	</View>
 
       </View>
@@ -57,25 +128,17 @@ class Run extends Component {
   }
 }
 
-export default Run
+const mapDispatchToProps = {fetchRunnerCoords}
+
+function mapStateToProps(state){
+  return {
+    runnerCoords: state.runnerCoords
+  }
+}
 
 
+var ConnectedRun = connect(mapStateToProps, mapDispatchToProps)(Run)
 
 
+export default ConnectedRun
 
-
-	    		/*<MapView.Marker
-      			coordinate={marker.latlng}
-      			title={marker.title}
-      			description={marker.description}
-    			/>*/
-
-//         <View>
-//           <Text onPress={gotoRouteSelect} style={styles.button}>Create a route</Text>
-//         </View>
-
-      // <View>
-      //  		<Text onPress={gotoRouteSelect} style={styles.button}>Select a route</Text>
-      //  </View>
-
-      //  <Text>CAN YOU SEE THIS </Text>
