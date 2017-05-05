@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Image, 
+  Image,
   Button,
 } from 'react-native';
 import styles from '../Styles'
@@ -14,10 +14,12 @@ import {StackNavigator} from 'react-navigation';
 import OurMap from './OurMap'
 import MapView from 'react-native-maps';
 
+import {fetchRunnerCoords} from './storeAndReducer'
 
 
 class Run extends Component {
   render() {
+
 
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
     const marker = {
@@ -26,13 +28,18 @@ class Run extends Component {
     	description: 'this is a test'
     }
 
+    // const getRunnerCoords(coords){
+    //   dispatch(fetchRunnerCoords(coords))
+    // }
+
+    console.log("PROPS",this.props)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var initialPosition = JSON.stringify(position);
         console.log('this is the initial', initialPosition)
       }
-      )
+    )
 
     return (
       <View>

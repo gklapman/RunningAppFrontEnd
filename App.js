@@ -4,16 +4,23 @@
  * @flow
  */
 
+import {Provider, connect } from 'react-redux'
+import store from './Components/storeAndReducer'
+import { bindActionCreators } from 'redux'
+import { fetchRunnerCoords } from './Components/storeAndReducer'
+// import AppContainer from './Components/AppContainer'
+
 import React, { Component } from 'react';
 import axios from 'axios';
-import {StackNavigator, TabNavigator} from 'react-navigation';
+import {StackNavigator, TabNavigator, addNavigationHelpers} from 'react-navigation';
 import {
   AppRegistry,
   StyleSheet,
   Text,
-  View, 
+  View,
   Button,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 
 
@@ -26,7 +33,7 @@ import Stats from './Components/Stats'
 import Run from './Components/Run'
 
 
-// export class ReactNativeMaps extends Component { 
+// export class ReactNativeMaps extends Component {
 
 //   render() {
 //     return (
@@ -40,7 +47,7 @@ import Run from './Components/Run'
 
 
 
-/* 
+/*
 why is the title not showing up?
 
 
@@ -120,13 +127,84 @@ const OurApp = TabNavigator({
 
 });
 
+
+//IN DOCS, THIS IS CALLED "AppNavigator"
 const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
 });
 
+//TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
 
 
-//TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY 
 
-AppRegistry.registerComponent('ReactNativeMaps', () => ReactNativeMaps);
+const App = () => (
+  <Provider store={store}>
+    {/* <ReactNativeMaps /> */}
+    <AppContainer />
+  </Provider>
+)
+// // //if in a different file, you have to import...
+// // import React, { Component } from 'react'
+// // import ReactNative from 'react-native'
+// // import { connect } from 'react-redux'
+// // import { bindActionCreators } from 'redux'
+//
+// //import { ReactNativeMaps }  from '../App'
+//
+// // //import actionCreators from store
+//
+// // const {
+// //   View,
+// //   Text,
+// // } = ReactNative
+//
+class AppContainer extends Component {
+  constructor(){
+    super();
+    this.state = { test: 0 }
+  }
+
+  addRunnerCoordsTest(){
+    console.log("this state is", this.state)
+    this.setState({
+      runnerCoords: this.state.test++
+    })
+  }
+
+  addRunnerCoordsOnStore(){
+    console.log("FETCH RUNNER COORDS",this.props.fetchRunnerCoords)
+    console.log(this.state);
+    var randomVal = Math.floor(Math.random() * 100)
+    fetchRunnerCoords(randomVal)
+  }
+
+
+
+  render(){
+    return (
+      <View>
+        <Text style={{margin: 30}}>
+          FROM APP CONTAINER this.state.runnerCoords is: {this.state.runnerCoords}
+        </Text>
+        <TouchableOpacity onPress={() => {this.addRunnerCoordsTest()}}>
+          <Text>test redux- add runner coords</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {this.addRunnerCoordsOnStore()}}>
+          <Text>test redux- add runner coords</Text>
+        </TouchableOpacity>
+        {/* <ReactNativeMaps /> */}
+      </View>
+    )
+  }
+}
+
+function mapDispatchToProps(dispatch){
+  return bindActionCreators(fetchRunnerCoords, dispatch)
+}
+
+export default connect(() => {return {}}, mapDispatchToProps)(AppContainer)
+
+
+AppRegistry.registerComponent('ReactNativeMaps', () => App);
+//App was ReactNativeMaps here
