@@ -11,7 +11,7 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View, 
+  View,
   Button,
   Image,
 } from 'react-native';
@@ -26,7 +26,7 @@ import Stats from './Components/Stats'
 import Run from './Components/Run'
 
 
-// export class ReactNativeMaps extends Component { 
+// export class ReactNativeMaps extends Component {
 
 //   render() {
 //     return (
@@ -40,12 +40,30 @@ import Run from './Components/Run'
 
 
 
-/* 
+/*
 why is the title not showing up?
 
 
 
 */
+
+// class HomeScreen extends React.Component {
+//   static navigationOptions = {
+//     title: 'Welcome',
+//   };
+//   render() {
+//     const { navigate } = this.props.navigation;
+//     return (
+//       <View>
+//         <Text>Hello, Chat App!</Text>
+//         <Button
+//           onPress={() => navigate('Chat', { user: 'Lucy' })}
+//           title="Chat with Lucy"
+//         />
+//       </View>
+//     );
+//   }
+// }
 
 // class HomeScreen extends React.Component {
 //   // static navigationOptions = {
@@ -127,6 +145,6 @@ const ReactNativeMaps = StackNavigator({
 
 
 
-//TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY 
+//TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
 
 AppRegistry.registerComponent('ReactNativeMaps', () => ReactNativeMaps);
