@@ -4,6 +4,7 @@
  * @flow
  */
 
+
 import {Provider, connect } from 'react-redux'
 import store from './Components/storeAndReducer'
 import { fetchRunnerCoords } from './Components/storeAndReducer'
@@ -30,6 +31,7 @@ import Login from './Components/Login'
 import Stats from './Components/Stats'
 import Run from './Components/Run'
 import MakeRoute from './Components/MakeRoute'
+import ViewRoute from './Components/ViewRoute'
 
 
 // export class ReactNativeMaps extends Component {
@@ -136,7 +138,7 @@ why is the title not showing up?
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
- 
+
   },
   {
   tabBarOptions: {
@@ -151,6 +153,7 @@ const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
   MakeRoute: {screen: MakeRoute},
+  ViewRoute: {screen: ViewRoute}
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
@@ -176,7 +179,7 @@ const App = () => (
 // //   View,
 // //   Text,
 // // } = ReactNative
-//
+
 class AppContainer extends Component {
 
   addRunnerCoordsOnStore(){
@@ -220,4 +223,3 @@ var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppCont
 
 
 AppRegistry.registerComponent('ReactNativeMaps', () => App);
-
