@@ -74,6 +74,19 @@ export const fetchUser = (email, password) => {
   }
 }
 
+export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
+  return dispatch => {
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
+    .then(response => {
+          console.log('this is the response', response.data)
+          //INVOKE THUNK TO RELOAD ALL ROUTES
+    })
+  }
+}
+
+///////////////////!!!! still need to add thunk creator for setRoutesData,
+/////////////////////   and add it to the reducer & store!
+
 export const fetchUserLocation = location => {
   return dispatch => {
     return dispatch(setUserLocation(location))
@@ -165,6 +178,7 @@ export const createNewRoute = (newRouteCoords, newRouteTimes) => {
 //     return dispatch(setRunnerCoords(newCoords))
 //   }
 // }
+
 
 
 /////////////////////////REDUCER
