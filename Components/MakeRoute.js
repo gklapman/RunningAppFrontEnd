@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Image, 
+  Image,
   Button,
 } from 'react-native';
 import styles from '../Styles'
@@ -19,14 +19,31 @@ class MakeRoute extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			currentPosition: {coords: { latitude: 41.878, longitude: -87.63 } }, //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
+			// currentPosition: {coords: { latitude: 41.878, longitude: -87.63 } }, //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
+      currentPosition: {coords: { latitude: 1, longitude: -1 } },
 			isRunning: false,
 			timer: '00.00.00',
 			timerStart: '00.00.00',
 		}
 		this.startStopButton = this.startStopButton.bind(this)
+    // this.testButton = this.testButton.bind(this)
 	}
 
+  // testButton(){
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       console.log('manually checking position', position)
+  //       this.setState({
+  //         currentPosition: position
+  //       }, ()=>{console.log('setting state (from testButton)',this.state.currentPosition)})
+  //     },
+  //
+  //                 (msg)=>alert('Please enable your GPS position future.'),
+  //
+  //                 {enableHighAccuracy: true},
+  //
+  //   )
+  // }
 
 
   startStopButton() {
@@ -36,7 +53,7 @@ class MakeRoute extends Component {
     		this.setState({
     			isRunning: false,
     		})
-    		return; 
+    		return;
     	} else {
     		console.log('this should run after false ', this.state.isRunning)
 	    		this.setState({
@@ -52,17 +69,23 @@ class MakeRoute extends Component {
 		    			console.log('position', position)
 		    			this.setState({
 		    				currentPosition: position
-		    			})
-		    		})
+		    			}, ()=>{console.log('setting state ',this.state.currentPosition)})
+		    		},
+
+            (msg)=>alert('Please enable your GPS position future.'),
+
+            {enableHighAccuracy: true},
+
+          )
 	   		 }, 500);
     	}
 
-    	
-  
+
+
     	}
 
-    	
-    	
+
+
   render() {
 
 
@@ -73,18 +96,21 @@ class MakeRoute extends Component {
       <View>
       	<View style={styles.mapcontainer}>
       		<View style={styles.startStop}>
-      		<TouchableOpacity onPress={this.startStopButton.bind(this)}>
+      		<TouchableOpacity onPress={this.startStopButton}>
       			<Text>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
       		</TouchableOpacity>
+          {/* <TouchableOpacity onPress={this.testButton}>
+            <Text>Get current position</Text>
+          </TouchableOpacity> */}
       		</View>
       		<View style={styles.timer}>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
       			<Text>{this.state.currentPosition.coords.latitude}</Text>
       			<Text>{this.state.currentPosition.coords.longitude}</Text>
-      			
+
       		</View>
-        
-       	 	<MapView 
+
+       	 	<MapView
        	 		region={{latitude: position.coords.latitude, longitude: position.coords.longitude, latitudeDelta: 1, longitudeDelta: 1}}
 			    style={styles.map}/>
       	</View>
@@ -95,6 +121,3 @@ class MakeRoute extends Component {
 }
 
 export default MakeRoute
-
-
-

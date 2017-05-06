@@ -136,7 +136,7 @@ why is the title not showing up?
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
- 
+
   },
   {
   tabBarOptions: {
@@ -176,7 +176,7 @@ const App = () => (
 // //   View,
 // //   Text,
 // // } = ReactNative
-//
+
 class AppContainer extends Component {
 
   addRunnerCoordsOnStore(){
@@ -220,4 +220,3 @@ var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppCont
 
 
 AppRegistry.registerComponent('ReactNativeMaps', () => App);
-
