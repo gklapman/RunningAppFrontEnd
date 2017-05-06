@@ -118,17 +118,17 @@ class Run extends Component {
                    strokeWidth= {2}
                  />
 
-                {/* <MapView.Marker
-                  coordinate={routeObj.coords[0]}
+                <MapView.Marker
+                  coordinate={{ latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
                   pinColor='red'
                   title='Start'
 
                 />
                 <MapView.Marker
-                  coordinate={routeObj.coords[routeObj.coords.length-1]}
+                  coordinate={{latitude: routeObj.coords[routeObj.coords.length-1][0], longitude: routeObj.coords[routeObj.coords.length-1][1]}}
                   pinColor='blue'
                   title='End'
-                /> */}
+                />
               </View>
             )
           })}

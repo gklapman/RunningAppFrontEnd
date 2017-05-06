@@ -1064,11 +1064,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-<<<<<<< HEAD
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1943.ReactNativeMaps;
-=======
+
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1942.ReactNativeMaps;
->>>>>>> 95b05d08780efe48d7a07b10c03ad4877be846c0
 				PRODUCT_NAME = ReactNativeMaps;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1094,11 +1091,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-<<<<<<< HEAD
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1943.ReactNativeMaps;
-=======
+
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1942.ReactNativeMaps;
->>>>>>> 95b05d08780efe48d7a07b10c03ad4877be846c0
 				PRODUCT_NAME = ReactNativeMaps;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
