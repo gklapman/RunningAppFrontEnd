@@ -220,3 +220,91 @@ why is the title not showing up?
 //     );
 //   }
 // }
+
+const OurApp = TabNavigator({
+  Stats: {screen: Stats },
+  Run: {screen: Run},
+
+  },
+  {
+  tabBarOptions: {
+    activeTintColor: '#e91e63',
+  },
+
+});
+
+
+//IN DOCS, THIS IS CALLED "AppNavigator"
+const ReactNativeMaps = StackNavigator({
+  Login: { screen: Login },
+  OurApp: { screen: OurApp },
+  MakeRoute: {screen: MakeRoute},
+});
+
+//TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
+
+
+
+const App = () => (
+  <Provider store={store}>
+    <ConnectedAppContainer />
+  </Provider>
+)
+// // //if in a different file, you have to import...
+// // import React, { Component } from 'react'
+// // import ReactNative from 'react-native'
+// // import { connect } from 'react-redux'
+// // import { bindActionCreators } from 'redux'
+//
+// //import { ReactNativeMaps }  from '../App'
+//
+// // //import actionCreators from store
+//
+// // const {
+// //   View,
+// //   Text,
+// // } = ReactNative
+
+class AppContainer extends Component {
+
+  addRunnerCoordsOnStore(){
+    // console.log("FETCH RUNNER COORDS",this.props.fetchRunnerCoords)
+    console.log(this.state);
+    var randomVal = Math.floor(Math.random() * 100)
+    this.props.fetchRunnerCoords(randomVal)
+  }
+
+
+
+  render(){
+    // console.log("this.state is", this.state)
+    // console.log("this.props is", this.props)
+    return (
+      <View style={{flex: 1}}>
+        <ReactNativeMaps />
+
+        {/* <TouchableOpacity onPress={() => {this.addRunnerCoordsOnStore()}}>
+          <Text>test redux- add runner coords</Text>
+        </TouchableOpacity> */}
+      </View>
+    )
+  }
+}
+
+// function mapDispatchToProps(dispatch){
+//
+//   return bindActionCreators({fetchRunnerCoords}, dispatch)
+// }
+
+const mapDispatchToProps = {fetchRunnerCoords}
+
+function mapStateToProps(state){
+  return {
+    runnerCoords: state.runnerCoords
+  }
+}
+
+var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer)
+
+
+AppRegistry.registerComponent('ReactNativeMaps', () => App);
