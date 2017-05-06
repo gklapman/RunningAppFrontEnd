@@ -19,11 +19,14 @@ class MakeRoute extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			// currentPosition: {coords: { latitude: 41.878, longitude: -87.63 } }, //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
-      currentPosition: {coords: { latitude: 1, longitude: -1 } },
+
+			currentPosition: { latitude: 37.33, longitude: -122.0207 } , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
 			isRunning: false,
 			timer: '00.00.00',
 			timerStart: '00.00.00',
+			timerEnd: '00:00:00',
+			routeCoords: [],
+			timeMarker: []
 		}
 		this.startStopButton = this.startStopButton.bind(this)
     // this.testButton = this.testButton.bind(this)
@@ -48,36 +51,75 @@ class MakeRoute extends Component {
 
   startStopButton() {
 
+  	let intervalIncrease = 0.0005 //THIS IS PURELY FOR TESTING
+  	let intervalIncrease2 = 0.0007
+
     	if(this.state.isRunning){
     		clearInterval(this.interval)
+    		clearInterval(this.recordInterval)
+    		let finalTime = this.state.timer
     		this.setState({
     			isRunning: false,
     		})
     		return;
     	} else {
-    		console.log('this should run after false ', this.state.isRunning)
+    		// const routeCoordsArr = this.state.routeCoords
+    		// routeCoordsArr.push(this.state.currentPosition)
 	    		this.setState({
 	    		isRunning: true,
-	    		timerStart: Date.now()
+	    		timerStart: Date.now(),
+	    		// routeCoords: routeCoordsArr
+
     		})
 	    		this.interval = setInterval(() => {
 		    	this.setState({
 		    		timer: Date.now() - this.state.timerStart
 		    	})
-		    	navigator.geolocation.getCurrentPosition(
-		    		(position) => {
-		    			console.log('position', position)
+		    	navigator.geolocation.getCurrentPosition((position) => {
+		    			let lng = position.coords.longitude
+		    			let lat = position.coords.latitude
+              // console.log('this is the latlng', lat, lng)
+		    			let newPosition = {latitude: lat, longitude: lng}
+              // console.log('this is the new', newPosition)
+              // let realPosition = Object.assign({}, newPosition)
+              // console.log('POSITION ', realPosition)
 		    			this.setState({
-		    				currentPosition: position
-		    			}, ()=>{console.log('setting state ',this.state.currentPosition)})
+		    				currentPosition: newPosition
+		    			})
 		    		},
-
             (msg)=>alert('Please enable your GPS position future.'),
+            {enableHighAccuracy: true},)
+            }, 100);
 
-            {enableHighAccuracy: true},
+	    		this.recordInterval = setInterval(() => {
+	    			// intervalIncrease += 0.0005
+	    			// intervalIncrease2 += 0.0003
+            // console.log('CURRENT ROUTECORDS', this.state.routeCoords)
+	    			let newrouteCoords = this.state.routeCoords.slice(0)
 
-          )
-	   		 }, 500);
+	    			// let adjustedLat = this.state.currentPosition.latitude + intervalIncrease
+	    			// let adjustedLng = this.state.currentPosition.longitude + intervalIncrease2
+	    			// let adjustedCoords =  { latitude: adjustedLat, longitude: adjustedLng }
+	    			// //ADJUSTED COORDS IS ONLY FOR TESTING!!!!!! IT WILL REALLY PUSH IN CURRENT LOCATION
+	    			// newrouteCoords.push(adjustedCoords)
+
+            // let addedPosition = this.state.currentPosition
+            // console.log('added position ', addedPosition)
+            let lat = this.state.currentPosition.latitude
+            let lng = this.state.currentPosition.longitude
+            // console.log('LAT LONG BEFORE ADDING ', lat, lng)
+            let nextObj = {latitude: lat, longitude: lng}
+            // let realAdded = Object.assign({}, addedPosition)
+            // console.log('real real positon', realAdded)
+
+	    			// let timeMarkerArr = this.state.timeMarker
+	    			// timeMarkerArr.push(TimeFormatter(this.state.timer))
+	    			newrouteCoords.push(nextObj)
+	    			this.setState({
+	    				routeCoords: newrouteCoords,
+	    				// timeMarker: timeMarkerArr
+	    			})
+	    		}, 200)
     	}
 
 
@@ -90,7 +132,33 @@ class MakeRoute extends Component {
 
 
     const position = this.state.currentPosition;
-    console.log(position)
+    // console.log('this is the time marker', this.state.timeMarker)
+    // console.log('this is the state', this.state)
+    // console.log('this is the router coords', this.state.routeCoords)
+  	const routerDisplayCoords = this.state.routeCoords.slice(0)
+    // console.log('DISPLAY COORDS', routerDisplayCoords)
+    // let final;
+    // let lat;
+    // let lng;
+    // let routerDisplayCoords1;
+
+
+  // //   const getCorrectCoords = (routerDisplayCoords) => {
+  //      if (routerDisplayCoords.length){
+  //         routerDisplayCoords1 = routerDisplayCoords.map(coords => {
+  //             lat = coords.latitude + 0
+  //             lng = coords.longitude + 0
+  //             return ({latitude: lat, longitude: lng})
+  //         })
+  //         console.log('this will return ', routerDisplayCoords1)
+  //   }
+  // }
+
+  // routerDisplayCoords1 = [{latitude: 37.5, longitude: -122.5}, {latitude: 37.6, longitude: -122.6}, {latitude: 37.7, longitude: -122.7}]
+
+
+   // }
+   // console.log('THIS IS WHAT IS GOING TO BE PASSED IN', final)
 
     return (
       <View>
@@ -105,14 +173,21 @@ class MakeRoute extends Component {
       		</View>
       		<View style={styles.timer}>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
-      			<Text>{this.state.currentPosition.coords.latitude}</Text>
-      			<Text>{this.state.currentPosition.coords.longitude}</Text>
+
+      			<Text>{this.state.currentPosition.latitude}</Text>
+      			<Text>{this.state.currentPosition.longitude}</Text>
 
       		</View>
 
        	 	<MapView
-       	 		region={{latitude: position.coords.latitude, longitude: position.coords.longitude, latitudeDelta: 1, longitudeDelta: 1}}
-			    style={styles.map}/>
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 3, longitudeDelta: 3}}
+			    style={styles.map}>
+
+			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {2} />
+
+
+
+			 </MapView>
       	</View>
 
       </View>
