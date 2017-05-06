@@ -13,8 +13,9 @@ import axios from 'axios';
 const SET_USER = 'SET_USER'
 const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
-const SET_SELECTED_ROUTE_COORDS = 'SET_SELECTED_ROUTE_COORDS'
-const SET_SELECTED_ROUTE_TIMES = 'SET_SELECTED_ROUTE_TIMES'
+
+const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
+
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
 ////ACTION CREATORS
@@ -27,6 +28,7 @@ export const setUser = function(user){
 }
 
 export const setUserLocation = function(location){
+
   return {
     type: SET_USER_LOCATION,
     userLocation: location
@@ -40,26 +42,14 @@ export const setNearbyRoutes = function(routesData){
   }
 }
 
-export const setSelectedRouteCoords = function(routeCoords){
+export const setSelectedRoute = function(routeData){
   return {
-    type: SET_SELECTED_ROUTE_COORDS,
-    selectedRouteCoords: routeCoords,
+    type: SET_SELECTED_ROUTE,
+    selectedRoute: routeData,
   }
 }
 
-export const setSelectedRouteTimes = function(routeTimes){
-  return {
-    type: SET_SELECTED_ROUTE_TIMES,
-    selectedRouteTimes: routeTimes ////should the associated users be eager loaded here?
-  }
-}
 
-// export const setRunnerCoords = function(newCoords){
-//   return {
-//     type: SET_RUNNER_COORDS,
-//     newCoords: newCoords
-//   }
-// }
 
 ////DISPATCHERS
 
@@ -74,6 +64,30 @@ export const fetchUser = (email, password) => {
   }
 }
 
+
+export const fetchUserLocation = location => {
+  return dispatch => {
+    return dispatch(setUserLocation(location))
+  }
+}
+
+export const fetchNearbyRoutes = () => {
+  return dispatch => {
+    axios.get('http://localhost:3000/api/runroutes')
+    .then(res => res.data)
+    .then(routesData => {
+      let formattedRouteData = routesData.map(routeWCoords => {
+        let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
+          return coordPair.map(coord => {
+            return +coord
+          })
+        })
+        return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
+      })
+      return dispatch(setNearbyRoutes(formattedRouteData))
+    })
+    .catch(console.log)
+
 export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
   return dispatch => {
     return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
@@ -81,11 +95,44 @@ export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) =>
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
     })
+
   }
 }
 
-///////////////////!!!! still need to add thunk creator for setRoutesData,
-/////////////////////   and add it to the reducer & store!
+
+
+export const fetchSelectedRoute = selectedRouteId => {
+  return dispatch => {
+    axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
+    .then(res => res.data)
+    .then(routeData => {
+      console.log(routeData)
+      return dispatch(setSelectedRoute(routeData))
+    })
+    .catch(console.log)
+  }
+}
+
+//////////GABI WILL HAVE RE-WRITTEN THIS
+// export const createNewRoute = (newRouteCoords, newRouteTimes) => {
+//   return dispatch => {
+//     axios.post('/api/ROUTESorSomething', routeCoords)
+//     .then(res => res.data)
+//     .then(newRoute => {
+//       return newRoute
+//     })
+//     .then(newRouteCoords => {
+//       axios.post('/api/ROUTESTIMESorSomething', (newRouteTimes, newRoute.id))
+//       .then(res => res.data)
+//       .then(newRouteTimes => newRouteTimes)
+//     })
+//     .then(newRouteCoords => {
+//       return dispatch(setSelectedRouteCoords(newRoute))
+//     })
+//     .catch(console.log)
+//   }
+// }
+
 
 export const fetchUserLocation = location => {
   return dispatch => {
@@ -172,22 +219,12 @@ export const createNewRoute = (newRouteCoords, newRouteTimes) => {
 
 
 
-////~~~~~I think we said that this would be on local state
-// export const fetchRunnerCoords = (newCoords) => {
-//   return dispatch => {
-//     return dispatch(setRunnerCoords(newCoords))
-//   }
-// }
-
-
-
 /////////////////////////REDUCER
 const initialState = {
   user: {},
   userLocation: {},
   nearbyRoutes: [],
-  selectedRouteCoords: [],
-  selectedRouteTimes: [],
+  selectedRoute: {},
 }
 
 
@@ -205,19 +242,13 @@ function reducer(state = initialState, action){
       nextState.userLocation = action.userLocation
       break;
     case SET_NEARBY_ROUTES:
-      console.log("in store NB routes")
       nextState.nearbyRoutes = action.nearbyRoutes;
       break;
-    case SET_SELECTED_ROUTE_COORDS:
-      nextState.selectedRouteCoords = action.selectedRouteCoords
-      break;
-    case SET_SELECTED_ROUTE_TIMES:
-      nextState.selectedRouteTimes = action.selectedRouteTimes
+    case SET_SELECTED_ROUTE:
       break;
     default:
       return state;
   }
-  console.log("NEXT STATE IS", nextState)
   return nextState;
 }
 

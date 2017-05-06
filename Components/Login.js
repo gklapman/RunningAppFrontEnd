@@ -17,7 +17,7 @@ import {StackNavigator} from 'react-navigation';
 export default class Login extends Component {
   render(){
     const { navigate } = this.props.navigation;
-    console.log('styles', styles)
+    // console.log('styles', styles)
     // const gotoStats = () => {
     //   axios.get('http://localhost:3000/api/users/')
     //    .then(res => {
