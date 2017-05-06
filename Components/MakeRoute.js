@@ -80,7 +80,7 @@ class MakeRoute extends Component {
 		    			let lat = position.coords.latitude
               // console.log('this is the latlng', lat, lng)
 		    			let newPosition = {latitude: lat, longitude: lng}
-              // console.log('this is the new', newPosition)
+              console.log('this is the new', newPosition)
               // let realPosition = Object.assign({}, newPosition)
               // console.log('POSITION ', realPosition)
 		    			this.setState({
@@ -92,6 +92,7 @@ class MakeRoute extends Component {
             }, 100);
 
 	    		this.recordInterval = setInterval(() => {
+            console.log('pushing into routeCoords')
 	    			// intervalIncrease += 0.0005
 	    			// intervalIncrease2 += 0.0003
             // console.log('CURRENT ROUTECORDS', this.state.routeCoords)
@@ -119,7 +120,7 @@ class MakeRoute extends Component {
 	    				routeCoords: newrouteCoords,
 	    				// timeMarker: timeMarkerArr
 	    			})
-	    		}, 200)
+	    		}, 500)
     	}
 
 
@@ -136,7 +137,7 @@ class MakeRoute extends Component {
     // console.log('this is the state', this.state)
     // console.log('this is the router coords', this.state.routeCoords)
   	const routerDisplayCoords = this.state.routeCoords.slice(0)
-    // console.log('DISPLAY COORDS', routerDisplayCoords)
+    console.log('DISPLAY COORDS', routerDisplayCoords)
     // let final;
     // let lat;
     // let lng;
@@ -180,10 +181,10 @@ class MakeRoute extends Component {
       		</View>
 
        	 	<MapView
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 3, longitudeDelta: 3}}
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
 			    style={styles.map}>
 
-			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {2} />
+			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
 
 
 
