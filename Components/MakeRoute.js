@@ -157,7 +157,7 @@ class MakeRoute extends Component {
       		</View>
         
        	 	<MapView 
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 3, longitudeDelta: 3}}
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}}
 			    style={styles.map}>
 
 			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {2} />
