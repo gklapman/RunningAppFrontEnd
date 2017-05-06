@@ -19,50 +19,28 @@ import {fetchNearbyRoutes} from './storeAndReducer'
 
 
 class Run extends Component {
-  // constructor(){
-  //   super();
-  //   this.state = Object.assign({}, this.props)
-  // }
+  constructor(){
+    super();
 
-  componentWillMount(){
-    // console.log("will this work?")
-    this.props.fetchNearbyRoutes();
+    this.onRegionChange=this.onRegionChange.bind(this);
+  }
+
+  onRegionChange(region) {
+    // console.log('region is ', region)
+    if(this.props) this.props.fetchNearbyRoutes(region);
+    // console.log('this.props is ',this.props);
   }
 
   render() {
-
 
   	const { navigate } = this.props.navigation;
 
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
 
-    //
-    // const testRoutesArr=//dummy data... delete this once we are able to get routes from props (and from backend)
-    // [
-    //   {
-    //     id: 1,
-    //     coords: [{latitude: 37, longitude: -122},{latitude: 36.5, longitude: -121},{latitude: 36.25, longitude: -119.5}],//this is routes array
-    //     routetimes: [
-    //       {timesArr: [0,7,16,24], user: {username: 'Alyssa'}},//these are times arrays associated with routes, and the times arrays also have their associated user
-    //       {timesArr: [0,8,16,25], user: {username: 'Gabi'}},
-    //       {timesArr: [0,5,10,19], user: {username: 'Charles'}}
-    //     ],
-    //   },
-    //   {
-    //     id: 2,
-    //     coords: [{latitude: 35, longitude: -118},{latitude: 35.75, longitude: -119.75},{latitude: 35.5, longitude: -119.5}],//this is routes array
-    //     routetimes: [
-    //       {timesArr: [0,7,16,24], user: {username: 'Alyssa'}},
-    //       {timesArr: [0,8,16,25], user: {username: 'Gabi'}},
-    //       {timesArr: [0,5,10,19], user: {username: 'Charles'}}
-    //       ],
-    //   }
-    // ]
-
     // const routesArr= testRoutesArr;
     let routesArr = this.props.nearbyRoutes;
 
-    console.log("THIS PROPS NB ROUTES", this.props.nearbyRoutes)
+    // console.log("THIS PROPS NB ROUTES", this.props.nearbyRoutes)
 
     // const routesArr= navigation.state.params.routesArr; //uncomment this once we are able to get the routes from props
 
@@ -94,22 +72,22 @@ class Run extends Component {
        	 		</View>
 
 
-       	 	<MapView style={styles.map}>
+       	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
 
+            {/* {console.log(routesArr)} */}
           {routesArr.map(routeObj=>{
-            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
 
+            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
+            // {console.log(routeObj.id)}
+            // {console.log(JSON.stringify(routeObj.coords))}
 
 
             return(
-
 
               <View key={routeObj.id} >
 
                <MapView.Polyline
                  coordinates={
-
-
                    routeObj.coords.map(function(coordPair){
                      return {latitude: coordPair[0], longitude: coordPair[1]}
                     })
@@ -117,18 +95,17 @@ class Run extends Component {
                    strokeColor='green'
                    strokeWidth= {2}
                  />
+                 <MapView.Marker
+                   coordinate={{latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
+                   pinColor='red'
+                   title='Start'
+                 />
 
-                {/* <MapView.Marker
-                  coordinate={routeObj.coords[0]}
-                  pinColor='red'
-                  title='Start'
-
-                />
                 <MapView.Marker
-                  coordinate={routeObj.coords[routeObj.coords.length-1]}
+                  coordinate={{latitude: routeObj.coords[routeObj.coords.length-1][0], longitude: routeObj.coords[routeObj.coords.length-1][1]}}
                   pinColor='blue'
                   title='End'
-                /> */}
+                />
               </View>
             )
           })}
