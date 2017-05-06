@@ -34,6 +34,8 @@ import MakeRoute from './Components/MakeRoute'
 import ViewRoute from './Components/ViewRoute'
 
 
+///////EXAMPLE BELOW- not sure it's still needed
+
 // export class ReactNativeMaps extends Component {
 
 //   render() {
@@ -135,6 +137,7 @@ why is the title not showing up?
 //   }
 // }
 
+
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
@@ -223,3 +226,4 @@ var ConnectedAppContainer = connect(mapStateToProps, mapDispatchToProps)(AppCont
 
 
 AppRegistry.registerComponent('ReactNativeMaps', () => App);
+
