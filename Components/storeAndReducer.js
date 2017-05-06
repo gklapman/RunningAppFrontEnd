@@ -13,7 +13,9 @@ import axios from 'axios';
 const SET_USER = 'SET_USER'
 const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
+
 const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
+
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
 ////ACTION CREATORS
@@ -26,6 +28,7 @@ export const setUser = function(user){
 }
 
 export const setUserLocation = function(location){
+
   return {
     type: SET_USER_LOCATION,
     userLocation: location
@@ -48,7 +51,6 @@ export const setSelectedRoute = function(routeData){
 
 
 
-
 ////DISPATCHERS
 
 export const fetchUser = (email, password) => {
@@ -61,6 +63,7 @@ export const fetchUser = (email, password) => {
     .catch(console.log)
   }
 }
+
 
 export const fetchUserLocation = location => {
   return dispatch => {
@@ -84,6 +87,15 @@ export const fetchNearbyRoutes = () => {
       return dispatch(setNearbyRoutes(formattedRouteData))
     })
     .catch(console.log)
+
+export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
+  return dispatch => {
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
+    .then(response => {
+          console.log('this is the response', response.data)
+          //INVOKE THUNK TO RELOAD ALL ROUTES
+    })
+
   }
 }
 
@@ -122,6 +134,90 @@ export const fetchSelectedRoute = selectedRouteId => {
 // }
 
 
+export const fetchUserLocation = location => {
+  return dispatch => {
+    return dispatch(setUserLocation(location))
+  }
+}
+
+export const fetchNearbyRoutes = (region) => {
+  // console.log("or this?!")
+
+http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
+
+  return dispatch => {
+    let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
+    // console.log("it worked!")
+    axios.get('http://localhost:3000/api/runroutes/'+query)
+    .then(res => res.data)
+    .then(routesData => {
+      console.log("ROUTE DATA!", routesData)
+
+      let formattedRouteData = routesData.map(routeWCoords => {
+        // console.log("ROUTEWCOORDS is", Array.isArray(routeWCoords.coords))
+        let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
+          // console.log("COORD PAIR",coordPair)
+          return coordPair.map(coord => {
+            // console.log("COORD", +coord)
+            return +coord
+          })
+        })
+        return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
+      })
+
+      console.log("FORMATTED COORDS!",formattedRouteData)
+
+
+
+      return dispatch(setNearbyRoutes(formattedRouteData))
+    })
+    .catch(console.log)
+  }
+}
+
+export const fetchSelectedRouteCoords = selectedRoute => {
+  return dispatch => {
+    axios.get('/api/ROUTES/IDorSOMETHING')
+    .then(res => res.data)
+    .then(routeCoords => {
+      return dispatch(setSelectedRouteCoords(routeCoords))
+    })
+    .catch(console.log)
+  }
+}
+
+export const fetchSelectedRouteTimes = selectedRoute => {
+  return dispatch => {
+    axios.get('/api/ROUTESTIMES/IDorSOMETHING')
+    .then(res => res.data)
+    .then(routeTimes => {
+      return dispatch(setSelectedRouteTimes(routeTimes))
+    })
+    .catch(console.log)
+  }
+}
+
+export const createNewRoute = (newRouteCoords, newRouteTimes) => {
+  return dispatch => {
+    axios.post('/api/ROUTESorSomething', routeCoords)
+    .then(res => res.data)
+    .then(newRoute => {
+      return newRoute
+    })
+    .then(newRouteCoords => {
+      axios.post('/api/ROUTESTIMESorSomething', (newRouteTimes, newRoute.id))
+      .then(res => res.data)
+      .then(newRouteTimes => newRouteTimes)
+    })
+    .then(newRouteCoords => {
+      return dispatch(setSelectedRouteCoords(newRoute))
+    })
+    .catch(console.log)
+  }
+}
+
+
+
 
 /////////////////////////REDUCER
 const initialState = {
@@ -149,7 +245,6 @@ function reducer(state = initialState, action){
       nextState.nearbyRoutes = action.nearbyRoutes;
       break;
     case SET_SELECTED_ROUTE:
-      nextState.selectedRoute = action.selectedRoute
       break;
     default:
       return state;

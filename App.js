@@ -4,6 +4,7 @@
  * @flow
  */
 
+
 import {Provider, connect } from 'react-redux'
 import store from './Components/storeAndReducer'
 import { fetchRunnerCoords } from './Components/storeAndReducer'
@@ -30,7 +31,10 @@ import Login from './Components/Login'
 import Stats from './Components/Stats'
 import Run from './Components/Run'
 import MakeRoute from './Components/MakeRoute'
+import ViewRoute from './Components/ViewRoute'
 
+
+///////EXAMPLE BELOW- not sure it's still needed
 
 
 
@@ -220,3 +224,4 @@ why is the title not showing up?
 //     );
 //   }
 // }
+
