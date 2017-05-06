@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Image, 
+  Image,
   Button,
 } from 'react-native';
 import styles from '../Styles'
@@ -19,6 +19,7 @@ class MakeRoute extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+
 			currentPosition: { latitude: 37.33, longitude: -122.0207 } , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
 			isRunning: false,
 			timer: '00.00.00',
@@ -28,13 +29,29 @@ class MakeRoute extends Component {
 			timeMarker: []
 		}
 		this.startStopButton = this.startStopButton.bind(this)
+    // this.testButton = this.testButton.bind(this)
 	}
 
+  // testButton(){
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       console.log('manually checking position', position)
+  //       this.setState({
+  //         currentPosition: position
+  //       }, ()=>{console.log('setting state (from testButton)',this.state.currentPosition)})
+  //     },
+  //
+  //                 (msg)=>alert('Please enable your GPS position future.'),
+  //
+  //                 {enableHighAccuracy: true},
+  //
+  //   )
+  // }
 
 
   startStopButton() {
 
-  	let intervalIncrease = 0.0005 //THIS IS PURELY FOR TESTING 
+  	let intervalIncrease = 0.0005 //THIS IS PURELY FOR TESTING
   	let intervalIncrease2 = 0.0007
 
     	if(this.state.isRunning){
@@ -44,9 +61,9 @@ class MakeRoute extends Component {
     		this.setState({
     			isRunning: false,
     		})
-    		return; 
+    		return;
     	} else {
-    		// const routeCoordsArr = this.state.routeCoords 
+    		// const routeCoordsArr = this.state.routeCoords
     		// routeCoordsArr.push(this.state.currentPosition)
 	    		this.setState({
 	    		isRunning: true,
@@ -63,16 +80,19 @@ class MakeRoute extends Component {
 		    			let lat = position.coords.latitude
               // console.log('this is the latlng', lat, lng)
 		    			let newPosition = {latitude: lat, longitude: lng}
-              // console.log('this is the new', newPosition)
+              console.log('this is the new', newPosition)
               // let realPosition = Object.assign({}, newPosition)
               // console.log('POSITION ', realPosition)
 		    			this.setState({
 		    				currentPosition: newPosition
 		    			})
-		    		})
-	   		 }, 100);
+		    		},
+            (msg)=>alert('Please enable your GPS position future.'),
+            {enableHighAccuracy: true},)
+            }, 100);
 
 	    		this.recordInterval = setInterval(() => {
+            console.log('pushing into routeCoords')
 	    			// intervalIncrease += 0.0005
 	    			// intervalIncrease2 += 0.0003
             // console.log('CURRENT ROUTECORDS', this.state.routeCoords)
@@ -80,10 +100,10 @@ class MakeRoute extends Component {
 
 	    			// let adjustedLat = this.state.currentPosition.latitude + intervalIncrease
 	    			// let adjustedLng = this.state.currentPosition.longitude + intervalIncrease2
-	    			// let adjustedCoords =  { latitude: adjustedLat, longitude: adjustedLng } 
+	    			// let adjustedCoords =  { latitude: adjustedLat, longitude: adjustedLng }
 	    			// //ADJUSTED COORDS IS ONLY FOR TESTING!!!!!! IT WILL REALLY PUSH IN CURRENT LOCATION
 	    			// newrouteCoords.push(adjustedCoords)
-            
+
             // let addedPosition = this.state.currentPosition
             // console.log('added position ', addedPosition)
             let lat = this.state.currentPosition.latitude
@@ -95,20 +115,20 @@ class MakeRoute extends Component {
 
 	    			// let timeMarkerArr = this.state.timeMarker
 	    			// timeMarkerArr.push(TimeFormatter(this.state.timer))
-	    			newrouteCoords.push(nextObj) 
+	    			newrouteCoords.push(nextObj)
 	    			this.setState({
 	    				routeCoords: newrouteCoords,
 	    				// timeMarker: timeMarkerArr
 	    			})
-	    		}, 200)
+	    		}, 500)
     	}
 
-    	
-  
+
+
     	}
 
-    	
-    	
+
+
   render() {
 
 
@@ -117,7 +137,7 @@ class MakeRoute extends Component {
     // console.log('this is the state', this.state)
     // console.log('this is the router coords', this.state.routeCoords)
   	const routerDisplayCoords = this.state.routeCoords.slice(0)
-    // console.log('DISPLAY COORDS', routerDisplayCoords)
+    console.log('DISPLAY COORDS', routerDisplayCoords)
     // let final;
     // let lat;
     // let lng;
@@ -137,7 +157,7 @@ class MakeRoute extends Component {
 
   // routerDisplayCoords1 = [{latitude: 37.5, longitude: -122.5}, {latitude: 37.6, longitude: -122.6}, {latitude: 37.7, longitude: -122.7}]
 
-      
+
    // }
    // console.log('THIS IS WHAT IS GOING TO BE PASSED IN', final)
 
@@ -145,23 +165,27 @@ class MakeRoute extends Component {
       <View>
       	<View style={styles.mapcontainer}>
       		<View style={styles.startStop}>
-      		<TouchableOpacity onPress={this.startStopButton.bind(this)}>
+      		<TouchableOpacity onPress={this.startStopButton}>
       			<Text>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
       		</TouchableOpacity>
+          {/* <TouchableOpacity onPress={this.testButton}>
+            <Text>Get current position</Text>
+          </TouchableOpacity> */}
       		</View>
       		<View style={styles.timer}>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
+
       			<Text>{this.state.currentPosition.latitude}</Text>
       			<Text>{this.state.currentPosition.longitude}</Text>
-      			
+
       		</View>
-        
-       	 	<MapView 
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 3, longitudeDelta: 3}}
+
+       	 	<MapView
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
 			    style={styles.map}>
 
-			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {2} />
-   
+			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
+
 
 
 			 </MapView>
@@ -173,6 +197,3 @@ class MakeRoute extends Component {
 }
 
 export default MakeRoute
-
-
-
