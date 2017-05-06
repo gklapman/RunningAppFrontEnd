@@ -80,12 +80,15 @@ export const fetchUserLocation = location => {
   }
 }
 
-export const fetchNearbyRoutes = () => {
-  console.log("or this?!")
+export const fetchNearbyRoutes = (region) => {
+  // console.log("or this?!")
+
+http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
 
   return dispatch => {
-    console.log("it worked!")
-    axios.get('http://localhost:3000/api/runroutes')
+    let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
+    // console.log("it worked!")
+    axios.get('http://localhost:3000/api/runroutes/'+query)
     .then(res => res.data)
     .then(routesData => {
       console.log("ROUTE DATA!", routesData)
