@@ -13,8 +13,7 @@ import axios from 'axios';
 const SET_USER = 'SET_USER'
 const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
-const SET_SELECTED_ROUTE_COORDS = 'SET_SELECTED_ROUTE_COORDS'
-const SET_SELECTED_ROUTE_TIMES = 'SET_SELECTED_ROUTE_TIMES'
+const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
 ////ACTION CREATORS
@@ -40,26 +39,15 @@ export const setNearbyRoutes = function(routesData){
   }
 }
 
-export const setSelectedRouteCoords = function(routeCoords){
+export const setSelectedRoute = function(routeData){
   return {
-    type: SET_SELECTED_ROUTE_COORDS,
-    selectedRouteCoords: routeCoords,
+    type: SET_SELECTED_ROUTE,
+    selectedRoute: routeData,
   }
 }
 
-export const setSelectedRouteTimes = function(routeTimes){
-  return {
-    type: SET_SELECTED_ROUTE_TIMES,
-    selectedRouteTimes: routeTimes ////should the associated users be eager loaded here?
-  }
-}
 
-// export const setRunnerCoords = function(newCoords){
-//   return {
-//     type: SET_RUNNER_COORDS,
-//     newCoords: newCoords
-//   }
-// }
+
 
 ////DISPATCHERS
 
@@ -81,87 +69,58 @@ export const fetchUserLocation = location => {
 }
 
 export const fetchNearbyRoutes = () => {
-  console.log("or this?!")
-
   return dispatch => {
-    console.log("it worked!")
     axios.get('http://localhost:3000/api/runroutes')
     .then(res => res.data)
     .then(routesData => {
-      console.log("ROUTE DATA!", routesData)
-
       let formattedRouteData = routesData.map(routeWCoords => {
-        // console.log("ROUTEWCOORDS is", Array.isArray(routeWCoords.coords))
         let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
-          // console.log("COORD PAIR",coordPair)
           return coordPair.map(coord => {
-            // console.log("COORD", +coord)
             return +coord
           })
         })
         return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
       })
-
-      console.log("FORMATTED COORDS!",formattedRouteData)
-
-
-
       return dispatch(setNearbyRoutes(formattedRouteData))
     })
     .catch(console.log)
   }
 }
 
-export const fetchSelectedRouteCoords = selectedRoute => {
+
+
+export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
-    axios.get('/api/ROUTES/IDorSOMETHING')
+    axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
-    .then(routeCoords => {
-      return dispatch(setSelectedRouteCoords(routeCoords))
+    .then(routeData => {
+      console.log(routeData)
+      return dispatch(setSelectedRoute(routeData))
     })
     .catch(console.log)
   }
 }
 
-export const fetchSelectedRouteTimes = selectedRoute => {
-  return dispatch => {
-    axios.get('/api/ROUTESTIMES/IDorSOMETHING')
-    .then(res => res.data)
-    .then(routeTimes => {
-      return dispatch(setSelectedRouteTimes(routeTimes))
-    })
-    .catch(console.log)
-  }
-}
-
-export const createNewRoute = (newRouteCoords, newRouteTimes) => {
-  return dispatch => {
-    axios.post('/api/ROUTESorSomething', routeCoords)
-    .then(res => res.data)
-    .then(newRoute => {
-      return newRoute
-    })
-    .then(newRouteCoords => {
-      axios.post('/api/ROUTESTIMESorSomething', (newRouteTimes, newRoute.id))
-      .then(res => res.data)
-      .then(newRouteTimes => newRouteTimes)
-    })
-    .then(newRouteCoords => {
-      return dispatch(setSelectedRouteCoords(newRoute))
-    })
-    .catch(console.log)
-  }
-}
-
-
-
-
-////~~~~~I think we said that this would be on local state
-// export const fetchRunnerCoords = (newCoords) => {
+//////////GABI WILL HAVE RE-WRITTEN THIS
+// export const createNewRoute = (newRouteCoords, newRouteTimes) => {
 //   return dispatch => {
-//     return dispatch(setRunnerCoords(newCoords))
+//     axios.post('/api/ROUTESorSomething', routeCoords)
+//     .then(res => res.data)
+//     .then(newRoute => {
+//       return newRoute
+//     })
+//     .then(newRouteCoords => {
+//       axios.post('/api/ROUTESTIMESorSomething', (newRouteTimes, newRoute.id))
+//       .then(res => res.data)
+//       .then(newRouteTimes => newRouteTimes)
+//     })
+//     .then(newRouteCoords => {
+//       return dispatch(setSelectedRouteCoords(newRoute))
+//     })
+//     .catch(console.log)
 //   }
 // }
+
 
 
 /////////////////////////REDUCER
@@ -169,8 +128,7 @@ const initialState = {
   user: {},
   userLocation: {},
   nearbyRoutes: [],
-  selectedRouteCoords: [],
-  selectedRouteTimes: [],
+  selectedRoute: {},
 }
 
 
@@ -188,19 +146,14 @@ function reducer(state = initialState, action){
       nextState.userLocation = action.userLocation
       break;
     case SET_NEARBY_ROUTES:
-      console.log("in store NB routes")
       nextState.nearbyRoutes = action.nearbyRoutes;
       break;
-    case SET_SELECTED_ROUTE_COORDS:
-      nextState.selectedRouteCoords = action.selectedRouteCoords
-      break;
-    case SET_SELECTED_ROUTE_TIMES:
-      nextState.selectedRouteTimes = action.selectedRouteTimes
+    case SET_SELECTED_ROUTE:
+      nextState.selectedRoute = action.selectedRoute
       break;
     default:
       return state;
   }
-  console.log("NEXT STATE IS", nextState)
   return nextState;
 }
 
