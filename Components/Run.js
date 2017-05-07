@@ -12,6 +12,7 @@ import {
 import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
+import RunARoute from './RunARoute';
 
 //added for react-redux
 import {connect} from 'react-redux'
@@ -52,6 +53,10 @@ class Run extends Component {
         var initialPosition = JSON.stringify(position);
       })
 
+    const gotoRunARoute = () => {
+    	navigate('RunARoute')
+   	}
+
     const goToRouteMaker = () => {
     	navigate('MakeRoute')
    	}
@@ -83,6 +88,10 @@ class Run extends Component {
        	 		<View style={styles.filter}>
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
+
+            <View style={styles.filter}>
+            <Button onPress={gotoRunARoute} title="Test Run A Route... DELETE THIS LATER"></Button>
+            </View>
 
 
 
