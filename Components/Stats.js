@@ -1,3 +1,4 @@
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -6,18 +7,19 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Image, 
+  Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
+//CUSTOM MODULES
+import styles from '../Styles'
 
 class Stats extends Component {
   render() {
     return (
       <View style={{margin: 128}}>
         <Text>Stats Page Placeholder</Text>
-        
+
       </View>
     )
   }

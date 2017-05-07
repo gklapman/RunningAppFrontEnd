@@ -1,3 +1,4 @@
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -9,22 +10,24 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
+import {connect} from 'react-redux'
+//MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
 import axios from 'axios'
-import {connect} from 'react-redux'
-import {addNewRoute} from './storeAndReducer.js'
 import geolib from 'geolib'
+//CUSTOM MODULES
+import styles from '../Styles'
+import {addNewRoute} from './storeAndReducer'
 
 
 class ViewRoute extends Component {
 	constructor(props) {
 		super(props);
-		
+
     this.submitRoute = this.submitRoute.bind(this)
-    
+
 	}
 
 
@@ -48,10 +51,10 @@ class ViewRoute extends Component {
       <View>
          <View style={styles.mapcontainer}>
             <View style={styles.finalTime}>
-                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>  
+                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>
           </View>
            <View style={styles.finalDistance}>
-                    <Text>Final Distance: {totalDistance} Miles</Text>  
+                    <Text>Final Distance: {totalDistance} Miles</Text>
           </View>
 
 
@@ -67,7 +70,7 @@ class ViewRoute extends Component {
                   <TouchableOpacity onPress={this.submitRoute}>
                     <Text>Submit Run</Text>
                   </TouchableOpacity>
-          </View> 
+          </View>
           </View>
         </View>
     )
@@ -85,5 +88,3 @@ function mapStateToProps(state){
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewRoute)
-
-
