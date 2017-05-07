@@ -15,7 +15,8 @@ import MapView from 'react-native-maps';
 
 //added for react-redux
 import {connect} from 'react-redux'
-import {fetchNearbyRoutes} from './storeAndReducer'
+import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
+
 
 
 class Run extends Component {
@@ -37,10 +38,10 @@ class Run extends Component {
 
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
 
-    // const routesArr= testRoutesArr;
     let routesArr = this.props.nearbyRoutes;
 
-    // console.log("THIS PROPS NB ROUTES", this.props.nearbyRoutes)
+    console.log("THIS PROPS here", this.props)
+
 
     // const routesArr= navigation.state.params.routesArr; //uncomment this once we are able to get the routes from props
 
@@ -55,8 +56,15 @@ class Run extends Component {
     	navigate('MakeRoute')
    	}
 
+    const goToRaceView = (evt) => {
+      const routeID = ''+evt.nativeEvent.id
+      console.log(routeID)
+      this.props.fetchSelectedRoute(routeID)
+      // navigate('CHARLES IS CREATING THIS COMPONENT NOW')
+    }
+
     const filter = () => {
-    	console.log('this will be for filters')
+    	// console.log('this will be for filters')
     }
 
 
@@ -67,11 +75,15 @@ class Run extends Component {
         <View style={styles.mapcontainer}>
 
         	<View style={styles.createRoute}>
-       	 		<Button onPress={goToRouteMaker} title="Create a Route"></Button>
+       	 		<Button
+              onPress={goToRouteMaker}
+              title="Create a Route">
+            </Button>
        	 		</View>
        	 		<View style={styles.filter}>
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
+
 
 
        	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
@@ -80,11 +92,17 @@ class Run extends Component {
           {routesArr.map(routeObj=>{
 
             //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
+
+            let routeID = ""+routeObj.id;
+
+
+            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
             // {console.log(routeObj.id)}
             // {console.log(JSON.stringify(routeObj.coords))}
 
 
             return(
+
 
               <View key={routeObj.id} >
 
@@ -94,19 +112,24 @@ class Run extends Component {
                      return {latitude: coordPair[0], longitude: coordPair[1]}
                     })
                    }
+                  //  identifier={routeObj.id}
                    strokeColor='green'
-                   strokeWidth= {2}
-                 />
-                 <MapView.Marker
-                   coordinate={{latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
-                   pinColor='red'
-                   title='Start'
+                   strokeWidth= {10}
                  />
 
+                <MapView.Marker
+                  coordinate={{ latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
+                  pinColor='red'
+                  title='Start'
+                  identifier={routeID}
+                  onSelect={goToRaceView}
+                />
                 <MapView.Marker
                   coordinate={{latitude: routeObj.coords[routeObj.coords.length-1][0], longitude: routeObj.coords[routeObj.coords.length-1][1]}}
                   pinColor='blue'
                   title='End'
+                  identifier={routeID}
+                  onSelect={goToRaceView}
                 />
               </View>
             )
@@ -121,11 +144,13 @@ class Run extends Component {
   }
 }
 
-const mapDispatchToProps = {fetchNearbyRoutes}
+
+const mapDispatchToProps = {fetchNearbyRoutes, fetchSelectedRoute}
 
 function mapStateToProps(state){
   return {
-    nearbyRoutes: state.nearbyRoutes
+    nearbyRoutes: state.nearbyRoutes,
+    selectedRoute: state.selectedRoute,
   }
 }
 
