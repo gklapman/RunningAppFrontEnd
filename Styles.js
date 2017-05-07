@@ -123,6 +123,33 @@ const styles = StyleSheet.create({
     top: 30,
     left: 50,
   },
+  viewRoute: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'orange',
+    position: 'absolute',
+    top: 30,
+    left: 50,
+  }, 
+    finalTime: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 30,
+    left: 50,
+  },
+  finalDistance: {
+    height: 50,
+    width: 100, 
+    backgroundColor: '#b0c4de',
+    zIndex: 1,
+    position: 'absolute',
+    top: 30,
+    right: 50,
+  },
   });
 
 export default styles

@@ -18,16 +18,21 @@ import {connect} from 'react-redux'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 
 
+
 class Run extends Component {
+  constructor(){
+    super();
 
+    this.onRegionChange=this.onRegionChange.bind(this);
+  }
 
-  componentWillMount(){
-    // console.log("will this work?")
-    this.props.fetchNearbyRoutes();
+  onRegionChange(region) {
+    // console.log('region is ', region)
+    if(this.props) this.props.fetchNearbyRoutes(region);
+    // console.log('this.props is ',this.props);
   }
 
   render() {
-
 
   	const { navigate } = this.props.navigation;
 
@@ -36,6 +41,7 @@ class Run extends Component {
     let routesArr = this.props.nearbyRoutes;
 
     console.log("THIS PROPS here", this.props)
+
 
     // const routesArr= navigation.state.params.routesArr; //uncomment this once we are able to get the routes from props
 
@@ -61,6 +67,8 @@ class Run extends Component {
     	// console.log('this will be for filters')
     }
 
+
+
     return (
       <View>
 
@@ -77,20 +85,27 @@ class Run extends Component {
        	 		</View>
 
 
-       	 	<MapView style={styles.map}>
 
+       	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
+
+            {/* {console.log(routesArr)} */}
           {routesArr.map(routeObj=>{
+
             //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
 
             let routeID = ""+routeObj.id;
+
+
+            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
+            // {console.log(routeObj.id)}
+            // {console.log(JSON.stringify(routeObj.coords))}
+
 
             return(
 
 
               <View key={routeObj.id} >
 
-
-              <TouchableOpacity onPress={goToRaceView}>
                <MapView.Polyline
                  coordinates={
                    routeObj.coords.map(function(coordPair){
@@ -101,7 +116,6 @@ class Run extends Component {
                    strokeColor='green'
                    strokeWidth= {10}
                  />
-               </TouchableOpacity>
 
                 <MapView.Marker
                   coordinate={{ latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
@@ -129,6 +143,7 @@ class Run extends Component {
     )
   }
 }
+
 
 const mapDispatchToProps = {fetchNearbyRoutes, fetchSelectedRoute}
 

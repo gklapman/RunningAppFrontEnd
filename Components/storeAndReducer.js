@@ -14,6 +14,7 @@ const SET_USER = 'SET_USER'
 const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
 const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
+
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
 ////ACTION CREATORS
@@ -26,6 +27,7 @@ export const setUser = function(user){
 }
 
 export const setUserLocation = function(location){
+
   return {
     type: SET_USER_LOCATION,
     userLocation: location
@@ -48,7 +50,6 @@ export const setSelectedRoute = function(routeData){
 
 
 
-
 ////DISPATCHERS
 
 export const fetchUser = (email, password) => {
@@ -62,32 +63,24 @@ export const fetchUser = (email, password) => {
   }
 }
 
+
 export const fetchUserLocation = location => {
   return dispatch => {
     return dispatch(setUserLocation(location))
   }
 }
 
-export const fetchNearbyRoutes = () => {
+
+export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
   return dispatch => {
-    axios.get('http://localhost:3000/api/runroutes')
-    .then(res => res.data)
-    .then(routesData => {
-      let formattedRouteData = routesData.map(routeWCoords => {
-        let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
-          return coordPair.map(coord => {
-            return +coord
-          })
-        })
-        return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
-      })
-      return dispatch(setNearbyRoutes(formattedRouteData))
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
+    .then(response => {
+          console.log('this is the response', response.data)
+          //INVOKE THUNK TO RELOAD ALL ROUTES
     })
-    .catch(console.log)
+
   }
 }
-
-
 
 export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
@@ -120,6 +113,44 @@ export const fetchSelectedRoute = selectedRouteId => {
 //     .catch(console.log)
 //   }
 // }
+
+
+
+export const fetchNearbyRoutes = (region) => {
+  // console.log("or this?!")
+
+http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
+
+  return dispatch => {
+    let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
+    // console.log("it worked!")
+    axios.get('http://localhost:3000/api/runroutes/'+query)
+    .then(res => res.data)
+    .then(routesData => {
+      console.log("ROUTE DATA!", routesData)
+
+      let formattedRouteData = routesData.map(routeWCoords => {
+        // console.log("ROUTEWCOORDS is", Array.isArray(routeWCoords.coords))
+        let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
+          // console.log("COORD PAIR",coordPair)
+          return coordPair.map(coord => {
+            // console.log("COORD", +coord)
+            return +coord
+          })
+        })
+        return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
+      })
+
+      console.log("FORMATTED COORDS!",formattedRouteData)
+
+
+
+      return dispatch(setNearbyRoutes(formattedRouteData))
+    })
+    .catch(console.log)
+  }
+}
+
 
 
 

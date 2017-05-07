@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "geolib": "^2.0.22",
     "minutes-seconds-milliseconds": "^1.0.3",
     "react": "16.0.0-alpha.6",
     "react-native": "0.43.4",
