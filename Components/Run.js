@@ -15,7 +15,6 @@ import MapView from 'react-native-maps';
 
 //added for react-redux
 import {connect} from 'react-redux'
-
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 
 
@@ -33,13 +32,11 @@ class Run extends Component {
     // console.log('this.props is ',this.props);
   }
 
-
   render() {
 
   	const { navigate } = this.props.navigation;
 
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
-
 
     let routesArr = this.props.nearbyRoutes;
 
@@ -88,6 +85,7 @@ class Run extends Component {
        	 		</View>
 
 
+
        	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
 
             {/* {console.log(routesArr)} */}
@@ -118,7 +116,6 @@ class Run extends Component {
                    strokeColor='green'
                    strokeWidth= {10}
                  />
-     
 
                 <MapView.Marker
                   coordinate={{ latitude: routeObj.coords[0][0], longitude: routeObj.coords[0][1]}}
@@ -154,7 +151,6 @@ function mapStateToProps(state){
   return {
     nearbyRoutes: state.nearbyRoutes,
     selectedRoute: state.selectedRoute,
-
   }
 }
 
