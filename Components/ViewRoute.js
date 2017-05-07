@@ -32,19 +32,20 @@ class ViewRoute extends Component {
 
 
     submitRoute(){
-          let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
+        let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
         console.log('this is the info', convCoords, timesArr)
-          this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
-          const { navigate } = this.props.navigation;
-          navigate('OurApp')
+        this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
+        const { navigate } = this.props.navigation;
+        navigate('OurApp')
       }
 
 
   render() {
 
     let givenprops = this.props.navigation.state.params
+    console.log('givenprops is ', givenprops)
     let finalTime = givenprops.timesArr[givenprops.timesArr.length-1]
-    let totalDistance = (geolib.getPathLength(givenprops.convCoords) * 0.000621371).toFixed(2)
+    let totalDistance = (geolib.getPathLength(givenprops.convCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
     console.log('this is the total distance', totalDistance)
 
     return (
@@ -59,7 +60,7 @@ class ViewRoute extends Component {
 
 
          <MapView
-              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: .01, longitudeDelta: .01}}
+              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: 5, longitudeDelta: 5}}
             style={styles.map}>
 
             <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
