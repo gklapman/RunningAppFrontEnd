@@ -2,9 +2,9 @@
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
 //selected route
-//selected routetime //who you are racing against
-//user
-//
+//selected racer (user), with associated routetime //who you are racing against
+//current user
+
 
 //Dispatch functions this component will receive as props
 //addNewRoute
@@ -27,22 +27,27 @@ import TimeFormatter from 'minutes-seconds-milliseconds'
 import axios from 'axios'
 import {connect} from 'react-redux'
 import {addNewRoute} from './storeAndReducer.js'
+import geolib from 'geolib'
 
+//Make sure.. when user clicks start.. check if at starting point
+//if at starting point, SET A COUNTDOWN..
+//once runner has gotten to the final checkpoint... do some ending thing
 
-class MakeRoute extends Component {
+//take out the test button thing when alyssa's thunk thing is working
+
+class RunARoute extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			currentPosition: {latitude: 1, longitude: 2} , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
 			isRunning: false,
+      selectedRoutePointer: 1,//this represents the index of the selected route coord (which is the next point that the runner will be running to.. that we'll check)
 			timer: 0,
 			timerStart: 0,
 			timerEnd: 0,
-			routeCoords: [],
 			timeMarker: [0]
 		}
 		this.startStopButton = this.startStopButton.bind(this)
-    // this.submitRun = this.submitRun.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
 	}
 
@@ -74,6 +79,9 @@ class MakeRoute extends Component {
     		return;
     	} else {
 
+        // const selectedRoute = this.props.selectedRoute; //this will be once we are able to get selectedRoute from store
+
+
         let lat = this.state.currentPosition.latitude
         let lng = this.state.currentPosition.longitude
         let firstRouteCoord = [{latitude: lat, longitude: lng}]
@@ -88,44 +96,52 @@ class MakeRoute extends Component {
 		    		timer: Date.now() - this.state.timerStart
 		    	})
 		    	navigator.geolocation.getCurrentPosition((position) => {
+              let selectedRouteCoords = [["37.785834","-122.406417"],["36.5","-121"],["36.25","-119.5"]];
 		    			let lng = position.coords.longitude
 		    			let lat = position.coords.latitude
 		    			let newPosition = {latitude: lat, longitude: lng}
 
+              let nextCheckPointUnconverted= selectedRouteCoords[this.state.selectedRoutePointer];
+              console.log('next checkpoint unconv', nextCheckPointUnconverted);
+              let nextCheckPoint={latitude: nextCheckPointUnconverted[0], longitude: nextCheckPointUnconverted[1]};
+              console.log('next checkpoint', nextCheckPoint)
+              let dist=geolib.getDistance(nextCheckPoint, newPosition);
+
+              if(dist>25){
+                let timeMarker= this.state.timeMarker;
+                timeMarker.push(this.state.timer)
+                this.setState({selectedRoutePointer: this.state.selectedRoutePointer+1, timeMarker}, ()=>console.log(this.state))
+              }
+
 		    			this.setState({
 		    				currentPosition: newPosition
 		    			})
+
+
 		    		},
             (msg)=>alert('Please enable your GPS position future.'),
             {enableHighAccuracy: true},)
             }, 100);
 
-	    		this.recordInterval = setInterval(() => {
-
-	    			// intervalIncrease += 0.0005
-	    			// intervalIncrease2 += 0.0003
-            // console.log('CURRENT ROUTECORDS', this.state.routeCoords)
-	    			// let adjustedLat = this.state.currentPosition.latitude + intervalIncrease
-	    			// let adjustedLng = this.state.currentPosition.longitude + intervalIncrease2
-	    			// let adjustedCoords =  { latitude: adjustedLat, longitude: adjustedLng }
-	    			// //ADJUSTED COORDS IS ONLY FOR TESTING!!!!!! IT WILL REALLY PUSH IN CURRENT LOCATION
-	    			// newrouteCoords.push(adjustedCoords)
 
 
-            let newrouteCoords = this.state.routeCoords.slice(0)
-            let lat = this.state.currentPosition.latitude
-            let lng = this.state.currentPosition.longitude
-            let nextObj = {latitude: lat, longitude: lng}
-	    			newrouteCoords.push(nextObj)
+	    		// this.recordInterval = setInterval(() => {
+          //   let newrouteCoords = this.state.routeCoords.slice(0)
+          //   let lat = this.state.currentPosition.latitude
+          //   let lng = this.state.currentPosition.longitude
+          //   let nextObj = {latitude: lat, longitude: lng}
+	    		// 	newrouteCoords.push(nextObj)
+          //
+          //   let timeMarkerArr = this.state.timeMarker
+          //   timeMarkerArr.push(this.state.timer)
+          //
+	    		// 	this.setState({
+	    		// 		routeCoords: newrouteCoords,
+	    		// 		timeMarker: timeMarkerArr
+	    		// 	})
+	    		// }, 500)
 
-            let timeMarkerArr = this.state.timeMarker
-            timeMarkerArr.push(this.state.timer)
 
-	    			this.setState({
-	    				routeCoords: newrouteCoords,
-	    				timeMarker: timeMarkerArr
-	    			})
-	    		}, 500)
     	}
     	}
 
@@ -148,12 +164,11 @@ class MakeRoute extends Component {
 
   render() {
 
+    // const selectedRoute = this.props.selectedRoute; //this will be once we are able to get selectedRoute from store
+    const selectedRouteCoords = [["37.785834","-122.406417"],["36.5","-121"],["36.25","-119.5"]];
 
     const position = this.state.currentPosition;
-  	const routerDisplayCoords = this.state.routeCoords.slice(0)
 
-
-    console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
       <View>
       	<View style={styles.mapcontainer}>
@@ -177,12 +192,14 @@ class MakeRoute extends Component {
 
       		</View>
        	 	<MapView
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .5, longitudeDelta: .5}}
 			    style={styles.map}>
 
-			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
-
-
+			 <MapView.Polyline coordinates={
+         selectedRouteCoords.map(function(coordPair){
+           return {latitude: coordPair[0], longitude: coordPair[1]}
+          })
+         } strokeColor='green' strokeWidth= {10} />
 
 			 </MapView>
       	</View>
@@ -202,4 +219,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(MakeRoute)
+export default connect(mapStateToProps, mapDispatchToProps)(RunARoute)
