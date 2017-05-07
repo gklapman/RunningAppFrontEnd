@@ -56,9 +56,11 @@ const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
   MakeRoute: {screen: MakeRoute},
+  ViewRoute: {screen: ViewRoute}
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
+
 
 
 
@@ -67,21 +69,8 @@ const App = () => (
     <ConnectedAppContainer />
   </Provider>
 )
-// // //if in a different file, you have to import...
-// // import React, { Component } from 'react'
-// // import ReactNative from 'react-native'
-// // import { connect } from 'react-redux'
-// // import { bindActionCreators } from 'redux'
-//
-// //import { ReactNativeMaps }  from '../App'
-//
-// // //import actionCreators from store
-//
-// // const {
-// //   View,
-// //   Text,
-// // } = ReactNative
-//
+
+
 class AppContainer extends Component {
 
   addRunnerCoordsOnStore(){
@@ -224,4 +213,3 @@ why is the title not showing up?
 //     );
 //   }
 // }
-
