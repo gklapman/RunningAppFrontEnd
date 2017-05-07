@@ -124,7 +124,7 @@ class MakeRoute extends Component {
 
     viewRoute(){
         let convCoords = this.state.routeCoords;
-        let userId = 1;
+        let userId = this.props.user.id;
         let timesArr = this.state.timeMarker;
         let startTime = this.state.timerStart
         let endTime = this.state.timerEnd
@@ -188,8 +188,8 @@ const mapDispatchToProps = null
 
 function mapStateToProps(state){
   return {
-    // currentUser: state.currentUser,
-    // currentLocation: state.currentLocation
+    user: state.user,
+    currentLocation: state.currentLocation,
   }
 }
 

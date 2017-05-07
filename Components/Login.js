@@ -36,11 +36,13 @@ class Login extends Component {
   login(){
     const { navigate } = this.props.navigation;
 
+    this.state={email: 'Charles@charles.com', password: '1234'}//COMMENT THIS WHEN WE ARE READY TO DO OUR PRESENTATION
     this.props.fetchUser(this.state)
       .then(fetchUserRes=>{
         if(fetchUserRes==='userSetAllGravy') navigate('OurApp');
       })
       .catch(console.error)
+
   }
 
   render(){
