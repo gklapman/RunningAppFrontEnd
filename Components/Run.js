@@ -1,3 +1,4 @@
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -9,14 +10,13 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
-import RunARoute from './RunARoute';
-
-//added for react-redux
 import {connect} from 'react-redux'
+//CUSTOM MODULES
+import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
+import RunARoute from './RunARoute';
 
 
 

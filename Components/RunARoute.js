@@ -1,14 +1,4 @@
-
-//Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
-
-//selected route
-//selected racer (user), with associated routetime //who you are racing against
-//current user
-
-
-//Dispatch functions this component will receive as props
-//addNewRoute
-
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -20,14 +10,29 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
+import {connect} from 'react-redux'
+//MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
 import axios from 'axios'
-import {connect} from 'react-redux'
-import {addNewRoute} from './storeAndReducer.js'
 import geolib from 'geolib'
+//CUSTOM MODULES
+import styles from '../Styles'
+import {addNewRoute} from './storeAndReducer'
+
+
+//Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
+
+//selected route
+//selected racer (user), with associated routetime //who you are racing against
+//current user
+
+
+//Dispatch functions this component will receive as props
+//addNewRoute
+
+//TO DO:
 
 //Make sure.. when user clicks start.. check if at starting point
 //if at starting point, SET A COUNTDOWN..
