@@ -71,9 +71,10 @@ export const fetchUserLocation = location => {
 }
 
 
-export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
+export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, routeId) => {
+
   return dispatch => {
-    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -119,7 +120,7 @@ export const fetchSelectedRoute = selectedRouteId => {
 export const fetchNearbyRoutes = (region) => {
   // console.log("or this?!")
 
-http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
+// http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
 
   return dispatch => {
     let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
@@ -150,9 +151,6 @@ http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&
     .catch(console.log)
   }
 }
-
-
-
 
 /////////////////////////REDUCER
 const initialState = {
