@@ -35,6 +35,8 @@ import ViewRoute from './Components/ViewRoute'
 import ChooseYourOpponent from './Components/ChooseYourOpponent'
 import RunARoute from './Components/RunARoute'
 
+import Coordinates from './Components/Coordinates'
+
 
 
 ///////EXAMPLE BELOW- not sure it's still needed
@@ -62,6 +64,8 @@ const ReactNativeMaps = StackNavigator({
   ViewRoute: {screen: ViewRoute},
   ChooseYourOpponent: {screen: ChooseYourOpponent},
   RunARoute: {screen: RunARoute},
+
+  Coordinates: {screen: Coordinates}
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY

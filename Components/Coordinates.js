@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   Button,
+  ScrollView
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
@@ -52,28 +53,17 @@ class ViewRoute extends Component {
     let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
 
     return (
-      <View>
-         <View style={styles.mapcontainer}>
-            <View style={styles.finalTime}>
-                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>
-          </View>
-           <View style={styles.finalDistance}>
-                    <Text>Final Distance: {totalDistance} Miles</Text>
-          </View>
-
-         <MapView
-              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: 5, longitudeDelta: 5}}
-            style={styles.map}>
-
-            <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
-
-          </MapView>
-
-          <View style={styles.viewRoute}>
-                  <TouchableOpacity onPress={this.submitRoute}>
-                    <Text>Submit Run</Text>
-                  </TouchableOpacity>
-          </View>
+      <View style={styles.container}>
+         <View style={{flex: 1, justifyContent: 'flex-start', padding: 3, backgroundColor: 'green', marginBottom: 8}}>
+           <ScrollView style={{height: 300}}>
+            {
+              routeCoordsArr.map((coords, idx) => {
+                return (
+                  <Text key={idx}>{JSON.stringify(coords)}</Text>
+                )
+              })
+            }
+          </ScrollView>
           </View>
         </View>
     )
