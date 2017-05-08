@@ -62,7 +62,7 @@ class ViewRoute extends Component {
           </View>
 
          <MapView
-              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: 5, longitudeDelta: 5}}
+              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: .1, longitudeDelta: .1}}
             style={styles.map}>
 
             <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
