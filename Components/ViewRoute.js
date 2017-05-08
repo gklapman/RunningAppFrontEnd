@@ -58,7 +58,6 @@ class ViewRoute extends Component {
                     <Text>Final Distance: {totalDistance} Miles</Text>
           </View>
 
-
          <MapView
               region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: 5, longitudeDelta: 5}}
             style={styles.map}>

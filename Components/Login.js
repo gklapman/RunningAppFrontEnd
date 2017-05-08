@@ -43,6 +43,7 @@ class Login extends Component {
       })
       .catch(console.error)
 
+    // navigate('OurApp');//Uncomment if you want to test on iphone (but server is not deployed)
   }
 
   render(){
