@@ -1064,7 +1064,6 @@
 					"-ObjC",
 					"-lc++",
 				);
-
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1942.ReactNativeMaps;
 				PRODUCT_NAME = ReactNativeMaps;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1091,7 +1090,6 @@
 					"-ObjC",
 					"-lc++",
 				);
-
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example1942.ReactNativeMaps;
 				PRODUCT_NAME = ReactNativeMaps;
 				PROVISIONING_PROFILE_SPECIFIER = "";

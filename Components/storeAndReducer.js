@@ -94,39 +94,32 @@ export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, ro
 
 export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
-    axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
+    return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
-    .then(routeData => {
-      console.log(routeData)
-      return dispatch(setSelectedRoute(routeData))
-    })
+    .then(eagerLoadedRoute => {
+        eagerLoadedRoute.convCoords=eagerLoadedRoute.coords.map(coordPair=>{
+          return {latitude:+coordPair[0], longitude:+coordPair[1]};
+        })
+        return dispatch(setSelectedRoute(eagerLoadedRoute))
+      })
     .catch(console.log)
   }
 }
 
 export const fetchNearbyRoutes = (region) => {
-
 // http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000 //this is an example of a runroute query
-
   return dispatch => {
     let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
-    // console.log("it worked!")
     axios.get('http://localhost:3000/api/runroutes/'+query)
     .then(res => res.data)
-    .then(routesData => {
-      // console.log("ROUTE DATA!", routesData)
-      let formattedRouteData = routesData.map(routeWCoords => {
-        // console.log("ROUTEWCOORDS is", Array.isArray(routeWCoords.coords))
+    .then(routes => {
+      let formattedRoutes = routes.map(routeWCoords => {
         let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
-          // console.log("COORD PAIR",coordPair)
-          return coordPair.map(coord => {
-            // console.log("COORD", +coord)
-            return +coord
-          })
+          return {latitude:+coordPair[0], longitude:+coordPair[1]}
         })
-        return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
+        return { id: routeWCoords.id, convCoords: formattedCoordsPerRoute}
       })
-      return dispatch(setNearbyRoutes(formattedRouteData))
+      return dispatch(setNearbyRoutes(formattedRoutes))
     })
     .catch(console.log)
   }
@@ -148,8 +141,6 @@ const initialState = {
   selectedRoute: {},
   selectedRacer: {},
 }
-
-
 
 function reducer(state = initialState, action){
 
@@ -177,8 +168,5 @@ function reducer(state = initialState, action){
   }
   return nextState;
 }
-
-
-
 
 export default createStore(reducer, applyMiddleware(thunkMiddleware, logger));

@@ -117,7 +117,8 @@ class MakeRoute extends Component {
 	    				routeCoords: newrouteCoords,
 	    				timeMarker: timeMarkerArr
 	    			})
-	    		}, 500)
+	    		// }, 500)
+        }, 150)//PURELY FOR TESTING PURPOSES (mainly to get points on map on the way to and from class... uncomment the above later)
     	}
     	}
 
@@ -130,16 +131,12 @@ class MakeRoute extends Component {
         let endTime = this.state.timerEnd
         let currentPosition = this.state.currentPosition
 
-         const { navigate } = this.props.navigation;
+        const { navigate } = this.props.navigation;
         navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
 
     }
 
-
-
-
   render() {
-
 
     const position = this.state.currentPosition;
   	const routerDisplayCoords = this.state.routeCoords.slice(0)
@@ -172,9 +169,23 @@ class MakeRoute extends Component {
        	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
 			    style={styles.map}>
 
+       {/* {routerDisplayCoords.map(coord=>{
+         let coord1=coord;
+         let coord2={latitude:coord.latitude, longitude:coord.longitude+.001}
+         let coord3={latitude:coord.latitude+.001, longitude:coord.longitude}
+        //  return(<MapView.Polygon coordinates={[coord1,coord2,coord3]} strokewidth={5}/>)
+         return(<MapView.Marker coordinate={coord1} />)
+       })} */}
+
+       {/* <MapView.Marker
+         coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
+         pinColor='blue'
+         title='End'
+         identifier={routeID}
+         onSelect={goToRaceView}
+       /> */}
+
 			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
-
-
 
 			 </MapView>
       	</View>
