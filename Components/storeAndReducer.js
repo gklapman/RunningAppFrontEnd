@@ -14,6 +14,7 @@ const SET_USER = 'SET_USER'
 const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
 const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
+const SET_SELECTED_RACER = 'SET_SELECTED_RACER'
 
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
@@ -45,6 +46,13 @@ export const setSelectedRoute = function(routeData){
   return {
     type: SET_SELECTED_ROUTE,
     selectedRoute: routeData,
+  }
+}
+
+export const setSelectedRacer = function(racerData){
+  return {
+    type: SET_SELECTED_RACER,
+    selectedRacer: racerData,
   }
 }
 
@@ -118,12 +126,19 @@ export const fetchNearbyRoutes = (region) => {
         })
         return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
       })
-      // console.log("FORMATTED COORDS!",formattedRouteData)
       return dispatch(setNearbyRoutes(formattedRouteData))
     })
     .catch(console.log)
   }
 }
+
+
+export const sendSelectedRacer = (racerData) => {
+  return dispatch => {
+    return dispatch(setSelectedRacer(racerData))
+  }
+}
+
 
 /////////////////////////REDUCER
 const initialState = {
@@ -131,12 +146,13 @@ const initialState = {
   userLocation: {},
   nearbyRoutes: [],
   selectedRoute: {},
+  selectedRacer: {},
 }
 
 
 
 function reducer(state = initialState, action){
-  console.log("In reducer", action)
+
   const nextState = Object.assign({}, state);
 
   switch(action.type){
@@ -152,6 +168,9 @@ function reducer(state = initialState, action){
       break;
     case SET_SELECTED_ROUTE:
       nextState.selectedRoute = action.selectedRoute
+      break;
+    case SET_SELECTED_RACER:
+      nextState.selectedRacer = action.selectedRacer
       break;
     default:
       return state;
