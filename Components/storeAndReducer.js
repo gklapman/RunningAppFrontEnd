@@ -15,6 +15,7 @@ const SET_USER_LOCATION = 'SET_USER_LOCATION'
 const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
 const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
 const SET_SELECTED_RACER = 'SET_SELECTED_RACER'
+const SET_USER_STATS = "SET_USER_STATS"
 
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
@@ -56,14 +57,22 @@ export const setSelectedRacer = function(racerData){
   }
 }
 
+export const setUserStats = function(statsData){
+  return {
+    type: SET_USER_STATS,
+    userStats: statsData,
+  }
+}
 
 
 ////DISPATCHERS
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
+
     return axios.post('http://localhost:3000/api/users/login', { email, password} )
     // return axios.post('https://runningappbackend.herokuapp.com/api/users/login', { email, password} )
+
 
     .then(res => res.data)
     .then(foundUser => {
@@ -85,8 +94,10 @@ export const fetchUserLocation = location => {
 export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, routeId) => {
 
   return dispatch => {
+
     // return axios.post('https://runningappbackend.herokuapp.com/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
     return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
+
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -135,6 +146,31 @@ export const sendSelectedRacer = (racerData) => {
   }
 }
 
+export const fetchUserStats = (userId) => {
+  return dispatch => {
+    console.log('making request')
+    return axios.get(`http://localhost:3000/api/users/${userId}`)
+    .then(res => {
+      return res.data
+    })
+    .then(user => {
+      user.routes = user.routes.map(route => {
+        route.convCoords = route.coords.map(coordPair => {
+          let formattedCoordPair = {latitude:+coordPair[0], longitude:+coordPair[1]}
+           return formattedCoordPair
+        })
+        return route
+      })
+      return user
+    })
+    .then(userStatsInfo => {
+      console.log('this is the user info', userStatsInfo)
+      return dispatch(setUserStats(userStatsInfo))
+    })
+  } 
+}
+
+
 
 /////////////////////////REDUCER
 const initialState = {
@@ -143,6 +179,7 @@ const initialState = {
   nearbyRoutes: [],
   selectedRoute: {},
   selectedRacer: {},
+  userStats: {},
 }
 
 function reducer(state = initialState, action){
@@ -165,6 +202,9 @@ function reducer(state = initialState, action){
       break;
     case SET_SELECTED_RACER:
       nextState.selectedRacer = action.selectedRacer
+      break;
+    case SET_USER_STATS:
+      nextState.userStats = action.userStats
       break;
     default:
       return state;

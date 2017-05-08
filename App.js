@@ -35,6 +35,8 @@ import ViewRoute from './Components/ViewRoute'
 import ChooseYourOpponent from './Components/ChooseYourOpponent'
 import RunARoute from './Components/RunARoute'
 
+import Coordinates from './Components/Coordinates'
+
 
 
 

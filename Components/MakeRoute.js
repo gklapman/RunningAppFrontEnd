@@ -15,7 +15,7 @@ import MapView from 'react-native-maps';
 import {connect} from 'react-redux'
 //MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
-import axios from 'axios'
+
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
@@ -34,7 +34,6 @@ class MakeRoute extends Component {
 			timeMarker: [0]
 		}
 		this.startStopButton = this.startStopButton.bind(this)
-    // this.submitRun = this.submitRun.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
 	}
 
@@ -51,10 +50,19 @@ class MakeRoute extends Component {
             })
   }
 
-  startStopButton() {
+  componentWillUnmount(){
+    this.setState({//this is need to set things to default.
+      currentPosition: {latitude: 1, longitude: 2} ,
+      isRunning: false,
+      timer: 0,
+      timerStart: 0,
+      timerEnd: 0,
+      routeCoords: [],
+      timeMarker: [0]
+    })
+  }
 
-  	// let intervalIncrease = 0.0005 //THIS IS PURELY FOR TESTING
-  	// let intervalIncrease2 = 0.0007
+  startStopButton() {
 
     	if(this.state.isRunning){
     		clearInterval(this.interval)
@@ -94,16 +102,6 @@ class MakeRoute extends Component {
 
 	    		this.recordInterval = setInterval(() => {
 
-	    			// intervalIncrease += 0.0005
-	    			// intervalIncrease2 += 0.0003
-            // console.log('CURRENT ROUTECORDS', this.state.routeCoords)
-	    			// let adjustedLat = this.state.currentPosition.latitude + intervalIncrease
-	    			// let adjustedLng = this.state.currentPosition.longitude + intervalIncrease2
-	    			// let adjustedCoords =  { latitude: adjustedLat, longitude: adjustedLng }
-	    			// //ADJUSTED COORDS IS ONLY FOR TESTING!!!!!! IT WILL REALLY PUSH IN CURRENT LOCATION
-	    			// newrouteCoords.push(adjustedCoords)
-
-
             let newrouteCoords = this.state.routeCoords.slice(0)
             let lat = this.state.currentPosition.latitude
             let lng = this.state.currentPosition.longitude
@@ -126,7 +124,7 @@ class MakeRoute extends Component {
     viewRoute(){
         let convCoords = this.state.routeCoords;
         let userId = this.props.user.id;
-        let timesArr = this.state.timeMarker;
+        let timesArr = this.state.timeMarker
         let startTime = this.state.timerStart
         let endTime = this.state.timerEnd
         let currentPosition = this.state.currentPosition
@@ -208,7 +206,6 @@ const mapDispatchToProps = null
 function mapStateToProps(state){
   return {
     user: state.user,
-    currentLocation: state.currentLocation,
   }
 }
 

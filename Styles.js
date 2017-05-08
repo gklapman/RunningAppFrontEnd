@@ -141,6 +141,15 @@ const styles = StyleSheet.create({
     top: 30,
     left: 50,
   },
+   submitRoute: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'orange',
+    position: 'absolute',
+    bottom: 30,
+    left: 50,
+  },
   finalDistance: {
     height: 50,
     width: 100, 
@@ -150,6 +159,23 @@ const styles = StyleSheet.create({
     top: 30,
     right: 50,
   },
+  userHeader: {
+    display: 'flex',
+    backgroundColor: 'orange',
+    height: 200,
+    width: 500,
+    justifyContent: 'center', 
+
+  }, 
+  userCity: {
+    justifyContent: 'center'
+  }, 
+  userName: {
+    alignItems: 'center'
+  },
+  userStats: {
+    margin: 2
+  }
   });
 
 export default styles
