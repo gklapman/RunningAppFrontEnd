@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   AppRegistry,
   StyleSheet,
@@ -8,10 +8,10 @@ import {
   TextInput,
   Image,
   Button,
-} from 'react-native';
+} from 'react-native'
 import styles from '../Styles'
-import {StackNavigator} from 'react-navigation';
-import MapView from 'react-native-maps';
+import {StackNavigator} from 'react-navigation'
+import MapView from 'react-native-maps'
 
 //added for react-redux
 import {connect} from 'react-redux'
@@ -20,16 +20,15 @@ import {sendSelectedRacer} from './storeAndReducer'
 
 class OpponentsView extends Component {
     constructor(){
-      super();
-
+      super()
       this.goToRace = this.goToRace.bind(this)
     }
 
     goToRace(userIdx){
-      const { navigate } = this.props.navigation;
+      const { navigate } = this.props.navigation
       let racer = this.props.selectedRoute.users[userIdx]
       this.props.sendSelectedRacer(racer)
-      // navigate('CHARLES WAS WORKING ON THIS COMPONENT')
+      navigate('RunARoute')
     }
 
     render(){

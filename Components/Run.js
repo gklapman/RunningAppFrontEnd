@@ -58,17 +58,16 @@ class Run extends Component {
         var initialPosition = JSON.stringify(position);
       })
 
-    const gotoRunARoute = () => {
-    	navigate('RunARoute')
-   	}
+    // const gotoRunARoute = () => {  //DELETE WHEN THINGS WORK
+    // 	navigate('RunARoute')
+   // 	}
 
     const goToRouteMaker = () => {
     	navigate('MakeRoute')
    	}
 
-    const goToRaceView = (evt) => {
+    const goToChooseYourOpponent = (evt) => {
       const routeID = ''+evt.nativeEvent.id
-      console.log(routeID)
       this.props.fetchSelectedRoute(routeID)
       navigate('ChooseYourOpponent')
     }
@@ -92,9 +91,9 @@ class Run extends Component {
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
 
-            <View style={styles.filter}>
+            {/* <View style={styles.filter}>     //DELETE WHEN THINGS WORK
             <Button onPress={gotoRunARoute} title="Test Run A Route... DELETE THIS LATER"></Button>
-            </View>
+            </View> */}
 
        	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
 
@@ -116,7 +115,7 @@ class Run extends Component {
                    strokeWidth= {10}
                   //  identifier={routeID}
                   //  target={routeObj.id}
-                  //  onPress={goToRaceView}
+                  //  onPress={goToChooseYourOpponent}
                  />
 
                 <MapView.Marker
@@ -124,14 +123,14 @@ class Run extends Component {
                   pinColor='red'
                   title='Start'
                   identifier={routeID}
-                  onSelect={goToRaceView}
+                  onSelect={goToChooseYourOpponent}
                 />
                 <MapView.Marker
                   coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
                   pinColor='blue'
                   title='End'
                   identifier={routeID}
-                  onSelect={goToRaceView}
+                  onSelect={goToChooseYourOpponent}
                 />
               </View>
             )
