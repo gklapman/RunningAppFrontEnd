@@ -20,7 +20,7 @@ import geolib from 'geolib'
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
-import {promisifiedGetCurrPos} from './Utils'
+import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2 } from './Utils'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -48,9 +48,8 @@ class RunARoute extends Component {
 			currentPosition: {latitude: 0, longitude: 0},
 
       selectedRoutePointer: 0,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
-      racerPointer: 0,//this represents index of the !!!NEXT POINT!!! that the phantom racer will get to (it's index of BOTH the selected route coord AND the racer's time array)
-
-      testRunnerCoordinates: [{latitude: 37.785834,longitude:-122.406417},{latitude: 37,longitude:-121.3},{latitude: 36.2,longitude:-121},{latitude: 36.5,longitude:-120},{latitude: 36.29,longitude:-119.7},{latitude: 36.25,longitude:-119.5}],
+      racerCoordsPointer: 0,//this represents index of the !!!NEXT POINT!!! that the phantom racer will get to (it's index of BOTH the selected route coord AND the racer's time array)
+      racerTimesArrPointer: 1,
 
 			isRunning: false,
       showStart: false,
@@ -60,15 +59,19 @@ class RunARoute extends Component {
 			timerEnd: 0,
 			timeMarker: [],
 		}
+    this.startInterval
+    this.interval
 		this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
-
-
+    this.testRunner = new TestRunner(testRoute2.convCoords, testRoute1.timesArr)
+    this.testRunner.startTimer()
 	}
 
   componentDidMount() {
     this.startInterval=setInterval(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
+    // promisifiedGetCurrPos()//uncomment this (and comment this.testRunner below) if you want to take out test runner (and keep track of where the actual user is at)
+    this.testRunner.moveAndGetPos()//uncomment this (and comment promisifiedGetCurrPos above) if you want to implement test runner
+      .then(position=>{
         let lng = position.coords.longitude
         let lat = position.coords.latitude
         let newPosition = {latitude: lat, longitude: lng}
@@ -87,7 +90,13 @@ class RunARoute extends Component {
           this.setState({showStart: false});
         }
       })
+      .catch(err=>console.log(err))
     }, 100);
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.startInterval)
+    clearInterval(this.interval)
   }
 
   startStopButton() {
@@ -116,7 +125,8 @@ class RunARoute extends Component {
 		    		timer: Date.now() - this.state.timerStart
 		    	})
 
-        promisifiedGetCurrPos()
+        // promisifiedGetCurrPos()//uncomment this (and comment this.testRunner.moveAndGetPos below) if you want to take out test runner (and keep track of where the actual user is at)
+        this.testRunner.moveAndGetPos()//uncomment this (and comment promisifiedGetCurrPos above) if you want to implement test runner
           .then(position=>{
             let lng = position.coords.longitude
             let lat = position.coords.latitude
@@ -124,6 +134,7 @@ class RunARoute extends Component {
 
             let checkPoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
             let dist=geolib.getDistance(checkPoint, newPosition);
+            // console.log('distance betwen checkpoint and current position: ', dist)
             if(dist<25){
               let timeMarker= this.state.timeMarker;
               timeMarker.push(this.state.timer)
@@ -158,29 +169,36 @@ class RunARoute extends Component {
         // -----------------------------------------------------------------------------
         // let selectedRacer= this.props.selectedRacer;// uncomment this when can get racer from store
         // sometimes phantom racer doesnt work if you click start too fast?  need to squash this bug
-        let selectedRoutePointer= this.state.selectedRoutePointer;
-        let selectedRacer= this.props.selectedRacer;
-        let racerPointer= this.state.racerPointer;
-        let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerPointer];
-        let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerPointer];
+        let selectedRoutePointer= this.state.selectedRoutePointer
+        let selectedRacer= this.props.selectedRacer
+        let racerCoordsPointer= this.state.racerCoordsPointer
+        let racerTimesArrPointer= this.state.racerTimesArrPointer
+        let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
+        let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
 
         if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
-          this.setState({racerPointer: racerPointer+1});
+          this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
         }
+
+        // console.log('phantomracer pointer: ', racerCoordsPointer, racerTimesArrPointer)
+        // console.log('phantomracer position: ', phantomRacerCurrPos)
 
         let YOUREAHEAD='You are slightly ahead of the phantom racer!';
         let YOURENECKANDNECK='You are neck and neck with phantom racer!';
         let YOUREBEHIND='You are slightly behind the phantom racer... PICK UP THE PACE!';
 
-        if(selectedRoutePointer-racerPointer === 2 || 1 ){
+        // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
+        // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
+
+        if(selectedRoutePointer-racerCoordsPointer === 2 || selectedRoutePointer-racerCoordsPointer === 1 ){
           if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
           this.setState({saying: YOUREAHEAD});
         }
-        else if(selectedRoutePointer-racerPointer === 0 ){
+        else if((selectedRoutePointer)-racerCoordsPointer === 0 ){
           if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
           this.setState({saying: YOURENECKANDNECK});
         }
-        else if(selectedRoutePointer-racerPointer === -2 || -1 ){
+        else if(selectedRoutePointer-racerCoordsPointer === -2 || selectedRoutePointer-racerCoordsPointer === -1){
           if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
           this.setState({saying: YOUREBEHIND});
         }
@@ -202,13 +220,12 @@ class RunARoute extends Component {
 
   render() {
 
-    const position = this.state.currentPosition;
-    const convCoords= this.props.selectedRoute.convCoords;
-    // console.log('convCoords is ',convCoords)
-    // console.log('this.state.racePointer is ', this.state.racerPointer)
-    // console.log('convCoords[this.state.racerPointer-1] is ', convCoords[this.state.racerPointer-1])
-    const racerMarkerLoc= this.state.racerPointer ? convCoords[this.state.racerPointer-1] : null;
-    // console.log('phantom racer should be at this loc: ', racerMarkerLoc)
+    const position = this.state.currentPosition
+    const convCoords= this.props.selectedRoute.convCoords
+    const racerCoordsPointer= this.state.racerCoordsPointer
+    const phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
+    // console.log('phantom racer pos ',phantomRacerCurrPos)
+
 
     return (
       <View>
@@ -230,21 +247,22 @@ class RunARoute extends Component {
       		<View style={styles.timer}>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
-      			<Text>{this.state.currentPosition.latitude}</Text>
-      			<Text>{this.state.currentPosition.longitude}</Text>
+      			<Text>{position.latitude}</Text>
+      			<Text>{position.longitude}</Text>
 
       		</View>
-          {console.log('first position to zoom into: ', position)}
        	 	<MapView
        	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .05, longitudeDelta: .05}}
 			    style={styles.map}>
 
-            { racerMarkerLoc && <MapView.Marker
-              coordinate={racerMarkerLoc}
+            { phantomRacerCurrPos && <MapView.Marker
+              coordinate={phantomRacerCurrPos}
               pinColor='orange'
               title='phantom racer'
               identifier='3'
             />}
+
+           <MapView.Marker coordinate={position} pinColor='purple' title='human runner' identifier={JSON.stringify(this.props.user.id)} />
 
     			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
 

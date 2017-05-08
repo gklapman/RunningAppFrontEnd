@@ -18,8 +18,6 @@ import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
 
-
-
 class Run extends Component {
   constructor(){
     super();
@@ -91,22 +89,20 @@ class Run extends Component {
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
 
-            {/* <View style={styles.filter}>     //DELETE WHEN THINGS WORK
-            <Button onPress={gotoRunARoute} title="Test Run A Route... DELETE THIS LATER"></Button>
-            </View> */}
-
        	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
 
+            {/* {alyssaTestRun.map(coordpair=>{
+              let coord= {latitude:+coordpair[0], longitude:+coordpair[1]}
+              return(<MapView.Marker coordinate={coord} />)
+            })} // this is for testing routes that we tried on our phones */}
 
           {routesArr.map(routeObj=>{
-            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
             let routeID = ""+routeObj.id;
-            //routeObj looks like { id: 1, coords: [[37, -122],[3,4],[5,6]] }
-            // {console.log(routeObj.id)}
-            // {console.log(JSON.stringify(routeObj.coords))}
 
             return(
               <View key={routeObj.id} >
+
+
 
                <MapView.Polyline
                  coordinates={routeObj.convCoords}

@@ -69,7 +69,9 @@ export const setUserStats = function(statsData){
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
-    return axios.post('http://localhost:3000/api/users/login', { email, password} )
+    // return axios.post('http://localhost:3000/api/users/login', { email, password} )
+    return axios.post('https://runningappbackend.herokuapp.com/api/users/login', { email, password} )
+
     .then(res => res.data)
     .then(foundUser => {
       if(foundUser) dispatch(setUser(foundUser))
@@ -90,7 +92,7 @@ export const fetchUserLocation = location => {
 export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, routeId) => {
 
   return dispatch => {
-    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
+    return axios.post('https://runningappbackend.herokuapp.com/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
