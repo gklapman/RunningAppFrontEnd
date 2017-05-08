@@ -32,6 +32,7 @@ import Stats from './Components/Stats'
 import Run from './Components/Run'
 import MakeRoute from './Components/MakeRoute'
 import ViewRoute from './Components/ViewRoute'
+import ChooseYourOpponent from './Components/ChooseYourOpponent'
 
 
 ///////EXAMPLE BELOW- not sure it's still needed
@@ -56,7 +57,8 @@ const ReactNativeMaps = StackNavigator({
   Login: { screen: Login },
   OurApp: { screen: OurApp },
   MakeRoute: {screen: MakeRoute},
-  ViewRoute: {screen: ViewRoute}
+  ViewRoute: {screen: ViewRoute},
+  ChooseYourOpponent: {screen: ChooseYourOpponent}
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
