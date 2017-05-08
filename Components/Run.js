@@ -47,7 +47,7 @@ class Run extends Component {
 
     let routesArr = this.props.nearbyRoutes;
 
-    console.log("THIS PROPS here", this.props)
+    // console.log("THIS PROPS here", this.props)
 
     // const routesArr= navigation.state.params.routesArr; //uncomment this once we are able to get the routes from props
 
@@ -70,7 +70,7 @@ class Run extends Component {
       const routeID = ''+evt.nativeEvent.id
       console.log(routeID)
       this.props.fetchSelectedRoute(routeID)
-      // navigate('CHARLES IS CREATING THIS COMPONENT NOW')
+      navigate('ChooseYourOpponent')
     }
 
     const filter = () => {
@@ -111,8 +111,12 @@ class Run extends Component {
 
                <MapView.Polyline
                  coordinates={routeObj.convCoords}
+
                    strokeColor='green'
                    strokeWidth= {10}
+                  //  identifier={routeID}
+                  //  target={routeObj.id}
+                  //  onPress={goToRaceView}
                  />
 
                 <MapView.Marker
