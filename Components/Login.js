@@ -1,5 +1,4 @@
-// import axios from 'axios';
-
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -11,34 +10,52 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
+import {connect} from 'react-redux'
+//CUSTOM MODULES
+import styles from '../Styles';
+import {fetchUser} from './storeAndReducer';
 
-export default class Login extends Component {
-  render(){
+class Login extends Component {
+  constructor(props){
+    super(props)
+    this.state={email:'',password:''}
+    this.login=this.login.bind(this);
+    this.changeTextHandlerEmail=this.changeTextHandlerEmail.bind(this);
+    this.changeTextHandlerPw=this.changeTextHandlerPw.bind(this);
+  }
+
+  changeTextHandlerEmail(email){//you can also do onChangeText={(email) => this.setState({email})}   down there at the textinput thing.. just for future reference
+    this.setState({email})
+  }
+
+  changeTextHandlerPw(password){//you can also do onChangeText={(password) => this.setState({password})}   down there at the textinput thing.. just for future reference
+    this.setState({password})
+  }
+
+  login(){
     const { navigate } = this.props.navigation;
-    // console.log('styles', styles)
-    // const gotoStats = () => {
-    //   axios.get('http://localhost:3000/api/users/')
-    //    .then(res => {
-    //      console.log(res);
-    //     //  dispatch(setUser(res.data));
-    //    })
-    //   return Actions.statsPage({logininfo: 'blah blah login info'});
-    // }
-    const goToStats = () => {
-      navigate('OurApp')
-    }
+
+    this.state={email: 'Charles@charles.com', password: '1234'}//COMMENT THIS WHEN WE ARE READY TO DO OUR PRESENTATION
+    this.props.fetchUser(this.state)
+      .then(fetchUserRes=>{
+        if(fetchUserRes==='userSetAllGravy') navigate('OurApp');
+      })
+      .catch(console.error)
+
+  }
+
+  render(){
 
     return (
       <View style={styles.container}>
         <Text>Email:</Text>
-        <TextInput style={styles.input} />
+        <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
         <Text>Password:</Text>
-        <TextInput style={styles.input} />
+        <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
         <TouchableOpacity>
           <Button
-          onPress={goToStats}
+          onPress={this.login}
           title="Login"
         />
         </TouchableOpacity>
@@ -46,3 +63,11 @@ export default class Login extends Component {
     )
   }
 }
+
+const mapDispatchToProps = {fetchUser}
+
+const mapStateToProps = null;
+
+var ConnectedLogin = connect(mapStateToProps, mapDispatchToProps)(Login);
+
+export default ConnectedLogin;

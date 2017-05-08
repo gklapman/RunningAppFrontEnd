@@ -1,3 +1,4 @@
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -9,13 +10,13 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
-
-//added for react-redux
 import {connect} from 'react-redux'
+//CUSTOM MODULES
+import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
+import RunARoute from './RunARoute';
 
 
 
@@ -52,6 +53,10 @@ class Run extends Component {
         var initialPosition = JSON.stringify(position);
       })
 
+    const gotoRunARoute = () => {
+    	navigate('RunARoute')
+   	}
+
     const goToRouteMaker = () => {
     	navigate('MakeRoute')
    	}
@@ -67,8 +72,6 @@ class Run extends Component {
     	// console.log('this will be for filters')
     }
 
-
-
     return (
       <View>
 
@@ -83,6 +86,10 @@ class Run extends Component {
        	 		<View style={styles.filter}>
        	 		<Button onPress={filter} title="Filter Your Routes"></Button>
        	 		</View>
+
+            <View style={styles.filter}>
+            <Button onPress={gotoRunARoute} title="Test Run A Route... DELETE THIS LATER"></Button>
+            </View>
 
 
 

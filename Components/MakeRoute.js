@@ -1,3 +1,4 @@
+//REACT MODULES
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -9,13 +10,15 @@ import {
   Image,
   Button,
 } from 'react-native';
-import styles from '../Styles'
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
+import {connect} from 'react-redux'
+//MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
 import axios from 'axios'
-import {connect} from 'react-redux'
-import {addNewRoute} from './storeAndReducer.js'
+//CUSTOM MODULES
+import styles from '../Styles'
+import {addNewRoute} from './storeAndReducer'
 
 
 class MakeRoute extends Component {
@@ -41,7 +44,7 @@ class MakeRoute extends Component {
               let lng = position.coords.longitude
               let lat = position.coords.latitude
               let newPosition = {latitude: lat, longitude: lng}
-             
+
               this.setState({
                 currentPosition: newPosition
               })
@@ -62,7 +65,7 @@ class MakeRoute extends Component {
     		})
     		return;
     	} else {
-    		
+
         let lat = this.state.currentPosition.latitude
         let lng = this.state.currentPosition.longitude
         let firstRouteCoord = [{latitude: lat, longitude: lng}]
@@ -80,7 +83,7 @@ class MakeRoute extends Component {
 		    			let lng = position.coords.longitude
 		    			let lat = position.coords.latitude
 		    			let newPosition = {latitude: lat, longitude: lng}
-             
+
 		    			this.setState({
 		    				currentPosition: newPosition
 		    			})
@@ -106,7 +109,7 @@ class MakeRoute extends Component {
             let lng = this.state.currentPosition.longitude
             let nextObj = {latitude: lat, longitude: lng}
 	    			newrouteCoords.push(nextObj)
-         
+
             let timeMarkerArr = this.state.timeMarker
             timeMarkerArr.push(this.state.timer)
 
@@ -121,7 +124,7 @@ class MakeRoute extends Component {
 
     viewRoute(){
         let convCoords = this.state.routeCoords;
-        let userId = 1;
+        let userId = this.props.user.id;
         let timesArr = this.state.timeMarker;
         let startTime = this.state.timerStart
         let endTime = this.state.timerEnd
@@ -132,32 +135,32 @@ class MakeRoute extends Component {
 
     }
 
-   
+
 
 
   render() {
 
-  
+
     const position = this.state.currentPosition;
   	const routerDisplayCoords = this.state.routeCoords.slice(0)
-  
+
 
     console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
       <View>
       	<View style={styles.mapcontainer}>
-        {!this.state.isRunning && this.state.timerEnd !== 0 ? 
+        {!this.state.isRunning && this.state.timerEnd !== 0 ?
           <View style={styles.viewRoute}>
                 <TouchableOpacity onPress={this.viewRoute}>
                   <Text>View Run</Text>
                 </TouchableOpacity>
-            </View> : 
+            </View> :
             <View style={styles.startStop}>
               <TouchableOpacity onPress={this.startStopButton}>
                 <Text>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
               </TouchableOpacity>
            </View> }
-      		
+
       		<View style={styles.timer}>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
@@ -185,14 +188,10 @@ const mapDispatchToProps = null
 
 function mapStateToProps(state){
   return {
-    // currentUser: state.currentUser,
-    // currentLocation: state.currentLocation
+    user: state.user,
+    currentLocation: state.currentLocation,
   }
 }
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(MakeRoute)
-
-
-
-

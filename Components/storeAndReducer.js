@@ -60,12 +60,13 @@ export const setSelectedRacer = function(racerData){
 
 ////DISPATCHERS
 
-export const fetchUser = (email, password) => {
+export const fetchUser = ({email, password}) => {
   return dispatch => {
-    return axios.get('/api/USERSorSomething', { params: { email: email, password: password}})
+    return axios.post('http://localhost:3000/api/users/login', { email, password} )
     .then(res => res.data)
     .then(foundUser => {
-      dispatch(setUser(foundUser))
+      if(foundUser) dispatch(setUser(foundUser))
+      return 'userSetAllGravy';//this is so I can .then off the thunk in the login component
     })
     .catch(console.log)
   }
@@ -79,9 +80,10 @@ export const fetchUserLocation = location => {
 }
 
 
-export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime) => {
+export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, routeId) => {
+
   return dispatch => {
-    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime})
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -102,32 +104,9 @@ export const fetchSelectedRoute = selectedRouteId => {
   }
 }
 
-//////////GABI WILL HAVE RE-WRITTEN THIS
-// export const createNewRoute = (newRouteCoords, newRouteTimes) => {
-//   return dispatch => {
-//     axios.post('/api/ROUTESorSomething', routeCoords)
-//     .then(res => res.data)
-//     .then(newRoute => {
-//       return newRoute
-//     })
-//     .then(newRouteCoords => {
-//       axios.post('/api/ROUTESTIMESorSomething', (newRouteTimes, newRoute.id))
-//       .then(res => res.data)
-//       .then(newRouteTimes => newRouteTimes)
-//     })
-//     .then(newRouteCoords => {
-//       return dispatch(setSelectedRouteCoords(newRoute))
-//     })
-//     .catch(console.log)
-//   }
-// }
-
-
-
 export const fetchNearbyRoutes = (region) => {
-  // console.log("or this?!")
 
-http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000
+// http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000 //this is an example of a runroute query
 
   return dispatch => {
     let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
@@ -136,7 +115,6 @@ http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&
     .then(res => res.data)
     .then(routesData => {
       // console.log("ROUTE DATA!", routesData)
-
       let formattedRouteData = routesData.map(routeWCoords => {
         // console.log("ROUTEWCOORDS is", Array.isArray(routeWCoords.coords))
         let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
@@ -148,16 +126,12 @@ http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&
         })
         return { id: routeWCoords.id, coords: formattedCoordsPerRoute}
       })
-
-      // console.log("FORMATTED COORDS!",formattedRouteData)
-
-
-
       return dispatch(setNearbyRoutes(formattedRouteData))
     })
     .catch(console.log)
   }
 }
+
 
 export const sendSelectedRacer = (racerData) => {
   return dispatch => {
