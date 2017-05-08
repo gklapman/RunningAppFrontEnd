@@ -56,6 +56,9 @@ class ViewRoute extends Component {
     let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
 
 
+    console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
+    let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
+
     return (
       <View>
          <View style={styles.mapcontainer}>

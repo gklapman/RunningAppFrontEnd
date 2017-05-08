@@ -134,20 +134,6 @@ class MakeRoute extends Component {
 
     }
 
-    // viewRoute(){
-    //     let convCoords = this.state.routeCoords;
-    //     let userId = this.props.user.id;
-    //     let timesArr = this.state.timeMarker;
-    //     let startTime = this.state.timerStart
-    //     let endTime = this.state.timerEnd
-    //     let currentPosition = this.state.currentPosition
-    //
-    //     let completeRouteCoords = this.state.routeCoords.slice(0)//THIS IS JUST HERE TO TEST GEOLOCATION ACCURACY
-    //
-    //     const { navigate } = this.props.navigation;                                                // v This is passed just for testing, remove later
-    //     navigate('Coordinates', {convCoords, userId, timesArr, startTime, endTime, currentPosition, completeRouteCoords})
-    //
-    // }
 
   render() {
 

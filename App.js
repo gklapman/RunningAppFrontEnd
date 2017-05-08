@@ -39,6 +39,7 @@ import Coordinates from './Components/Coordinates'
 
 
 
+
 ///////EXAMPLE BELOW- not sure it's still needed
 
 
@@ -65,7 +66,6 @@ const ReactNativeMaps = StackNavigator({
   ChooseYourOpponent: {screen: ChooseYourOpponent},
   RunARoute: {screen: RunARoute},
 
-  Coordinates: {screen: Coordinates}
 });
 
 //TRY TO STYLE MAP IN ABSOLUTE IF NOT RENDERING PROPERLY
