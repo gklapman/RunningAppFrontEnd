@@ -33,7 +33,6 @@ class ViewRoute extends Component {
 
     submitRoute(){
         let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
-        console.log('this is the info', convCoords, timesArr)
         this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
         const { navigate } = this.props.navigation;
         navigate('OurApp')
@@ -43,11 +42,12 @@ class ViewRoute extends Component {
   render() {
 
     let givenprops = this.props.navigation.state.params
+    let startPosition = givenprops.convCoords[0] //This is setting the view of map to the start of the route
     console.log('givenprops is ', givenprops)
     let finalTime = givenprops.timesArr[givenprops.timesArr.length-1]
     let totalDistance = (geolib.getPathLength(givenprops.convCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
-    console.log('this is the total distance', totalDistance)
-
+    // console.log('this is the total distance', totalDistance)
+    let oldRoute = givenprops.oldRoute //this will determine if the submit button is available
     return (
       <View>
          <View style={styles.mapcontainer}>
@@ -59,18 +59,19 @@ class ViewRoute extends Component {
           </View>
 
          <MapView
-              region={{latitude: givenprops.currentPosition.latitude, longitude: givenprops.currentPosition.longitude, latitudeDelta: 5, longitudeDelta: 5}}
+              region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005}}
             style={styles.map}>
 
             <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
 
           </MapView>
-
-          <View style={styles.viewRoute}>
-                  <TouchableOpacity onPress={this.submitRoute}>
-                    <Text>Submit Run</Text>
-                  </TouchableOpacity>
-          </View>
+          {!oldRoute && 
+            <View style={styles.submitRoute}>
+                <TouchableOpacity onPress={this.submitRoute}>
+                  <Text>Submit Run</Text>
+               </TouchableOpacity>
+            </View> }
+          
           </View>
         </View>
     )
