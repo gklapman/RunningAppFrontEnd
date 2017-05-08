@@ -45,9 +45,7 @@ class RunARoute extends Component {
 		super(props);
 		this.state = {
       saying: '',
-
-      // convCoords: [],
-			currentPosition: {latitude: 0, longitude: 0} , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
+			currentPosition: {latitude: 0, longitude: 0},
 
       selectedRoutePointer: 0,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
       racerPointer: 0,//this represents index of the !!!NEXT POINT!!! that the phantom racer will get to (it's index of BOTH the selected route coord AND the racer's time array)
@@ -66,54 +64,7 @@ class RunARoute extends Component {
     this.viewRoute = this.viewRoute.bind(this)
 
 
-//THIS IS FOR TESTING PURPOSES (BEFORE LINKING UP WITH STORE!!!) DELETE THIS SHIT AFTERWARD (and change all the this.testprops to this.props later in this component)
-    this.testprops={};
-    this.testprops.selectedRoute = {
-    "convCoords":[{latitude:37.785834,longitude:-122.406417},{latitude:37,longitude:-121.3},{latitude:36.2,longitude:-121},{latitude:36.5,longitude:-120},{latitude:36.29,longitude:-119.7},{latitude:36.25,longitude:-119.5}],
-    "id":1,
-    "coords":[["37","-122"],["36.5","-121"],["36.25","-119.5"]],
-    "createdAt":"2017-05-05T20:25:08.925Z",
-    "updatedAt":"2017-05-05T20:25:08.925Z",
-    "users":[]}
-    this.testprops.selectedRacer =
-        {
-          "id":3,"email":"charles@charles.com",
-          "password":"1234",
-          "username":"charliieee",
-          "city":"Chicago",
-          "createdAt":"2017-05-05T20:25:08.890Z",
-          "updatedAt":"2017-05-05T20:25:08.890Z",
-          "groupId":null,
-          "UserAndRoutes":{"createdAt":"2017-05-05T20:25:08.960Z","updatedAt":"2017-05-05T20:25:08.960Z","userId":3,"routeId":1},
-          "routetimes":[
-            {
-              "convTimesArr":["0:00","0:00","0:00","0:00"],
-              "runtime":20,
-              "id":2,
-              "timesArr":[0,2000,4000,6000,8000,10000],//Really strange the the timesArr elements come as numbers from the server, but the selectedRouteCoords thing comes as strings... but whatever
-              "startTime":null,
-              "endTime":null,
-              "best":true,
-              "createdAt":"2017-05-05T20:25:08.935Z",
-              "updatedAt":"2017-05-05T20:25:08.995Z",
-              "userId":3,"routeId":1
-            }]
-        }
 	}
-
-  // componentWillMount(){
-  //   console.log('this.testprops is ', this.testprops)
-  //   // below is TEST ROUTE... TAKE THIS OUT AND REPLACE WITH THIS.PROPS.COORDS LATER (OR SOMETHING) ONCE WE CAN ACCESS THE INFO FROM STORE
-  //   // let testselectedRouteCoords = [["37.785834","-122.406417"],["37","-121.3"],["36.2","-121"],["36.5","-120"],["36.29","-119.7"],["36.25","-119.5"]];
-  //   let convCoords= testselectedRouteCoords.map(locArr=>{
-  //     return {latitude: +locArr[0], longitude: +locArr[1]}
-  //   })
-  //   this.setState({convCoords})
-  //
-  //   // below is TEST PHANTOM RACER ... TAKE THIS OUT AND REPLACE ONCE WE CAN ACCESS THE RACER FROM STORE
-  //
-  //   this.setState({testRacerDELETELATER: testselectedRacer});
-  // }
 
   componentDidMount() {
     this.startInterval=setInterval(() => {
@@ -122,13 +73,14 @@ class RunARoute extends Component {
         let lat = position.coords.latitude
         let newPosition = {latitude: lat, longitude: lng}
 
-        let checkPoint=this.testprops.selectedRoute.convCoords[this.state.selectedRoutePointer];
+        let checkPoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
         let dist=geolib.getDistance(checkPoint, newPosition);
 
         this.setState({
           currentPosition: newPosition
         })
-        if(1){
+        // if(1){ // this is to have the start button show all the time (for testing purposes)
+        if(dist<25){
           this.setState({showStart: true});
         }
         else {
@@ -170,26 +122,26 @@ class RunARoute extends Component {
             let lat = position.coords.latitude
             let newPosition = {latitude: lat, longitude: lng}
 
-            let checkPoint=this.testprops.selectedRoute.convCoords[this.state.selectedRoutePointer];
+            let checkPoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
             let dist=geolib.getDistance(checkPoint, newPosition);
             if(dist<25){
               let timeMarker= this.state.timeMarker;
               timeMarker.push(this.state.timer)
-              if(this.state.selectedRoutePointer===this.testprops.selectedRoute.convCoords.length-1){
-                clearInterval(this.interval)//this represents stopping the interval when a person has completed the run route
-                this.setState({
-                  isRunning: false,
-              })
+              if(this.state.selectedRoutePointer===this.props.selectedRoute.convCoords.length-1){
+                      clearInterval(this.interval)//this represents stopping the interval when a person has completed the run route
+                      this.setState({
+                        isRunning: false,
+                    })
 
-              let convCoords = this.testprops.selectedRoute.convCoords;
-              let userId = this.props.user.id;
-              let timesArr = timeMarker;//Not in setState because we need it right away
-              let startTime = this.state.timerStart;
-              let endTime = Date.now();//Not in setState because we need it right away
-              let currentPosition = newPosition;//Not in setState because we need it right away
+                    let convCoords = this.props.selectedRoute.convCoords;
+                    let userId = this.props.user.id;
+                    let timesArr = timeMarker;//Not in setState because we need it right away
+                    let startTime = this.state.timerStart;
+                    let endTime = Date.now();//Not in setState because we need it right away
+                    let currentPosition = newPosition;//Not in setState because we need it right away
 
-              const { navigate } = this.props.navigation;
-              navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
+                    const { navigate } = this.props.navigation;
+                    navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
               }
               else{
                 this.setState({selectedRoutePointer: this.state.selectedRoutePointer+1, timeMarker})
@@ -202,57 +154,15 @@ class RunARoute extends Component {
           })
           .catch(err=>console.error(err))
 
-	    	// navigator.geolocation.getCurrentPosition((position) => {
-        //   let lng = position.coords.longitude
-        //   let lat = position.coords.latitude
-        //   let newPosition = {latitude: lat, longitude: lng}
-        //   // let newPosition = this.state.testRunnerCoordinates[this.state.selectedRoutePointer];
-        //   // console.log('new position is ', newPosition);
-        //   // console.log('selected route pointer: ', this.state.selectedRoutePointer)
-        //
-        //   let checkPoint=this.testprops.selectedRoute.convCoords[this.state.selectedRoutePointer];
-        //
-        //   let dist=geolib.getDistance(checkPoint, newPosition);
-        //
-        //     if(dist<25){
-        //       let timeMarker= this.state.timeMarker;
-        //       timeMarker.push(this.state.timer)
-        //       if(this.state.selectedRoutePointer===this.testprops.selectedRoute.convCoords.length-1){
-        //         clearInterval(this.interval)//this represents stopping the interval when a person has completed the run route
-        //         this.setState({
-        //           isRunning: false,
-        //         })
-        //
-        //       let convCoords = this.testprops.selectedRoute.convCoords;
-        //       let userId = this.props.user.id;
-        //       let timesArr = timeMarker;//Not in setState because we need it right away
-        //       let startTime = this.state.timerStart;
-        //       let endTime = Date.now();//Not in setState because we need it right away
-        //       let currentPosition = newPosition;//Not in setState because we need it right away
-        //
-        //       const { navigate } = this.props.navigation;
-        //       navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
-        //       }
-        //       else{
-        //         this.setState({selectedRoutePointer: this.state.selectedRoutePointer+1, timeMarker})
-        //       }
-        //     }
-	    	// 		this.setState({
-	    	// 			currentPosition: newPosition
-	    	// 		})
-    		// },
-        // (msg)=>alert('Please enable your GPS position future.'),
-        // {enableHighAccuracy: true},)
-
         // THIS BLOCK OF CODE IS FOR UPDATING PHANTOM RACER !!!!
         // -----------------------------------------------------------------------------
         // let selectedRacer= this.props.selectedRacer;// uncomment this when can get racer from store
         // sometimes phantom racer doesnt work if you click start too fast?  need to squash this bug
         let selectedRoutePointer= this.state.selectedRoutePointer;
-        let selectedRacer= this.testprops.selectedRacer;
+        let selectedRacer= this.props.selectedRacer;
         let racerPointer= this.state.racerPointer;
         let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerPointer];
-        let phantomRacerCurrPos= this.testprops.selectedRoute.convCoords[racerPointer];
+        let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerPointer];
 
         if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
           this.setState({racerPointer: racerPointer+1});
@@ -279,7 +189,7 @@ class RunARoute extends Component {
   	}
 
     viewRoute(){
-        let convCoords = this.testprops.selectedRoute.convCoords;
+        let convCoords = this.props.selectedRoute.convCoords;
         let userId = 1;
         let timesArr = this.state.timeMarker;
         let startTime = this.state.timerStart
@@ -293,7 +203,7 @@ class RunARoute extends Component {
   render() {
 
     const position = this.state.currentPosition;
-    const convCoords= this.testprops.selectedRoute.convCoords;
+    const convCoords= this.props.selectedRoute.convCoords;
     // console.log('convCoords is ',convCoords)
     // console.log('this.state.racePointer is ', this.state.racerPointer)
     // console.log('convCoords[this.state.racerPointer-1] is ', convCoords[this.state.racerPointer-1])
@@ -324,8 +234,9 @@ class RunARoute extends Component {
       			<Text>{this.state.currentPosition.longitude}</Text>
 
       		</View>
+          {console.log('first position to zoom into: ', position)}
        	 	<MapView
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: 4, longitudeDelta: 4}}
+       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .05, longitudeDelta: .05}}
 			    style={styles.map}>
 
             { racerMarkerLoc && <MapView.Marker
@@ -350,8 +261,8 @@ const mapDispatchToProps = null
 function mapStateToProps(state){
   return {
     user: state.user,
-    // selectedRoute: state.selectedRoute,//Uncomment these after we can receive from store (and then delete the test props in gotoRunARoute (in the run component)
-    // selectedRacer: state.selectedRacer,//Uncomment these after we can receive from store (and then delete the test props in gotoRunARoute (in the run component)
+    selectedRoute: state.selectedRoute,
+    selectedRacer: state.selectedRacer,
   }
 }
 
