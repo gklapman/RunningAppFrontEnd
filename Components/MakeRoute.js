@@ -136,13 +136,28 @@ class MakeRoute extends Component {
 
     }
 
+    // viewRoute(){
+    //     let convCoords = this.state.routeCoords;
+    //     let userId = this.props.user.id;
+    //     let timesArr = this.state.timeMarker;
+    //     let startTime = this.state.timerStart
+    //     let endTime = this.state.timerEnd
+    //     let currentPosition = this.state.currentPosition
+    //
+    //     let completeRouteCoords = this.state.routeCoords.slice(0)//THIS IS JUST HERE TO TEST GEOLOCATION ACCURACY
+    //
+    //     const { navigate } = this.props.navigation;                                                // v This is passed just for testing, remove later
+    //     navigate('Coordinates', {convCoords, userId, timesArr, startTime, endTime, currentPosition, completeRouteCoords})
+    //
+    // }
+
   render() {
 
     const position = this.state.currentPosition;
   	const routerDisplayCoords = this.state.routeCoords.slice(0)
 
 
-    console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
+    // console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
       <View>
       	<View style={styles.mapcontainer}>
@@ -169,13 +184,15 @@ class MakeRoute extends Component {
        	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
 			    style={styles.map}>
 
-       {/* {routerDisplayCoords.map(coord=>{
+       {routerDisplayCoords.map((coord, idx) =>{
          let coord1=coord;
          let coord2={latitude:coord.latitude, longitude:coord.longitude+.001}
          let coord3={latitude:coord.latitude+.001, longitude:coord.longitude}
+        //  let stringified = JSON.stringify(coord1)
+        //  let easy2readCoords = stringified.slice()
         //  return(<MapView.Polygon coordinates={[coord1,coord2,coord3]} strokewidth={5}/>)
-         return(<MapView.Marker coordinate={coord1} />)
-       })} */}
+         return(<MapView.Marker coordinate={coord1} title={JSON.stringify(coord1)} key={''+idx}/>)
+       })}
 
        {/* <MapView.Marker
          coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
@@ -184,6 +201,11 @@ class MakeRoute extends Component {
          identifier={routeID}
          onSelect={goToRaceView}
        /> */}
+
+
+
+
+
 
 			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
 
