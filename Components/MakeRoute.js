@@ -15,7 +15,7 @@ import MapView from 'react-native-maps';
 import {connect} from 'react-redux'
 //MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
-import axios from 'axios'
+
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
@@ -34,7 +34,6 @@ class MakeRoute extends Component {
 			timeMarker: [0]
 		}
 		this.startStopButton = this.startStopButton.bind(this)
-    // this.submitRun = this.submitRun.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
 	}
 
@@ -125,7 +124,7 @@ class MakeRoute extends Component {
     viewRoute(){
         let convCoords = this.state.routeCoords;
         let userId = this.props.user.id;
-        let timesArr = this.state.timeMarker;
+        let timesArr = this.state.timeMarker
         let startTime = this.state.timerStart
         let endTime = this.state.timerEnd
         let currentPosition = this.state.currentPosition
@@ -221,7 +220,6 @@ const mapDispatchToProps = null
 function mapStateToProps(state){
   return {
     user: state.user,
-    currentLocation: state.currentLocation,
   }
 }
 
