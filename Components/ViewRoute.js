@@ -79,8 +79,6 @@ class ViewRoute extends Component {
     // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
     let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
 
-
-
     return (
       <View>
          <View style={styles.mapcontainer}>
@@ -98,7 +96,7 @@ class ViewRoute extends Component {
             <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
 
           </MapView>
-          {!oldRoute && 
+          {!oldRoute &&
             <View style={styles.submitRoute}>
                 <TouchableOpacity onPress={this.submitRoute}>
                   <Text>Submit Run</Text>
@@ -110,8 +108,6 @@ class ViewRoute extends Component {
                   <Text>Replay Run</Text>
                </TouchableOpacity>
             </View>
-
-          
           </View>
         </View>
     )

@@ -8,10 +8,13 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "cocoa-lumberjack": "^3.0.3",
     "geolib": "^2.0.22",
     "minutes-seconds-milliseconds": "^1.0.3",
     "react": "16.0.0-alpha.6",
     "react-native": "0.43.4",
+    "react-native-background-fetch": "^2.0.5",
+    "react-native-background-geolocation": "^2.7.0",
     "react-native-maps": "^0.13.0",
     "react-navigation": "^1.0.0-beta.9",
     "react-redux": "^5.0.4",
