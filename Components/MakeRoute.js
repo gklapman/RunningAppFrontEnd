@@ -13,19 +13,21 @@ import {
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
 import {connect} from 'react-redux'
+import BackgroundGeolocation from "react-native-background-geolocation";
 //MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
 
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
+import {promisifiedGetCurrPos} from './Utils'
 
 
 class MakeRoute extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			currentPosition: {latitude: 1, longitude: 2} , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
+			currentPosition: {latitude: 0, longitude: 0} , //THIS WILL BE TAKEN FROM THE STORE TO RENDER INITIAL RUNNER STATE
 			isRunning: false,
 			timer: 0,
 			timerStart: 0,
@@ -35,24 +37,55 @@ class MakeRoute extends Component {
 		}
 		this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
+    this.onLocation = this.onLocation.bind(this)
 	}
 
+  onLocation(locInp){
+    console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
+    let lng = locInp.coords.longitude
+    let lat = locInp.coords.latitude
+    let newPosition = {latitude: lat, longitude: lng}
+    this.setState({ currentPosition: newPosition })
+
+    if(this.state.isRunning){
+      let elapsedTime= Date.now() - this.state.timerStart
+      this.setState({
+        timer: elapsedTime
+      })
+
+      let newrouteCoords = this.state.routeCoords.slice(0)
+      newrouteCoords.push(newPosition)
+
+      let timeMarkerArr = this.state.timeMarker
+      timeMarkerArr.push(elapsedTime)
+
+      this.setState({
+        routeCoords: newrouteCoords,
+        timeMarker: timeMarkerArr
+      })
+    }
+  }
 
   componentWillMount() {
-    navigator.geolocation.getCurrentPosition((position) => {
-              let lng = position.coords.longitude
-              let lat = position.coords.latitude
-              let newPosition = {latitude: lat, longitude: lng}
-
-              this.setState({
-                currentPosition: newPosition
-              })
-            })
+    promisifiedGetCurrPos()//BackgroundGeolocation is still far superior to navigator.geolocation.getCurrentPosition, but the latter is still good to use for getting position at a specified time
+      .then((position) => {
+        console.log('here')
+        let lng = position.coords.longitude
+        let lat = position.coords.latitude
+        let newPosition = {latitude: lat, longitude: lng}
+        return this.setState({//not actually sure if this will actually wait for setState to complete before adding the BackgroundGeolocation onlocation listener.. we can put in the setState callback function later, if this causes problems
+          currentPosition: newPosition
+        })
+      })
+      .then(()=>{
+        BackgroundGeolocation.on('location', this.onLocation)
+    })
   }
 
   componentWillUnmount(){
+    BackgroundGeolocation.un('location', this.onLocation)//needed to remove listener
     this.setState({//this is need to set things to default.
-      currentPosition: {latitude: 1, longitude: 2} ,
+      currentPosition: {latitude: 0, longitude: 0} ,
       isRunning: false,
       timer: 0,
       timerStart: 0,
@@ -63,17 +96,16 @@ class MakeRoute extends Component {
   }
 
   startStopButton() {
-
+    //when we have time, we can reimplement a timer that can run in realtime when the app is in the foreground (PURELY for visual effect... not for determining whether to push points or anything)
     	if(this.state.isRunning){
-    		clearInterval(this.interval)
-    		clearInterval(this.recordInterval)
+    		// clearInterval(this.interval)
+    		// clearInterval(this.recordInterval)
     		this.setState({
     			isRunning: false,
           timerEnd: Date.now()
     		})
     		return;
     	} else {
-
         let lat = this.state.currentPosition.latitude
         let lng = this.state.currentPosition.longitude
         let firstRouteCoord = [{latitude: lat, longitude: lng}]
@@ -81,58 +113,22 @@ class MakeRoute extends Component {
 	    		isRunning: true,
 	    		timerStart: Date.now(),
 	    		routeCoords: firstRouteCoord
-
     		})
-	    		this.interval = setInterval(() => {
-		    	this.setState({
-		    		timer: Date.now() - this.state.timerStart
-		    	})
-		    	navigator.geolocation.getCurrentPosition((position) => {
-		    			let lng = position.coords.longitude
-		    			let lat = position.coords.latitude
-		    			let newPosition = {latitude: lat, longitude: lng}
-
-		    			this.setState({
-		    				currentPosition: newPosition
-		    			})
-		    		},
-            (msg)=>alert('Please enable your GPS position future.'),
-            {enableHighAccuracy: true},)
-            }, 100);
-
-	    		this.recordInterval = setInterval(() => {
-
-            let newrouteCoords = this.state.routeCoords.slice(0)
-            let lat = this.state.currentPosition.latitude
-            let lng = this.state.currentPosition.longitude
-            let nextObj = {latitude: lat, longitude: lng}
-	    			newrouteCoords.push(nextObj)
-
-            let timeMarkerArr = this.state.timeMarker
-            timeMarkerArr.push(this.state.timer)
-
-	    			this.setState({
-	    				routeCoords: newrouteCoords,
-	    				timeMarker: timeMarkerArr
-	    			})
-	    		// }, 500)
-        }, 150)//PURELY FOR TESTING PURPOSES (mainly to get points on map on the way to and from class... uncomment the above later)
-    	}
-    	}
-
-
-    viewRoute(){
-        let convCoords = this.state.routeCoords;
-        let userId = this.props.user.id;
-        let timesArr = this.state.timeMarker
-        let startTime = this.state.timerStart
-        let endTime = this.state.timerEnd
-        let currentPosition = this.state.currentPosition
-
-        const { navigate } = this.props.navigation;
-        navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
-
     }
+  }
+
+  viewRoute(){
+      let convCoords = this.state.routeCoords;
+      let userId = this.props.user.id;
+      let timesArr = this.state.timeMarker
+      let startTime = this.state.timerStart
+      let endTime = this.state.timerEnd
+      let currentPosition = this.state.currentPosition
+
+      const { navigate } = this.props.navigation;
+      navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
+
+  }
 
 
   render() {
@@ -186,11 +182,6 @@ class MakeRoute extends Component {
          onSelect={goToRaceView}
        /> */}
 
-
-
-
-
-
 			 <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
 
 			 </MapView>
@@ -208,6 +199,5 @@ function mapStateToProps(state){
     user: state.user,
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(MakeRoute)

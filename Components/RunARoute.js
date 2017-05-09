@@ -82,7 +82,7 @@ class RunARoute extends Component {
         this.setState({
           currentPosition: newPosition
         })
-        // if(1){ // this is to have the start button show all the time (for testing purposes)
+        
         if(dist<25){
           this.setState({showStart: true});
         }
