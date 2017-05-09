@@ -19,7 +19,7 @@ import axios from 'axios'
 import geolib from 'geolib'
 //CUSTOM MODULES
 import styles from '../Styles'
-import {addNewRoute} from './storeAndReducer'
+import {addNewRoute, fetchSelectedRacer} from './storeAndReducer'
 
 
 class ViewRoute extends Component {
@@ -30,14 +30,38 @@ class ViewRoute extends Component {
 
 	}
 
+  componentDidMount() {
+    console.log('givenprops ', this.props.navigation.state.params )
+    let opponentRoutetimeId = this.props.navigation.state.params.opponentRoutetimeId
+    if (opponentRoutetimeId){
+      console.log('opppooonnnneeennnt')
+      this.props.fetchSelectedRacer(opponentRoutetimeId)
+    }
+  }
 
-    submitRoute(){
-        let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
-        this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
-        const { navigate } = this.props.navigation;
-        navigate('OurApp')
+
+  submitRoute(){
+    let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
+    this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
+    const { navigate } = this.props.navigation;
+    navigate('OurApp')
+  }
+
+
+  replayRoute(){
+
+      let selectedRoutePointer= this.state.selectedRoutePointer
+      let selectedRacer= this.props.selectedRacer
+      let racerCoordsPointer= this.state.racerCoordsPointer
+      let racerTimesArrPointer= this.state.racerTimesArrPointer
+      let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
+      let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
+
+      if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
+        this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
       }
 
+  }
 
   render() {
 
@@ -52,7 +76,7 @@ class ViewRoute extends Component {
 
     //console.log('this is the total distance', totalDistance)
 
-    //console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
+    // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
     let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
 
     return (
@@ -79,18 +103,23 @@ class ViewRoute extends Component {
                </TouchableOpacity>
             </View> }
 
+            <View style={styles.replayRoute}>
+                <TouchableOpacity onPress={this.replayRoute}>
+                  <Text>Replay Run</Text>
+               </TouchableOpacity>
+            </View>
           </View>
         </View>
     )
   }
 }
 
-const mapDispatchToProps = {addNewRoute}
+const mapDispatchToProps = {addNewRoute, fetchSelectedRacer}
 
 function mapStateToProps(state){
   return {
-    // currentUser: state.currentUser,
-    // currentLocation: state.currentLocation
+    user: state.user,
+    selectedRacer: state.selectedRacer
   }
 }
 

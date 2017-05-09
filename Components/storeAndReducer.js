@@ -138,6 +138,16 @@ export const fetchNearbyRoutes = (region) => {
 }
 
 
+export const fetchSelectedRacer = (opponentRoutetimeId) => {
+  return dispatch => {
+    return axios.get(`http://localhost:3000/api/runroutes/routetime/${opponentRoutetimeId}`)
+    .then(res => {
+      console.log('this is the opponent info', res.data)
+    })
+  }
+
+}
+
 export const sendSelectedRacer = (racerData) => {
   return dispatch => {
     return dispatch(setSelectedRacer(racerData))
@@ -163,7 +173,7 @@ export const fetchUserStats = (userId) => {
       return user
     })
     .then(userStatsInfo => {
-      console.log('this is the user info', userStatsInfo)
+      // console.log('this is the user info', userStatsInfo)
       return dispatch(setUserStats(userStatsInfo))
     })
   }
