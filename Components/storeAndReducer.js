@@ -90,12 +90,12 @@ export const fetchUserLocation = location => {
 }
 
 
-export const addNewRoute = (checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime) => {
+export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId) => {
 
   return dispatch => {
 
     // return axios.post(`${herokuUrl}/api/runroutes`, {checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime})
-    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
+    return axios.post('http://localhost:3000/api/runroutes', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -151,12 +151,14 @@ export const fetchNearbyRoutes = (region) => {
 }
 
 
-export const fetchSelectedRacer = (opponentRoutetimeId) => {
+export const fetchSelectedRacer = (phantomRacerId) => {
   return dispatch => {
     // return axios.get(`${herokuUrl}/api/users/${opponentRoutetimeId}`)
-    return axios.get(`${localHost}/api/users/${opponentRoutetimeId}`)
+    return axios.get(`${localHost}/api/users/${phantomRacerId}`)
     .then(res => {
       console.log('this is the opponent info', res.data)
+      // dispatch(setSelectedRacer(res.data))
+
     })
   }
 
@@ -169,13 +171,13 @@ export const sendSelectedRacer = (racerData) => {
 }
 
 export const fetchUserStats = (userId) => {
-  console.log('this is the user id', userId)
+  // console.log('this is the user id', userId)
   return dispatch => {
-    console.log('making request')
+    // console.log('making request')
     // return axios.get(`${herokuUrl}/api/users/${userId}`)
     return axios.get(`http://localhost:3000/api/users/${userId}`)
     .then(res => {
-      console.log('this is the res', res.data)
+      // console.log('this is the res', res.data)
       return res.data
     })
     .then(user => {
@@ -184,6 +186,13 @@ export const fetchUserStats = (userId) => {
           let formattedCoordPair = {latitude:+coordPair[0], longitude:+coordPair[1]}
            return formattedCoordPair
         })
+         route.routetimes = route.routetimes.map(routetime => {
+          routetime.personalCoords = routetime.personalCoords.map(coordPair => {
+            let formattedCoordPair = {latitude:+coordPair[0], longitude:+coordPair[1]}
+            return formattedCoordPair
+          })
+          return routetime
+         })
         return route
       })
       return user
