@@ -41,7 +41,6 @@ class MakeRoute extends Component {
     this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
     this.onLocation = this.onLocation.bind(this)
-
   }
 
   componentWillMount() {

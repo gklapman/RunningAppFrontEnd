@@ -2,8 +2,9 @@
 
 import {StackNavigator} from 'react-navigation';
 
-//navigator geolocation promisified so we can .then off it and not have to write all these nasty nested functions
+//navigator geolocation promisified so we can .then off it and not have to write all those nasty nested functions
 export function promisifiedGetCurrPos() {
+  //reminder for how to do promisify async stuff in general:
     // 1 - Create a new Promise
     return new Promise(function (resolve, reject) {
         // 2 - Copy-paste your async code inside this function
