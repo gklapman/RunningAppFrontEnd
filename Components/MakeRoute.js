@@ -35,7 +35,7 @@ class MakeRoute extends Component {
      timerStart: 0,
      timerEnd: 0,
      personalCoords: [],
-     personalTimeMarker: [], 
+     personalTimeMarker: [],
      checkpointTimeMarker: []
    }
     this.startStopButton = this.startStopButton.bind(this)
@@ -94,54 +94,60 @@ class MakeRoute extends Component {
          isRunning: true,
          timerStart: Date.now(),
          personalCoords: firstRouteCoord,
-         personalTimeMarker: [0], 
+         personalTimeMarker: [0],
          checkpointTimeMarker: [0]
        })
     }
   }
 
     onLocation(locInp){
-    console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
+    // console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
     let lng = locInp.coords.longitude
     let lat = locInp.coords.latitude
+    let rawPosition= {latitude: lat, longitude: lng}
 
-     // axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBlN-sYTlKuxuCHeOgX0wvj_L-iOxaLvwM`)
-     // .then(res => {
-        // if (res.data.error){
-          newPosition = {latitude: lat, longitude: lng}
-        //   console.log('ERROR with googleapis')
-        // } else {
-          // let snappedLoc= res.data.snappedPoints[0].location
-          // let newPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
-        // }
-        console.log('our position ', newPosition)
-        this.setState({ currentPosition: newPosition })
+     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyChVDhT_LyFAxYTLkoUOxc-0gr37tfuSAM`)
+       .then(res => {
+          // console.log('in snappedLoc block')
+          let snappedLoc= res.data.snappedPoints[0].location
+          let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+          return snappedPosition
+        })
+       .catch(err => {
+         if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
+         else {throw err.message}
+       })
+       .then(position=>{
+          this.setState({ currentPosition: position })
 
-        if(this.state.isRunning){
-            let elapsedTime= Date.now() - this.state.timerStart
+          if(this.state.isRunning){
+              let elapsedTime= Date.now() - this.state.timerStart
+              this.setState({
+                timer: elapsedTime
+            })
+
+            let newrouteCoords = this.state.personalCoords.slice(0)
+            let newtimeMarker = this.state.personalTimeMarker
+            let newcheckpointTimeMarker = this.state.checkpointTimeMarker
+
+            if (newrouteCoords.length % 10){
+                newcheckpointTimeMarker.push(elapsedTime)
+            }
+
+            newrouteCoords.push(position)
+            newtimeMarker.push(elapsedTime)
+
             this.setState({
-              timer: elapsedTime
-          })
-
-          let newrouteCoords = this.state.personalCoords.slice(0)
-          let newtimeMarker = this.state.personalTimeMarker
-          let newcheckpointTimeMarker = this.state.checkpointTimeMarker
-
-          if (newrouteCoords.length % 10){ 
-              newcheckpointTimeMarker.push(elapsedTime)
+              personalCoords: newrouteCoords,
+              personalTimeMarker: newtimeMarker,
+              checkpointTimeMarker: newcheckpointTimeMarker
+            })
           }
 
-          newrouteCoords.push(newPosition)
-          newtimeMarker.push(elapsedTime)
+       })
+       .catch(err=>console.error(err))
 
-          this.setState({
-            personalCoords: newrouteCoords,
-            personalTimeMarker: newtimeMarker,
-            checkpointTimeMarker: newcheckpointTimeMarker
-          })
-        }
-    // })
-     // .catch(err => console.log(err))
+
   }
 
 
@@ -202,7 +208,7 @@ class MakeRoute extends Component {
        //  //  let easy2readCoords = stringified.slice()
        //  //  return(<MapView.Polygon coordinates={[coord1,coord2,coord3]} strokewidth={5}/>)
        //   return(<MapView.Marker coordinate={coord1} title={JSON.stringify(coord1)} key={''+idx}/>)
-       // })} 
+       // })}
 
        {/* <MapView.Marker
          coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
@@ -221,13 +227,13 @@ class MakeRoute extends Component {
     )
   }
 }
-	
-
-	
 
 
 
-  
+
+
+
+
 
 
 const mapDispatchToProps = null
