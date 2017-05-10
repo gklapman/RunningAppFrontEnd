@@ -33,16 +33,17 @@ class ViewRoute extends Component {
   componentDidMount() {
     console.log('givenprops ', this.props.navigation.state.params )
     let opponentRoutetimeId = this.props.navigation.state.params.opponentRoutetimeId
+    // let opponentRoutetimeId = 1 //this is for testing... need to update heroku to have our real backend
     if (opponentRoutetimeId){
-      console.log('opppooonnnneeennnt')
+      // console.log('opppooonnnneeennnt')
       this.props.fetchSelectedRacer(opponentRoutetimeId)
     }
   }
 
 
   submitRoute(){
-    let {convCoords, userId, timesArr, startTime, endTime} = this.props.navigation.state.params
-    this.props.addNewRoute(convCoords, userId, timesArr, startTime, endTime)
+    let {checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime} = this.props.navigation.state.params
+    this.props.addNewRoute(checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime)
     const { navigate } = this.props.navigation;
     navigate('OurApp')
   }
@@ -78,6 +79,8 @@ class ViewRoute extends Component {
 
     // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
     let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
+
+    console.log('this is what we receive', this.props.navigation.state.params, this.props.selectedRacer)
 
     return (
       <View>

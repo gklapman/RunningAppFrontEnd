@@ -7,6 +7,8 @@ import logger from 'redux-logger' ////from example
 
 ////IMPORTS FOR DISPATCHERS
 import axios from 'axios';
+import {herokuUrl, localHost} from '../config.js'
+
 
 
 /////CONSTANTS
@@ -69,8 +71,8 @@ export const setUserStats = function(statsData){
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
-    return axios.post('https://runningappbackend.herokuapp.com/api/users/login', { email, password} )
-    // return axios.post('http://localhost:3000/api/users/login', { email, password} )
+    // return axios.post(`${herokuUrl}/api/users/login`, { email, password} )
+    return axios.post('http://localhost:3000/api/users/login', { email, password} )
     .then(res => res.data)
     .then(foundUser => {
       if(foundUser) dispatch(setUser(foundUser))
@@ -88,12 +90,12 @@ export const fetchUserLocation = location => {
 }
 
 
-export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, routeId) => {
+export const addNewRoute = (checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime) => {
 
   return dispatch => {
 
-    return axios.post('https://runningappbackend.herokuapp.com/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
-    // return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
+    // return axios.post(`${herokuUrl}/api/runroutes`, {checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime})
+    return axios.post('http://localhost:3000/api/runroutes', {convCoords, userId, timesArr, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -104,12 +106,23 @@ export const addNewRoute = (convCoords, userId, timesArr, startTime, endTime, ro
 
 export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
-    return axios.get(`https://runningappbackend.herokuapp.com/api/runroutes/${selectedRouteId}`)
-    // return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
+    // return axios.get(`${herokuUrl}/${selectedRouteId}`)
+    return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
     .then(eagerLoadedRoute => {
-        eagerLoadedRoute.convCoords=eagerLoadedRoute.coords.map(coordPair=>{
+        eagerLoadedRoute.convCoords = eagerLoadedRoute.coords.map(coordPair=>{
           return {latitude:+coordPair[0], longitude:+coordPair[1]};
+        })
+        eagerLoadedRoute.checkpointConvCoords = eagerLoadedRoute.checkpointCoords.map(coordPair=>{
+          return {latitude:+coordPair[0], longitude:+coordPair[1]};
+        })
+        eagerLoadedRoute.users = eagerLoadedRoute.users.map(user => {
+          // console.log('user is ', user)
+          user.routetimes[0].personalCoords = user.routetimes[0].personalCoords.map(coordPair => {
+            // console.log('coord pair is ', coordPair)
+             return {latitude:+coordPair[0], longitude:+coordPair[1]};
+          })
+          return user
         })
         return dispatch(setSelectedRoute(eagerLoadedRoute))
       })
@@ -121,8 +134,8 @@ export const fetchNearbyRoutes = (region) => {
 // http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000 //this is an example of a runroute query
   return dispatch => {
     let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
-    return axios.get('https://runningappbackend.herokuapp.com/api/runroutes/'+query)
-    // return axios.get('http://localhost:3000/api/runroutes/'+query)
+    // return axios.get(`${herokuUrl}/api/runroutes/`+query)
+    return axios.get('http://localhost:3000/api/runroutes/'+query)
     .then(res => res.data)
     .then(routes => {
       let formattedRoutes = routes.map(routeWCoords => {
@@ -140,7 +153,8 @@ export const fetchNearbyRoutes = (region) => {
 
 export const fetchSelectedRacer = (opponentRoutetimeId) => {
   return dispatch => {
-    return axios.get(`http://localhost:3000/api/runroutes/routetime/${opponentRoutetimeId}`)
+    // return axios.get(`${herokuUrl}/api/users/${opponentRoutetimeId}`)
+    return axios.get(`${localHost}/api/users/${opponentRoutetimeId}`)
     .then(res => {
       console.log('this is the opponent info', res.data)
     })
@@ -155,11 +169,13 @@ export const sendSelectedRacer = (racerData) => {
 }
 
 export const fetchUserStats = (userId) => {
+  console.log('this is the user id', userId)
   return dispatch => {
     console.log('making request')
-    return axios.get(`http://runningappbackend.herokuapp.com/api/users/${userId}`)
-    // return axios.get(`http://localhost:3000/api/users/${userId}`)
+    // return axios.get(`${herokuUrl}/api/users/${userId}`)
+    return axios.get(`http://localhost:3000/api/users/${userId}`)
     .then(res => {
+      console.log('this is the res', res.data)
       return res.data
     })
     .then(user => {
@@ -176,6 +192,7 @@ export const fetchUserStats = (userId) => {
       // console.log('this is the user info', userStatsInfo)
       return dispatch(setUserStats(userStatsInfo))
     })
+    .catch(err => console.log(err))
   }
 }
 
