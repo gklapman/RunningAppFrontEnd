@@ -32,45 +32,46 @@ class ViewRoute extends Component {
 
   componentDidMount() {
     console.log('givenprops ', this.props.navigation.state.params )
-    let opponentRoutetimeId = this.props.navigation.state.params.opponentRoutetimeId
-    // let opponentRoutetimeId = 1 //this is for testing... need to update heroku to have our real backend
-    if (opponentRoutetimeId){
+    let phantomRacerRouteTimeId = this.props.navigation.state.params.phantomRacerRouteTimeId
+    if (phantomRacerRouteTimeId){
       // console.log('opppooonnnneeennnt')
-      this.props.fetchSelectedRacer(opponentRoutetimeId)
+      this.props.fetchSelectedRacer(phantomRacerRouteTimeId)
     }
   }
 
 
   submitRoute(){
-    let {checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime} = this.props.navigation.state.params
-    this.props.addNewRoute(checkpointTimeMarker, timeMarker, routeCoords, userId, startTime, endTime)
+    let {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerId } = this.props.navigation.state.params
+    this.props.addNewRoute(checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime)
     const { navigate } = this.props.navigation;
     navigate('OurApp')
   }
 
 
-  replayRoute(){
+  // replayRoute(){
 
-      let selectedRoutePointer= this.state.selectedRoutePointer
-      let selectedRacer= this.props.selectedRacer
-      let racerCoordsPointer= this.state.racerCoordsPointer
-      let racerTimesArrPointer= this.state.racerTimesArrPointer
-      let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
-      let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
+  //     let selectedRoutePointer= this.state.selectedRoutePointer
+  //     let selectedRacer= this.props.selectedRacer
+  //     let racerCoordsPointer= this.state.racerCoordsPointer
+  //     let racerTimesArrPointer= this.state.racerTimesArrPointer
+  //     let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
+  //     let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
 
-      if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
-        this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
-      }
+  //     if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
+  //       this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
+  //     }
 
-  }
+  // }
 
   render() {
 
+    
     let givenprops = this.props.navigation.state.params
-    let startPosition = givenprops.convCoords[0] //This is setting the view of map to the start of the route
-    console.log('givenprops is ', givenprops)
-    let finalTime = givenprops.timesArr[givenprops.timesArr.length-1]
-    let totalDistance = (geolib.getPathLength(givenprops.convCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
+    // console.log('this is given props', givenprops)
+    let startPosition = givenprops.personalCoords[0] //This is setting the view of map to the start of the route
+    // console.log('givenprops is ', givenprops)
+    let finalTime = givenprops.personalTimeMarker[givenprops.personalTimeMarker.length-1]
+    let totalDistance = (geolib.getPathLength(givenprops.personalCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
 
     // console.log('this is the total distance', totalDistance)
     let oldRoute = givenprops.oldRoute //this will determine if the submit button is available
@@ -78,9 +79,10 @@ class ViewRoute extends Component {
     //console.log('this is the total distance', totalDistance)
 
     // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
-    let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
+    // let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
+    // let routeCoordsArr = this.state.selectedRoute.convCoords // do we even need this?
 
-    console.log('this is what we receive', this.props.navigation.state.params, this.props.selectedRacer)
+    // console.log('this is what we receive', this.props.navigation.state.params, this.props.selectedRacer)
 
     return (
       <View>
@@ -96,7 +98,7 @@ class ViewRoute extends Component {
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005}}
             style={styles.map}>
 
-            <MapView.Polyline coordinates={givenprops.convCoords} strokeColor='green' strokeWidth= {4} />
+            <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {4} />
 
           </MapView>
           {!oldRoute &&
@@ -122,7 +124,8 @@ const mapDispatchToProps = {addNewRoute, fetchSelectedRacer}
 function mapStateToProps(state){
   return {
     user: state.user,
-    selectedRacer: state.selectedRacer
+    selectedRacer: state.selectedRacer, 
+    selectedRoute: state.selectedRoute
   }
 }
 

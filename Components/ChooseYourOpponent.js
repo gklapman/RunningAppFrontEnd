@@ -26,13 +26,14 @@ class OpponentsView extends Component {
 
     goToRace(userIdx){
       const { navigate } = this.props.navigation
+      console.log('this is users', this.props.selectedRoute.users)
       let racer = this.props.selectedRoute.users[userIdx]
       this.props.sendSelectedRacer(racer)
       navigate('RunARoute')
     }
 
     render(){
-
+      console.log('this is props ', this.props)
 
     const users = this.props.selectedRoute.users
     const filterStyle = {width: 5, height: 5, backgroundColor: 'skyblue'}
