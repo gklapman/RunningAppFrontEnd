@@ -41,16 +41,19 @@ TestRunner.prototype.startTimer= function(){
 TestRunner.prototype.moveOrNot= function (){
   //this will cause the testrunner to advance to the next location (via incrementing this.coordsPointer)
   //AND move the timesArrPointer up by 1, but only IF timer matches the time that this.timesArrPointer is pointing to.
-  if(this.elapsedTime>this.timesArr[this.timesArrPointer]-200 && this.elapsedTime>this.timesArr[this.timesArrPointer]+200){
-    //we're not getting to this point for some reason!!
+
+  let origCoordsPointer=this.coordsPointer;
+
+  while (this.elapsedTime >= this.timesArr[this.timesArrPointer]){
     this.coordsPointer+=1
     this.timesArrPointer+=1
-    return true
   }
-  return false
+
+  return origCoordsPointer!==this.coordsPointer ? true : false
 }
 
 TestRunner.prototype.getPosition= function (){
+  console.log('testrunner coordinates ', this.convCoords[this.coordsPointer])
   return {coords: this.convCoords[this.coordsPointer]}
 }
 
@@ -72,11 +75,11 @@ export const testRoute2=
 timesArr:[0,1000,2000,5500,7000,8500,9000,12000]//faster
 }
 
-let testRoute3Coords=[[41.809590, -87.599837],[41.809590, -87.596837],[41.809686, -87.592427],[41.808071, -87.590689],[41.805676, -87.589218],[41.802476, -87.587889],[41.801058, -87.587528],[41.801058, -87.5874],[41.801058, -87.5873],[41.801058, -87.5872],[41.801058, -87.5871],[41.801058, -87.5870],[41.801058, -87.5869],[41.801058, -87.5868],[41.801058, -87.5867],[41.801058, -87.5866],[41.801058, -87.5865],[41.801058, -87.5854],[41.801058, -87.5863],[41.801058, -87.5862],[41.801058, -87.5861],[41.801058, -87.5860]]
+let testRoute3Coords=[[41.809590, -87.599837],[41.809590, -87.596837],[41.809686, -87.592427],[41.808071, -87.590689],[41.805676, -87.589218],[41.802476, -87.587889],[41.801058, -87.587528],[41.801058, -87.5874],[41.801058, -87.5873],[41.801058, -87.5872],[41.801058, -87.5871],[41.801058, -87.5870],[41.801058, -87.5869],[41.801058, -87.5868],[41.801058, -87.5867],[41.801058, -87.5866],[41.801058, -87.5865],[41.801058, -87.5864],[41.801058, -87.5863],[41.801058, -87.5862],[41.801058, -87.5861],[41.801058, -87.5860]]
 let testRoute3ConvCoords=testRoute3Coords.map(coordpair=>{return {latitude: coordpair[0], longitude: coordpair[1]} })
 
 export const testRoute3=
 {convCoords: testRoute3ConvCoords,
 // timesArr:[0,11000,23000,35000,45000,61000]
-timesArr:[0,2000,2150,3000,3200,9000,16000,16000,20000,20500,22000,24000,26000,28000,30000,32000,34000,36000,38000,40000,42000,44000] //faster
+timesArr:[0,2000,2150,3000,3200,9000,16000,16000,20000,20500,22000,24000,26000,28000,30000,32000,34000,36000,38000,40000,40100,40200] //faster
 }

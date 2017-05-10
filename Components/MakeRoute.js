@@ -146,11 +146,7 @@ class MakeRoute extends Component {
 
        })
        .catch(err=>console.error(err))
-
-
   }
-
-
 
   viewRoute(){
       let personalCoords = this.state.personalCoords;

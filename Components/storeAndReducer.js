@@ -110,7 +110,7 @@ export const fetchSelectedRoute = selectedRouteId => {
     return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
     .then(eagerLoadedRoute => {
-      console.log('eager loaded route ', eagerLoadedRoute)
+      // console.log('eager loaded route ', eagerLoadedRoute)
         eagerLoadedRoute.convCoords = eagerLoadedRoute.coords.map(coordPair=>{
           return {latitude:+coordPair[0], longitude:+coordPair[1]};
         })
@@ -125,6 +125,7 @@ export const fetchSelectedRoute = selectedRouteId => {
           })
           return user
         })
+        // console.log('eager loaded route with convCoords, checkpointConvCoords, and users', eagerLoadedRoute)
         return dispatch(setSelectedRoute(eagerLoadedRoute))
       })
     .catch(console.log)
@@ -199,7 +200,7 @@ export const fetchUserStats = (userId) => {
       return user
     })
     .then(userStatsInfo => {
-      // console.log('this is the user info', userStatsInfo)
+      console.log('this is the user info', userStatsInfo)
       return dispatch(setUserStats(userStatsInfo))
     })
     .catch(err => console.log(err))
