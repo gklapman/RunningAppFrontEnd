@@ -45,7 +45,7 @@ class Run extends Component {
       // Activity Recognition
       stopTimeout: 1,
       // Application config
-      debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. //DISABLE FOR PRESENTATION??
+      debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
       stopOnTerminate: true,   // <-- Allow the background-service to continue tracking when user closes the app. //KEEP THIS ON TRUE... DO NOT FORGET ABOUT THIS
       startOnBoot: true,        // <-- Auto start tracking when device is powered-up. //WE MAY NEED TO HAVE THIS TURNED OFF UNTIL THIS RUN COMPONENT MOUNTS (otherwise a lot of events emitted with no listeners, causing some yellow warnings)

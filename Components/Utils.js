@@ -56,7 +56,8 @@ TestRunner.prototype.getPosition= function (){
 
 TestRunner.prototype.moveAndGetPos= function (){
   this.moveOrNot()
-  return Promise.resolve(this.getPosition())
+  // return Promise.resolve(this.getPosition())
+  return this.getPosition()
 }
 
 export const testRoute1=
@@ -69,4 +70,13 @@ export const testRoute2=
 {convCoords:[{latitude: 41.808, longitude: -87.596837} , {latitude: 41.8087, longitude: -87.596837},{latitude: 41.809590, longitude: -87.596837},{latitude: 41.809686, longitude: -87.592427},{latitude: 41.808071, longitude: -87.590689},{latitude: 41.805676, longitude: -87.589218},{latitude: 41.802476, longitude: -87.587889},{latitude: 41.801058, longitude: -87.587528}],
 // timesArr:[0,11000,23000,35000,45000,61000]
 timesArr:[0,1000,2000,5500,7000,8500,9000,12000]//faster
+}
+
+let testRoute3Coords=[[41.809590, -87.599837],[41.809590, -87.596837],[41.809686, -87.592427],[41.808071, -87.590689],[41.805676, -87.589218],[41.802476, -87.587889],[41.801058, -87.587528],[41.801058, -87.5874],[41.801058, -87.5873],[41.801058, -87.5872],[41.801058, -87.5871],[41.801058, -87.5870],[41.801058, -87.5869],[41.801058, -87.5868],[41.801058, -87.5867],[41.801058, -87.5866],[41.801058, -87.5865],[41.801058, -87.5854],[41.801058, -87.5863],[41.801058, -87.5862],[41.801058, -87.5861],[41.801058, -87.5860]]
+let testRoute3ConvCoords=testRoute3Coords.map(coordpair=>{return {latitude: coordpair[0], longitude: coordpair[1]} })
+
+export const testRoute3=
+{convCoords: testRoute3ConvCoords,
+// timesArr:[0,11000,23000,35000,45000,61000]
+timesArr:[0,2000,2150,3000,3200,9000,16000,16000,20000,20500,22000,24000,26000,28000,30000,32000,34000,36000,38000,40000,42000,44000] //faster
 }

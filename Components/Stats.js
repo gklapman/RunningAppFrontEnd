@@ -39,7 +39,9 @@ class Stats extends Component {
 
   componentWillMount() {
     let userId = this.props.user.id 
+    console.log('this is front end fetch stats', userId)
     this.props.fetchUserStats(userId)
+
   }
 
   render() {

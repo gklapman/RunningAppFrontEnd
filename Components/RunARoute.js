@@ -13,14 +13,16 @@ import {
 import {StackNavigator} from 'react-navigation';
 import MapView from 'react-native-maps';
 import {connect} from 'react-redux'
+import BackgroundGeolocation from "react-native-background-geolocation";
 //MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
 import axios from 'axios'
 import geolib from 'geolib'
+
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
-import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2 } from './Utils'
+import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } from './Utils'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -40,6 +42,14 @@ import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2 } from './Util
 
 //take out the test button thing when alyssa's thunk thing is working
 
+
+
+//INFO WE NEED: 
+// checkpointConvCords - this.props.selectedRoute.checkpointConvCoords
+// checkpointTimeMarkerCoords (phantom) - this.props.selectedRacer.checkpointTimeMarkerCoords /// ??? should we get phantom checkpoints time markers or phantom personalTimemarkers (and phantom personalCoords?)
+
+
+
 class RunARoute extends Component {
 	constructor(props) {
 		super(props);
@@ -47,9 +57,9 @@ class RunARoute extends Component {
       saying: '',
 			currentPosition: {latitude: 0, longitude: 0},
 
-      selectedRoutePointer: 0,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
-      racerCoordsPointer: 0,//this represents index of the !!!NEXT POINT!!! that the phantom racer will get to (it's index of BOTH the selected route coord AND the racer's time array)
-      racerTimesArrPointer: 1,
+      checkpointConvCoordsPointer: 2,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
+      phantomRacerPointer: 1,//this represents index of the !!!NEXT POINT!!! that the phantom phantomRacer will get to (it's index of BOTH the selected route coord AND the phantomRacer's time array)
+      // phantomRacerTimesArrPointer: 1,
 
 			isRunning: false,
       showStart: false,
@@ -57,42 +67,197 @@ class RunARoute extends Component {
   		timer: 0,
 			timerStart: 0,
 			timerEnd: 0,
-			timeMarker: [],
+			personalTimeMarker: [],
+      checkpointTimeMarker: [],
+      personalCoords: [],
 		}
     this.startInterval
     this.interval
 		this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
-    this.testRunner = new TestRunner(testRoute2.convCoords, testRoute1.timesArr)
+    this.testRunner = new TestRunner(testRoute3.convCoords, testRoute3.timesArr)
     this.testRunner.startTimer()
+    this.onLocation = this.onLocation.bind(this)
 	}
 
-  componentDidMount() {
-    this.startInterval=setInterval(() => {
-    // promisifiedGetCurrPos()//uncomment this (and comment this.testRunner below) if you want to take out test runner (and keep track of where the actual user is at)
-    this.testRunner.moveAndGetPos()//uncomment this (and comment promisifiedGetCurrPos above) if you want to implement test runner
-      .then(position=>{
-        let lng = position.coords.longitude
-        let lat = position.coords.latitude
-        let newPosition = {latitude: lat, longitude: lng}
 
-        let checkPoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
-        let dist=geolib.getDistance(checkPoint, newPosition);
+   componentWillMount() {
+      let phantomRacerCurrPos;
+      promisifiedGetCurrPos()//BackgroundGeolocation is still far superior to navigator.geolocation.getCurrentPosition, but the latter is still good to use for getting position at a specified time
+        .then((position) => {
+          // console.log('here')
+          let lng = position.coords.longitude
+          let lat = position.coords.latitude
+          let newPosition = {latitude: lat, longitude: lng}
 
-        this.setState({
-          currentPosition: newPosition
+          newPosition= this.testRunner.moveAndGetPos().coords
+          console.log('testrunner new position ', newPosition)
+
+          let checkpoint = this.props.selectedRoute.checkpointConvCoords[this.state.checkpointConvCoordsPointer]
+          let dist = geolib.getDistance(checkpoint, newPosition)
+          // console.log('DIST', dist)
+
+
+          if (dist < 1000 && this.state.checkpointConvCoordsPointer === 2){ //This will trigger the start button to show
+            this.setState({showStart: true})
+          }
+          return this.setState({//not actually sure if this will actually wait for setState to complete before adding the BackgroundGeolocation onlocation listener.. we can put in the setState callback function later, if this causes problems
+            currentPosition: newPosition
+          })
         })
-        
-        if(dist<25){
-          this.setState({showStart: true});
-        }
-        else {
-          this.setState({showStart: false});
-        }
+        .then(()=>{
+          // console.log('inside of location checker and this is the state', this.state)
+          BackgroundGeolocation.on('location', this.onLocation)
       })
-      .catch(err=>console.log(err))
-    }, 100);
+        .catch(err => console.log(err))
+    }
+
+  onLocation(locInp){
+    // console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
+    let lng = locInp.coords.longitude
+    let lat = locInp.coords.latitude
+    let newPosition = {latitude: lat, longitude: lng}
+     // axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBlN-sYTlKuxuCHeOgX0wvj_L-iOxaLvwM`)
+     // .then(res => {
+        // let snappedLoc = res.data.snappedPoints[0].location
+        // let newPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+
+        newPosition= this.testRunner.moveAndGetPos().coords //this is for testtt delete later
+        // console.log('testrunner newposition ', newPosition)
+
+        this.setState({ currentPosition: newPosition })
+
+        let checkpoint = this.props.selectedRoute.checkpointConvCoords[this.state.checkpointConvCoordsPointer]
+        let dist = geolib.getDistance(checkpoint, newPosition)
+        // console.log('DIST', dist)
+
+
+
+        if (dist < 25 && this.state.checkpointConvCoordsPointer === 0){ //This will trigger the start button to show
+          this.setState({showStart: true})
+        }
+
+        if(this.state.isRunning){
+
+
+
+       
+
+          let elapsedTime = Date.now() - this.state.timerStart
+
+          let newpersonalCoords = this.state.personalCoords.slice(0)
+          newpersonalCoords.push(newPosition)
+          let newtimeMarker = this.state.personalTimeMarker.slice(0)
+          newtimeMarker.push(elapsedTime)
+
+          this.setState({
+              timer: elapsedTime,
+              personalCoords: newpersonalCoords,
+              personalTimeMarker: newtimeMarker
+
+          })
+
+            if(dist < 25){
+              let newcheckpointTimeMarker= this.state.checkpointTimeMarker.slice(0);
+              newcheckpointTimeMarker.push(elapsedTime)
+
+              if(this.state.checkpointConvCoordsPointer === this.props.selectedRoute.checkpointConvCoords.length-1){
+                      this.setState({
+                        isRunning: false,
+                    })
+
+              
+                    let checkpointTimeMarker = newcheckpointTimeMarker
+                    let personalCoords = newpersonalCoords
+                    let personalTimeMarker = newtimeMarker
+                    let userId = this.props.user.id
+                    let startTime = this.state.timerStart
+                    let endTime = Date.now()//Not in setState because we need it right away
+                    let currentPosition = newPosition//Not in setState because we need it right away
+
+                    const { navigate } = this.props.navigation;
+                    navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, currentPosition, })
+              }
+              else{
+
+                let YOUREAHEAD='You are slightly ahead of the phantom racer!';
+                let YOURENECKANDNECK='You are neck and neck with phantom racer!';
+                let YOUREBEHIND='You are slightly behind the phantom racer... PICK UP THE PACE!';
+
+
+               let remainingDist = geolib.getPathLength(this.props.selectedRoute.checkpointConvCoords.slice(this.state.checkpointConvCoordsPointer))
+               let phantomRemainingDist = geolib.getPathLength(this.props.selectedRacer.routetimes[0].personalCoords.slice(this.state.phantomRacerPointer))
+
+               console.log('distances ', remainingDist, phantomRemainingDist )
+
+       //      // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
+       //      // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
+
+              if(remainingDist-phantomRemainingDist < -50 && remainingDist-phantomRemainingDist > -150){
+                if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
+                this.setState({saying: YOUREAHEAD});
+              }
+              else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -50 ){
+                if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
+                this.setState({saying: YOURENECKANDNECK});
+              }
+              else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
+                if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
+                this.setState({saying: YOUREBEHIND});
+              }
+
+                this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
+              }
+            }
+            //PHANTOM RACER
+
+
+        let phantomRacerPointer= this.state.phantomRacerPointer
+        let phantomRacerTimeMarker = this.props.selectedRacer.routetimes[0].personalTimeMarker
+        let phantomRacerCoords = this.props.selectedRacer.routetimes[0].personalCoords
+
+        while (this.state.timer >= phantomRacerTimeMarker[phantomRacerPointer]){
+          phantomRacerPointer++
+        }
+          // let phantomRacerCurrPos = phantomRacerCoords[phantomRacerPointer-1]
+          // console.log('phantomRacerPointer', phantomRacerPointer, this.state.phantomRacerPointer)
+          this.setState({phantomRacerPointer: phantomRacerPointer});
+
+        
+
+        }
+    // })
+    //  .catch(err => console.log(err))
   }
+
+
+  // componentDidMount() {
+
+  //   this.startInterval=setInterval(() => {
+  //   // promisifiedGetCurrPos()//uncomment this (and comment this.testRunner below) if you want to take out test runner (and keep track of where the actual user is at)
+  //   this.testRunner.moveAndGetPos()//uncomment this (and comment promisifiedGetCurrPos above) if you want to implement test runner
+  //     .then(position=>{
+  //       let lng = position.coords.longituderacer
+  //       let lat = position.coords.latitude
+  //       let newPosition = {latitude: lat, longitude: lng}
+
+  //       let checkpoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
+  //       let dist=geolib.getDistance(checkpoint, newPosition);
+
+  //       this.setState({
+  //         currentPosition: newPosition
+  //       })
+        
+  //       if(dist<25){
+  //         this.setState({showStart: true});
+  //       }
+  //       else {
+  //         this.setState({showStart: false});
+  //       }
+  //     })
+  //     .catch(err=>console.log(err))
+  //   }, 100);
+  // }
 
   componentWillUnmount(){
     clearInterval(this.startInterval)
@@ -101,129 +266,55 @@ class RunARoute extends Component {
 
   startStopButton() {
 
-      clearInterval(this.startInterval)
+      
     	if(this.state.isRunning){
-    		clearInterval(this.interval)//this represents stopping the interval when a person manually chooses to stop by clicking the stop button (end early)
+    		//this represents stopping the interval when a person manually chooses to stop by clicking the stop button (end early)
     		this.setState({
     			isRunning: false,
           timerEnd: Date.now()
     		})
     		return;
     	} else {
-        //THIS BLOCK OF CODE IS FOR CHECKING IF USER IS AT A CERTAIN CHECKPOINT!!!!
-        //-----------------------------------------------------------------------------
-        let lat = this.state.currentPosition.latitude
-        let lng = this.state.currentPosition.longitude
-        let firstRouteCoord = [{latitude: lat, longitude: lng}]
 
-	    	this.setState({
-	    		isRunning: true,
-	    		timerStart: Date.now(),
-    		})
-	    	this.interval = setInterval(() => {
-		    this.setState({
-		    		timer: Date.now() - this.state.timerStart
-		    	})
+        this.setState({
+          isRunning: true,
+          timerStart: Date.now()
+        })
 
-        // promisifiedGetCurrPos()//uncomment this (and comment this.testRunner.moveAndGetPos below) if you want to take out test runner (and keep track of where the actual user is at)
-        this.testRunner.moveAndGetPos()//uncomment this (and comment promisifiedGetCurrPos above) if you want to implement test runner
-          .then(position=>{
-            let lng = position.coords.longitude
-            let lat = position.coords.latitude
-            let newPosition = {latitude: lat, longitude: lng}
+      }
+    }
 
-            let checkPoint=this.props.selectedRoute.convCoords[this.state.selectedRoutePointer];
-            let dist=geolib.getDistance(checkPoint, newPosition);
-            // console.log('distance betwen checkpoint and current position: ', dist)
-            if(dist<25){
-              let timeMarker= this.state.timeMarker;
-              timeMarker.push(this.state.timer)
-              if(this.state.selectedRoutePointer===this.props.selectedRoute.convCoords.length-1){
-                      clearInterval(this.interval)//this represents stopping the interval when a person has completed the run route
-                      this.setState({
-                        isRunning: false,
-                    })
+   //      // THIS BLOCK OF CODE IS FOR UPDATING PHANTOM RACER !!!!
+   //      // -----------------------------------------------------------------------------
+   //      // let selectedRacer= this.props.selectedRacer;// uncomment this when can get racer from store
+   //      // sometimes phantom racer doesnt work if you click start too fast?  need to squash this bug
+   //      
 
-                    let convCoords = this.props.selectedRoute.convCoords;
-                    let userId = this.props.user.id;
-                    let timesArr = timeMarker;//Not in setState because we need it right away
-                    let startTime = this.state.timerStart;
-                    let endTime = Date.now();//Not in setState because we need it right away
-                    let currentPosition = newPosition;//Not in setState because we need it right away
-
-                    const { navigate } = this.props.navigation;
-                    navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
-              }
-              else{
-                this.setState({selectedRoutePointer: this.state.selectedRoutePointer+1, timeMarker})
-              }
-            }
-
-	    			this.setState({
-	    				currentPosition: newPosition
-	    			})
-          })
-          .catch(err=>console.error(err))
-
-        // THIS BLOCK OF CODE IS FOR UPDATING PHANTOM RACER !!!!
-        // -----------------------------------------------------------------------------
-        // let selectedRacer= this.props.selectedRacer;// uncomment this when can get racer from store
-        // sometimes phantom racer doesnt work if you click start too fast?  need to squash this bug
-        let selectedRoutePointer= this.state.selectedRoutePointer
-        let selectedRacer= this.props.selectedRacer
-        let racerCoordsPointer= this.state.racerCoordsPointer
-        let racerTimesArrPointer= this.state.racerTimesArrPointer
-        let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
-        let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
-
-        if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
-          this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
-        }
-
-        // console.log('phantomracer pointer: ', racerCoordsPointer, racerTimesArrPointer)
-        // console.log('phantomracer position: ', phantomRacerCurrPos)
-
-        let YOUREAHEAD='You are slightly ahead of the phantom racer!';
-        let YOURENECKANDNECK='You are neck and neck with phantom racer!';
-        let YOUREBEHIND='You are slightly behind the phantom racer... PICK UP THE PACE!';
-
-        // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
-        // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
-
-        if(selectedRoutePointer-racerCoordsPointer === 2 || selectedRoutePointer-racerCoordsPointer === 1 ){
-          if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
-          this.setState({saying: YOUREAHEAD});
-        }
-        else if((selectedRoutePointer)-racerCoordsPointer === 0 ){
-          if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
-          this.setState({saying: YOURENECKANDNECK});
-        }
-        else if(selectedRoutePointer-racerCoordsPointer === -2 || selectedRoutePointer-racerCoordsPointer === -1){
-          if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
-          this.setState({saying: YOUREBEHIND});
-        }
-            }, 100);
-    	}
-  	}
+   //    
+   //          }, 100);
+   //  	}
+  	// }
 
     viewRoute(){
-        let convCoords = this.props.selectedRoute.convCoords;
-        let userId = 1;
-        let timesArr = this.state.timeMarker;
+        let personalCoords = this.state.personalCoords;
+        let userId = this.state.user.id;
+        let personalTimeMarker = this.state.personalTimeMarker;
         let startTime = this.state.timerStart
         let endTime = this.state.timerEnd
         let currentPosition = this.state.currentPosition
+        let checkpointTimeMarker = this.state.checkpointTimeMarker
 
         const { navigate } = this.props.navigation;
-        navigate('ViewRoute', {convCoords, userId, timesArr, startTime, endTime, currentPosition})
+        navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, checkpointTimeMarker, startTime, endTime, currentPosition})
     }
 
   render() {
 
     const position = this.state.currentPosition
     const convCoords= this.props.selectedRoute.convCoords
-    const racerCoordsPointer= this.state.racerCoordsPointer
-    const phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
+    // console.log('this is the selectedRoute', this.props.selectedRoute)
+    const phantomRacerPointer= this.state.phantomRacerPointer
+    const phantomRacerCurrPos= this.props.selectedRacer.routetimes[0].personalCoords[phantomRacerPointer-1]
     // console.log('phantom racer pos ',phantomRacerCurrPos)
 
 
