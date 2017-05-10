@@ -68,6 +68,7 @@ class Run extends Component {
     const goToChooseYourOpponent = (evt) => {
       const routeID = ''+evt.nativeEvent.id
       this.props.fetchSelectedRoute(routeID)
+      console.log('this is the route id', routeID)
       navigate('ChooseYourOpponent')
     }
 

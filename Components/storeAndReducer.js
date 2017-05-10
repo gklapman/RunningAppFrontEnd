@@ -110,6 +110,7 @@ export const fetchSelectedRoute = selectedRouteId => {
     return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
     .then(eagerLoadedRoute => {
+      console.log('eager loaded route ', eagerLoadedRoute)
         eagerLoadedRoute.convCoords = eagerLoadedRoute.coords.map(coordPair=>{
           return {latitude:+coordPair[0], longitude:+coordPair[1]};
         })
