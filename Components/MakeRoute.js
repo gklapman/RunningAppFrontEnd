@@ -16,6 +16,7 @@ import {connect} from 'react-redux'
 import BackgroundGeolocation from "react-native-background-geolocation";
 //MISC MODULES
 import TimeFormatter from 'minutes-seconds-milliseconds'
+import axios from 'axios'
 
 //CUSTOM MODULES
 import styles from '../Styles'
@@ -44,26 +45,34 @@ class MakeRoute extends Component {
     console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
     let lng = locInp.coords.longitude
     let lat = locInp.coords.latitude
-    let newPosition = {latitude: lat, longitude: lng}
-    this.setState({ currentPosition: newPosition })
 
-    if(this.state.isRunning){
-      let elapsedTime= Date.now() - this.state.timerStart
-      this.setState({
-        timer: elapsedTime
+    axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBlN-sYTlKuxuCHeOgX0wvj_L-iOxaLvwM`)
+    // axios.get('https://roads.googleapis.com/v1/snapToRoads?path=41.860494,%20-87.617480&key=AIzaSyBlN-sYTlKuxuCHeOgX0wvj_L-iOxaLvwM')
+      .then(res=>{
+        console.log(res.data.snappedPoints[0].location)
+        let snappedLoc= res.data.snappedPoints[0].location
+        let newPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+        this.setState({ currentPosition: newPosition })
+
+        if(this.state.isRunning){
+          let elapsedTime= Date.now() - this.state.timerStart
+          this.setState({
+            timer: elapsedTime
+          })
+
+          let newrouteCoords = this.state.routeCoords.slice(0)//not sure if this is necessary anymore... investigate when we have time
+          newrouteCoords.push(newPosition)
+
+          let timeMarkerArr = this.state.timeMarker
+          timeMarkerArr.push(elapsedTime)
+
+          this.setState({
+            routeCoords: newrouteCoords,
+            timeMarker: timeMarkerArr
+          })
+        }
       })
-
-      let newrouteCoords = this.state.routeCoords.slice(0)
-      newrouteCoords.push(newPosition)
-
-      let timeMarkerArr = this.state.timeMarker
-      timeMarkerArr.push(elapsedTime)
-
-      this.setState({
-        routeCoords: newrouteCoords,
-        timeMarker: timeMarkerArr
-      })
-    }
+      .catch(err=>console.log(err))
   }
 
   componentWillMount() {
@@ -83,8 +92,8 @@ class MakeRoute extends Component {
   }
 
   componentWillUnmount(){
-    BackgroundGeolocation.un('location', this.onLocation)//needed to remove listener
-    this.setState({//this is need to set things to default.
+    BackgroundGeolocation.un('location', this.onLocation)//needed to remove listener when component unmounts
+    this.setState({//this is needed to set things back to default.
       currentPosition: {latitude: 0, longitude: 0} ,
       isRunning: false,
       timer: 0,
@@ -97,9 +106,9 @@ class MakeRoute extends Component {
 
   startStopButton() {
     //when we have time, we can reimplement a timer that can run in realtime when the app is in the foreground (PURELY for visual effect... not for determining whether to push points or anything)
+    //essentially we'll have part of our old code (before background geolocation implementation) still running when the app is in the foreground
     	if(this.state.isRunning){
-    		// clearInterval(this.interval)
-    		// clearInterval(this.recordInterval)
+    		// clearInterval(this.interval)   //leavning this in case we do decide to do the above.. just as reminder
     		this.setState({
     			isRunning: false,
           timerEnd: Date.now()

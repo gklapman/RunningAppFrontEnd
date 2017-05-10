@@ -45,10 +45,10 @@ class Run extends Component {
       // Activity Recognition
       stopTimeout: 1,
       // Application config
-      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+      debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. //DISABLE FOR PRESENTATION??
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: true,   // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+      stopOnTerminate: true,   // <-- Allow the background-service to continue tracking when user closes the app. //KEEP THIS ON TRUE... DO NOT FORGET ABOUT THIS
+      startOnBoot: true,        // <-- Auto start tracking when device is powered-up. //WE MAY NEED TO HAVE THIS TURNED OFF UNTIL THIS RUN COMPONENT MOUNTS (otherwise a lot of events emitted with no listeners, causing some yellow warnings)
       // HTTP / SQLite config
       url: 'http://yourserver.com/locations',
       batchSync: false,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
