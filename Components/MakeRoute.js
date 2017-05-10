@@ -36,7 +36,10 @@ class MakeRoute extends Component {
      timerEnd: 0,
      personalCoords: [],
      personalTimeMarker: [],
-     checkpointTimeMarker: []
+     checkpointTimeMarker: [],
+
+     snappedPosCoords: [],//PURELY for testing (and maybe presentation?) purposes...
+     unsnappedPosCoords: [],//PURELY for testing (and maybe presentation?) purposes...
    }
     this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
@@ -106,11 +109,21 @@ class MakeRoute extends Component {
     let lat = locInp.coords.latitude
     let rawPosition= {latitude: lat, longitude: lng}
 
-     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyChVDhT_LyFAxYTLkoUOxc-0gr37tfuSAM`)
+    //FOR TESTING (and maybe presentation)?
+    let unsnappedPosCoords = this.state.unsnappedPosCoords.slice(0)
+    unsnappedPosCoords.push(rawPosition)
+    this.setState({unsnappedPosCoords})
+
+     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyAxTRVcG76wG9oMYdRVNPCIcfXKBlljBVc`)
        .then(res => {
           // console.log('in snappedLoc block')
           let snappedLoc= res.data.snappedPoints[0].location
           let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+
+          let snappedPosCoords = this.state.snappedPosCoords.slice(0)
+          snappedPosCoords.push(snappedPosition)
+          this.setState({snappedPosCoords})
+
           return snappedPosition
         })
        .catch(err => {
@@ -168,6 +181,9 @@ class MakeRoute extends Component {
     const position = this.state.currentPosition;
     const routerDisplayCoords = this.state.personalCoords.slice(0)
 
+    const unsnappedPosCoords = this.state.unsnappedPosCoords
+    const snappedPosCoords = this.state.snappedPosCoords
+
 
     // console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
@@ -214,7 +230,14 @@ class MakeRoute extends Component {
          onSelect={goToRaceView}
        /> */}
 
-      <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
+       {/* BELOW IS FOR EITHER SNAPPED OR UNSNAPPED (depending on if google api is working)*/}
+      {/* <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} /> */}
+
+      {/* BELOW IS FOR BOTH SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers))*/}
+      <MapView.Polyline coordinates={snappedPosCoords} strokeColor='green' strokeWidth= {10} />
+      {unsnappedPosCoords.map((coord,idx)=>{
+        return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
+      })}
 
       </MapView>
        </View>
@@ -223,14 +246,6 @@ class MakeRoute extends Component {
     )
   }
 }
-
-
-
-
-
-
-
-
 
 const mapDispatchToProps = null
 
