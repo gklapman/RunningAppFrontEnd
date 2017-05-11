@@ -120,7 +120,7 @@ class RunARoute extends Component {
     let rawPosition = {latitude: lat, longitude: lng}
 
 
-    axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyChVDhT_LyFAxYTLkoUOxc-0gr37tfuSAM`)
+    axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
       .then(res => {
          // console.log('in snappedLoc block')
          let snappedLoc= res.data.snappedPoints[0].location

@@ -114,7 +114,7 @@ class MakeRoute extends Component {
     unsnappedPosCoords.push(rawPosition)
     this.setState({unsnappedPosCoords})
 
-     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyAxTRVcG76wG9oMYdRVNPCIcfXKBlljBVc`)
+     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
        .then(res => {
           // console.log('in snappedLoc block')
           let snappedLoc= res.data.snappedPoints[0].location
