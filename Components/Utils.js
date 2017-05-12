@@ -84,3 +84,57 @@ export const testRoute3=
 // timesArr:[0,11000,23000,35000,45000,61000]
 timesArr:[0,2000,6150,7000,7200,13000,20000,20000,24000,24500,26000,28000,32000,33000,34000,36000,38000,40000,42000,44000,44100,44200] //faster
 }
+
+
+export const numToRGBConverter = (num=0, range, minRGB = 0, maxRGB = 255, convToHex = false) => {
+  var diffRGB = maxRGB - minRGB
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  var convRange = range/2;
+  var convNum = num - range/2;
+  if (convNum >= 0){
+    if (convNum > convRange/2){
+      r = maxRGB
+      g = diffRGB * ((convRange - convNum)/ convRange) + minRGB
+    } else {
+      r = diffRGB * (convNum / convRange) + minRGB
+      g = maxRGB
+    }
+  } else {
+    var nRange = (0 - convRange) / 2
+    var posNum = 0 - convNum
+    if (convNum < nRange){
+      b = maxRGB
+      g = diffRGB * ((convRange - posNum) /convRange) + minRGB
+    } else {
+      b = diffRGB * (posNum / convRange) + minRGB
+      g = maxRGB
+    }
+  }
+  var output = ''
+  if (convToHex){
+    output = [r, g, b].map(val => {
+      var hexVals = {
+        11: 'A',
+        12: 'B',
+        13: 'C',
+        14: 'D',
+        15: 'F',
+      }
+      if (val > 9){
+        return hexVals[val]
+      } else {
+        return Math.floor(val).toString()
+      }
+    })
+    return '#'+output.join('')
+    } else {
+    output = [r,g,b].map(val => {
+      return Math.floor(val)
+    })
+    console.log("NUM & OUTPUT", num, output)
+
+    return 'rgb(' + output.join(",") + ')'
+  }
+}

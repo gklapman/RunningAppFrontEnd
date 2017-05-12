@@ -61,6 +61,7 @@ class MakeRoute extends Component {
           })
         })
         .then(()=>{
+          console.log('attaching geolocation listener')
           BackgroundGeolocation.on('location', this.onLocation)
         })
     }
