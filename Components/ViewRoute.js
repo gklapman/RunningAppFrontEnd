@@ -20,15 +20,33 @@ import geolib from 'geolib'
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute, fetchSelectedRacer} from './storeAndReducer'
+import {runDataCoords, runDataTimes} from './RunData'
+import {numToRGBConverter} from './Utils'
 
 
 class ViewRoute extends Component {
 	constructor(props) {
 		super(props);
+    this.state ={
+    view: 'lineHeatmap'
+  }
 
     this.submitRoute = this.submitRoute.bind(this)
+    this.changeViewButton = this.changeViewButton.bind(this)
 
 	}
+
+  changeViewButton(){
+  if (this.state.view === 'lineHeatmap'){
+    return this.setState({
+      view: 'markerTimes'
+    })
+  } else if (this.state.view === 'markerTimes'){
+    return this.setState({
+      view: 'lineHeatmap'
+    })
+  }
+}
 
   componentDidMount() {
     console.log('givenprops ', this.props.navigation.state.params )
@@ -65,6 +83,7 @@ class ViewRoute extends Component {
 
 
     let givenprops = this.props.navigation.state.params
+    let personalCoords = givenprops.personalCoords.slice(0)
     // console.log('this is given props', givenprops)
     let startPosition = givenprops.personalCoords[0] //This is setting the view of map to the start of the route
     // console.log('givenprops is ', givenprops)
@@ -76,6 +95,23 @@ class ViewRoute extends Component {
 
     //console.log('this is the total distance', totalDistance)
 
+    // I THREW THESE IN TO POSSIBLY HELP SET THE BOUNDS OF THE MAP BASED ON THE ROUTE'S COORDINATES, SO THE ENTIRE ROUTE WOULD BE IN VIEW BY DEFAULT
+    let nBound = startPosition.latitude
+    let sBound = startPosition.latitude
+    let eBound = startPosition.longitude
+    let wBound = startPosition.longitude
+
+    console.log("GIVEN PROPS", givenprops)
+
+    let routeCoordsArr = givenprops.personalCoords.map((coords, idx) => { //NEED TO FEED THE ACUTAL COORDS THROUGH THIS MAP LATER ON
+      nBound = Math.max(nBound, coords.latitude)
+      sBound = Math.min(sBound, coords.latitude)
+      eBound = Math.min(eBound, coords.longitude)
+      wBound = Math.max(wBound, coords.longitude)
+      return {...coords, time: givenprops.personalTimeMarker[idx]}
+    })
+
+
     // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
     // let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
     // let routeCoordsArr = this.state.selectedRoute.convCoords // do we even need this?
@@ -86,9 +122,26 @@ class ViewRoute extends Component {
       <View>
          <View style={styles.mapcontainer}>
             <View style={styles.finalTime}>
-                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>
-          </View>
+                    {/* <Text>Final Time: {TimeFormatter(finalTime)}</Text> */}
+                  </View>
+            { ////////// I NEED TO FIX THIS- THIS NEW BUTTON IS COVERING UP THE OLD ONE
+              this.state.view === 'lineHeatmap' ?
+                <View style={styles.viewRoute}>
+                      <TouchableOpacity onPress={this.changeViewButton}>
+                        <Text>View Speed</Text>
+                      </TouchableOpacity>
+                  </View> :
+                  <View style={styles.viewRoute}>
+                      <TouchableOpacity onPress={this.changeViewButton}>
+                        <Text>View Heatmap</Text>
+                      </TouchableOpacity>
+                  </View>
+            }
+
+
+
            <View style={styles.finalDistance}>
+                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>
                     <Text>Final Distance: {totalDistance} Miles</Text>
           </View>
 
@@ -96,7 +149,65 @@ class ViewRoute extends Component {
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005}}
             style={styles.map}>
 
-            <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {4} />
+            { this.state.view === 'markerTimes' &&
+              routeCoordsArr.map((coords, idx) =>{
+                let speed = 0
+
+
+                idx > 0 ? speed = geolib.getSpeed(routeCoordsArr[idx-1], coords, {unit: 'mph'}) : speed = 0
+                console.log("SPEED", speed)
+                let speedColor = numToRGBConverter(speed,22, 100, 220, false)
+                return (
+                  <MapView.Marker
+                    key={idx}
+                    coordinate={coords}
+                    pinColor={speedColor}
+                    title={''+speed + ' mph'}
+                    style={{height: 10, width: 10, backgroundColor: speedColor, borderRadius: 10}}
+                  >
+                  </MapView.Marker>
+                )
+              })
+            }
+            {
+              (this.state.view === 'lineHeatmap' &&
+              ////////SWITCH TO THIS FOR POLYLINE
+
+              personalCoords.length) && personalCoords.map((coords, idx) => {
+                let speed = 0
+                speed = (idx > 0) ? geolib.getSpeed(routeCoordsArr[idx-1], routeCoordsArr[idx], {unit: 'mph'}) : 0
+                console.log('routecoordsarr ',routeCoordsArr)
+                console.log("SPEED", speed)
+                let speedColor = numToRGBConverter(speed,22, 5, 13, true)
+                // console.log("SPEEDCOLOR", speedColor)
+
+                let firstCoord = personalCoords[idx - 1] || coords
+                console.log("Firstcoords, ", firstCoord, 'coords ',coords)
+
+                return (
+                  <View>
+
+                  <MapView.Polyline
+                    key={idx}
+                    // coordinates={[runDataCoords[idx-1], coords]}
+                    coordinates={[firstCoord, coords]}
+                    strokeColor={speedColor}
+                    // strokeColor={'red'}
+                    strokeWidth={10}
+                    // title={''+speed}
+                  />
+                  </View>
+                )
+              })
+            }
+
+
+
+
+
+
+
+            {/* <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {4} /> */}
 
           </MapView>
           {!oldRoute &&
@@ -116,6 +227,11 @@ class ViewRoute extends Component {
     )
   }
 }
+
+////Couldnt get this to display the speed in a callout bubble
+// const CustomMarker = ({color}) => (
+//   <View style={{height: 10, width: 10, backgroundColor: color, borderRadius: 10}}></View>
+// )
 
 const mapDispatchToProps = {addNewRoute, fetchSelectedRacer}
 
