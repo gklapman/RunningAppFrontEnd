@@ -176,7 +176,6 @@ class MakeRoute extends Component {
               checkpointTimeMarker: newcheckpointTimeMarker
             })
           }
-
        })
       .catch(err=>console.error(err))
   }
@@ -190,7 +189,6 @@ class MakeRoute extends Component {
       let currentPosition = this.state.currentPosition
       let checkpointTimeMarker = this.state.checkpointTimeMarker
       let heartRateInfo = this.state.heartRateInfo
-
 
       const { navigate } = this.props.navigation;
       navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, startTime, endTime, currentPosition, checkpointTimeMarker, heartRateInfo})

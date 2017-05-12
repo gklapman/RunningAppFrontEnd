@@ -110,7 +110,7 @@ export const fetchUserLocation = location => {
 }
 
 
-export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId) => {
+export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId) => {
   return dispatch => {
     return axios.post(`${localHostorHeroku}/api/runroutes`, {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId})
 

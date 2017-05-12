@@ -41,14 +41,13 @@ class ViewRoute extends Component {
 
   submitRoute(){
     let {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId } = this.props.navigation.state.params
+    console.log('startTime is ', startTime)
     this.props.addNewRoute(checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId)
     const { navigate } = this.props.navigation;
     navigate('OurApp')
   }
 
-
   // replayRoute(){
-
   //     let selectedRoutePointer= this.state.selectedRoutePointer
   //     let selectedRacer= this.props.selectedRacer
   //     let racerCoordsPointer= this.state.racerCoordsPointer
@@ -59,7 +58,6 @@ class ViewRoute extends Component {
   //     if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
   //       this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
   //     }
-
   // }
 
   render() {
