@@ -87,9 +87,12 @@ class Stats extends Component {
         let userId = this.props.user.id
         let oldRoute = true
         // let heartRateInfo;
+        console.log('this props ', this.props, heartrateInfo)
         if (this.props.fitbitAccessToken && !heartrateInfo){
+          console.log('about to fetch')
         return this.props.fetchFitBitHeartrateInfo(startTime, endTime, routetimeId)
         .then((heartRateInfoReceived) => {
+          console.log('and we got this info ', heartRateInfoReceived)
           heartrateInfo = heartRateInfoReceived
           this.props.insertHeartRateInfo(routetimeId, heartrateInfo)
           const { navigate } = this.props.navigation
@@ -107,16 +110,16 @@ class Stats extends Component {
   }
 
   componentWillMount() {
-    console.log('this is')
+    
     let userId = this.props.user.id
-    console.log('this is front end fetch stats', userId)
+    // console.log('this is front end fetch stats', userId)
     this.props.fetchUserStats(userId)
 
   }
 
 
   render() {
-    console.log('user info', this.props.userStats)
+    // console.log('user info', this.props.userStats)
     let userStats = this.props.userStats
 
     return (
