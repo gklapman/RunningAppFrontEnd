@@ -26,7 +26,7 @@ function OAuth(client_id, cb) {
  // Listen to redirection
 Linking.addEventListener('url', handleUrl);
 function handleUrl(event){
-  console.log(event.url);
+  // console.log(event.url);
   Linking.removeEventListener('url', handleUrl);
   const [, query_string] = event.url.match(/\#(.*)/);
   // console.log(query_string);
@@ -37,7 +37,6 @@ function handleUrl(event){
   store.dispatch(setFitBitToken(query.access_token))
   cb(query.access_token);
 }
-
 
  // Call OAuth
 const oauthurl = 'https://www.fitbit.com/oauth2/authorize?'+
@@ -63,19 +62,17 @@ fetch(
       'Authorization': `Bearer ${access_token}`
     },
     //body: `root=auto&path=${Math.random()}`
-
-  }
-).then((res) => {
-  return res.json()
-}).then((res) => {
+  })
+  .then((res) => {
+    return res.json()
+  })
+  .then((res) => {
   console.log(`res: ${JSON.stringify(res)}`);
-}).catch((err) => {
+  })
+  .catch((err) => {
   console.error('Error: ', err);
-});
+  })
 }
-
-
-
 
 class Stats extends Component {
   constructor(props) {
@@ -95,7 +92,7 @@ class Stats extends Component {
         .then((heartRateInfoReceived) => {
           heartrateInfo = heartRateInfoReceived
           this.props.insertHeartRateInfo(routetimeId, heartrateInfo)
-          const { navigate } = this.props.navigation;
+          const { navigate } = this.props.navigation
           navigate('ViewRoute', {personalCoords, personalTimeMarker, userId, startTime, endTime, oldRoute, phantomRacerRoutetimeId, heartrateInfo})
         })
         } else {
@@ -107,12 +104,11 @@ class Stats extends Component {
 
   connectToFitBit(){
     OAuth(config.client_id, getData);
-
   }
 
   componentWillMount() {
     console.log('this is')
-    let userId = this.props.user.id 
+    let userId = this.props.user.id
     console.log('this is front end fetch stats', userId)
     this.props.fetchUserStats(userId)
 
@@ -127,23 +123,23 @@ class Stats extends Component {
       <View>
         <View style={styles.userHeader}>
           <Text style={styles.userName}>{userStats.username}</Text>
-          <Text style={styles.userCity}>{userStats.city}</Text> 
-        </View> 
-        <ScrollView style={{height: 200}}> 
+          <Text style={styles.userCity}>{userStats.city}</Text>
+        </View>
+        <ScrollView style={{height: 200}}>
         {userStats.routes && userStats.routes.map(route => {
           return (<View style={styles.userStats}key={route.id}>
                       <Text> Route Id: {route.id} </Text>
                       <Text>Time(s): </Text>{route.routetimes.map(routetime => {
                         let id = {routetimeId: routetime.id, personalCoords: routetime.personalCoords, personalTimeMarker: routetime.personalTimeMarker, startTime: routetime.startTime, endTime: routetime.endTime, phantomRacerRoutetimeId: routetime.routetimeId, heartrateInfo: routetime.heartrateInfo}
-                        return (<TouchableOpacity 
-                          style={{margin: 2}} 
-                          onPress={this.viewRoute.bind(this, id)} 
+                        return (<TouchableOpacity
+                          style={{margin: 2}}
+                          onPress={this.viewRoute.bind(this, id)}
                           key={routetime.id}>
                           <Text>{routetime.runtime}</Text>
                           </TouchableOpacity>)
                       })}
                       <Text>Total Dist: {route.totalDist}</Text>
-                   
+
                   </View>)
         }) }
         </ScrollView>
