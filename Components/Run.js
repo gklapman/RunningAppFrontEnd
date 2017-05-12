@@ -19,8 +19,6 @@ import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
 
-
-
 class Run extends Component {
   constructor(){
     super();
@@ -137,7 +135,6 @@ class Run extends Component {
     )
   }
 }
-
 
 const mapDispatchToProps = {fetchNearbyRoutes, fetchSelectedRoute}
 
