@@ -20,7 +20,7 @@ import axios from 'axios'
 
 //CUSTOM MODULES
 import styles from '../Styles'
-import {addNewRoute} from './storeAndReducer'
+import {addNewRoute, fetchFitBitHeartrateInfo} from './storeAndReducer'
 import {promisifiedGetCurrPos} from './Utils'
 import {accessKey, snapToRoad} from '../config'
 
@@ -36,7 +36,8 @@ class MakeRoute extends Component {
      timerEnd: 0,
      personalCoords: [],
      personalTimeMarker: [],
-     checkpointTimeMarker: []
+     checkpointTimeMarker: [], 
+     heartRateInfo: {},
    }
     this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
@@ -74,13 +75,14 @@ class MakeRoute extends Component {
   }
 
   startStopButton(){
-    //when we have time, we can reimplement a timer that can run in realtime when the app is in the foreground (PURELY for visual effect... not for determining whether to push points or anything)
      if(this.state.isRunning){
+        let heartRateInfo;
         clearInterval(this.timerInterval)
-       // clearInterval(this.recordInterval)
        this.setState({
          isRunning: false,
-          timerEnd: Date.now()
+          timerEnd: Date.now(),
+          heartRateInfo: heartRateInfo
+
        })
        return;
      } else {
@@ -156,9 +158,11 @@ class MakeRoute extends Component {
       let endTime = this.state.timerEnd
       let currentPosition = this.state.currentPosition
       let checkpointTimeMarker = this.state.checkpointTimeMarker
+      let heartRateInfo = this.state.heartRateInfo
+
 
       const { navigate } = this.props.navigation;
-      navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, startTime, endTime, currentPosition, checkpointTimeMarker})
+      navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, startTime, endTime, currentPosition, checkpointTimeMarker, heartRateInfo})
 
   }
 
@@ -232,11 +236,12 @@ class MakeRoute extends Component {
 
 
 
-const mapDispatchToProps = null
+const mapDispatchToProps = {fetchFitBitHeartrateInfo}
 
 function mapStateToProps(state){
   return {
     user: state.user,
+    fitbitAccessToken: state.fitbitAccessToken
   }
 }
 

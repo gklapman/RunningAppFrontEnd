@@ -175,8 +175,8 @@ class RunARoute extends Component {
                         isRunning: false,
                     })
 
-                    let oldRoute = true
-                    let phantomRacerRouteTimeId = this.props.selectedRacer.id //should this be the routetimeID of the opponent?
+                    let routeId = this.selectedRoute.id
+                    let phantomRacerRouteTimeId = this.props.selectedRacer.routetimes[0].id //should this be the routetimeID of the opponent?
                     let checkpointTimeMarker = newcheckpointTimeMarker
                     let personalCoords = newpersonalCoords
                     let personalTimeMarker = newtimeMarker
@@ -186,7 +186,7 @@ class RunARoute extends Component {
                     // let currentPosition = position //Not going to pass in the new position because we will view the route based on the start position
 
                     const { navigate } = this.props.navigation;
-                    navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, oldRoute, phantomRacerRouteTimeId})
+                    navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId})
               }
               else{
 
@@ -273,10 +273,11 @@ class RunARoute extends Component {
         let endTime = this.state.timerEnd
         let currentPosition = this.state.currentPosition
         let checkpointTimeMarker = this.state.checkpointTimeMarker
-        let phantomRacerRouteTimeId = this.props.selectedRacer.id
+        let phantomRacerRouteTimeId = this.props.selectedRacer.routetimes[0].id
+        let routeId = this.selectedRoute.id
 
         const { navigate } = this.props.navigation;
-        navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, checkpointTimeMarker, startTime, endTime, phantomRacerRouteTimeId })
+        navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, checkpointTimeMarker, startTime, endTime, phantomRacerRouteTimeId, routeId })
     }
 
   render() {
@@ -287,12 +288,12 @@ class RunARoute extends Component {
 
     const checkpointConvCoords= this.props.selectedRoute.checkpointConvCoords
     // A USER DOES NOT HAVE TO MATCH OFFICIAL COORDINATES TO FINISH THE RACE... ONLY MEET THE CHECKPOINTS
-    console.log('checkpointConvCoords ',checkpointConvCoords)
+    // console.log('checkpointConvCoords ',checkpointConvCoords)
     // console.log('this is the selectedRoute', this.props.selectedRoute)
     const phantomRacerPointer= this.state.phantomRacerPointer
     const phantomRacerCurrPos= this.props.selectedRacer.routetimes[0].personalCoords[phantomRacerPointer-1]
     // console.log('phantom racer pos ',phantomRacerCurrPos)
-    // console.log('selectedRacer', this.props.selectedRacer)
+    console.log('selectedRacer', this.props.selectedRacer)
 
     return (
       <View>
