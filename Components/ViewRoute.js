@@ -34,7 +34,6 @@ class ViewRoute extends Component {
     console.log('givenprops ', this.props.navigation.state.params )
     let phantomRacerRouteTimeId = this.props.navigation.state.params.phantomRacerRouteTimeId
     if (phantomRacerRouteTimeId){
-      // console.log('opppooonnnneeennnt')
       this.props.fetchSelectedRacer(phantomRacerRouteTimeId)
     }
   }
@@ -65,7 +64,7 @@ class ViewRoute extends Component {
 
   render() {
 
-    
+
     let givenprops = this.props.navigation.state.params
     // console.log('this is given props', givenprops)
     let startPosition = givenprops.personalCoords[0] //This is setting the view of map to the start of the route
@@ -124,7 +123,7 @@ const mapDispatchToProps = {addNewRoute, fetchSelectedRacer}
 function mapStateToProps(state){
   return {
     user: state.user,
-    selectedRacer: state.selectedRacer, 
+    selectedRacer: state.selectedRacer,
     selectedRoute: state.selectedRoute
   }
 }

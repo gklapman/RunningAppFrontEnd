@@ -90,7 +90,7 @@ class RunARoute extends Component {
           let lat = position.coords.latitude
           position = {latitude: lat, longitude: lng}
 
-          position= this.testRunner.moveAndGetPos().coords//for testrunner.. get rid of this if it you dont need it
+          // position= this.testRunner.moveAndGetPos().coords//for testrunner.. get rid of this if it you dont need it
 
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
@@ -118,21 +118,27 @@ class RunARoute extends Component {
     let lng = locInp.coords.longitude
     let lat = locInp.coords.latitude
     let rawPosition = {latitude: lat, longitude: lng}
+    let rawPositionProm=Promise.resolve(rawPosition)
 
 
-    axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
-      .then(res => {
-         // console.log('in snappedLoc block')
-         let snappedLoc= res.data.snappedPoints[0].location
-         let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
-         return snappedPosition
-       })
-      .catch(err => {
-        if(err.message.includes('code 429') || err.message.includes('Network Error')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
-        else {throw err.message}
-      })
+    // let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
+    //   .then(res => {
+    //      // console.log('in snappedLoc block')
+    //      let snappedLoc= res.data.snappedPoints[0].location
+    //      let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+    //      return snappedPosition
+    //    })
+    //   .catch(err => {
+    //     if(err.message.includes('code 429') || err.message.includes('Network Error')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
+    //     else {throw err.message}
+    //   })
+
+
+
+    // snapProm
+    rawPositionProm
       .then(position=>{
-        position= this.testRunner.moveAndGetPos().coords //this is for testtt delete later
+        // position= this.testRunner.moveAndGetPos().coords //this is for testtt delete later
         // console.log('testrunner newposition ', position)
         this.setState({ currentPosition: position })
 
@@ -146,9 +152,12 @@ class RunARoute extends Component {
         // -----------------------------------------------------------------------------
         // console.log('isrunning ', this.state.isRunning, 'convcoordspoiter ', this.state.checkpointConvCoordsPointer)
         if(!this.state.isRunning && this.state.checkpointConvCoordsPointer === 1){
+          // console.log('initial checkpoint pointer at ', this.props.selectedRoute.checkpointConvCoords[0])
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
+          // console.log("dist ", dist)
           if (dist < 50 ){
+            // console.log('dist less than 50?')
             this.setState({showStart: true})
           }
           else if(dist >= 50){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
@@ -187,7 +196,6 @@ class RunARoute extends Component {
                         isRunning: false,
                     })
 
-                    let oldRoute = true
                     let phantomRacerRouteTimeId = this.props.selectedRacer.id //should this be the routetimeID of the opponent?
                     let checkpointTimeMarker = newcheckpointTimeMarker
                     let personalCoords = newpersonalCoords
@@ -199,7 +207,7 @@ class RunARoute extends Component {
 
                     const { navigate } = this.props.navigation;
                     BackgroundGeolocation.un('location', this.onLocation)//not sure why, but navigating to another component unmounts it
-                    navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, oldRoute, phantomRacerRouteTimeId})
+                    navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId})
               }
               else{
 
@@ -215,8 +223,8 @@ class RunARoute extends Component {
 
                 // console.log('distances ', remainingDist, phantomRemainingDist )
 
-       //      // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
-       //      // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
+               // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
+               // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
 
               if(remainingDist-phantomRemainingDist < -50 && remainingDist-phantomRemainingDist > -150){
                 if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
@@ -250,6 +258,7 @@ class RunARoute extends Component {
         }
       })
       .catch(err => console.log(err))
+
   }
 
   componentWillUnmount(){
@@ -333,7 +342,8 @@ class RunARoute extends Component {
 
       		</View>
        	 	<MapView
-       	 		region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .05, longitudeDelta: .05}}
+            region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .005, longitudeDelta: .005}}
+          // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
 			    style={styles.map}>
 
             { phantomRacerCurrPos && <MapView.Marker
@@ -343,8 +353,9 @@ class RunARoute extends Component {
               identifier='3'
             />}
 
-            {checkpointConvCoords.map(checkPoint=>{
-              return (<MapView.Marker coordinate={checkPoint} pinColor='black' title='checkpoint' />)
+            {checkpointConvCoords.map((checkPoint,idx)=>{
+              let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
+              return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint' />)
             })
             }
 
