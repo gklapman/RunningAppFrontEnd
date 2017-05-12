@@ -28,8 +28,8 @@ const SET_FITBIT_TOKEN = "SET_FITBIT_TOKEN"
 
 ////CONFIG                          //CHANGE THIS TO MAKE ALL YOUR REQUESTS GO TO EITHER LOCALHOST OR THE DEPLOYED HEROKU SITE
 const localHostorHeroku=''
-localHostorHeroku= localHost
-// localHostorHeroku= herokuUrl
+// localHostorHeroku= localHost
+localHostorHeroku= herokuUrl
 
 
 ////ACTION CREATORS
@@ -281,7 +281,7 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
         let millisecondTime = fullDateToConvert.valueOf()
         // console.log('millis ', millisecondTime)
         let timeValResult  = [millisecondTime - (Number(timeStart)), timeValPair.value]
-        // if (timeValResult[0] > 0 && timeValResult[0] < (timeEnd - timeStart)){ //this is taking care of the extra data we receive for the first and last minute of their route because FitBit will only deliver the whole minute 
+        // if (timeValResult[0] > 0 && timeValResult[0] < (timeEnd - timeStart)){ //this is taking care of the extra data we receive for the first and last minute of their route because FitBit will only deliver the whole minute
           return timeValResult
         // }
       })
