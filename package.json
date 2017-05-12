@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "mocha ./tests --recursive --watch --compilers js:babel-register"
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "chai": "^3.5.0",
     "cocoa-lumberjack": "^3.0.3",
     "geolib": "^2.0.22",
     "minutes-seconds-milliseconds": "^1.0.3",
