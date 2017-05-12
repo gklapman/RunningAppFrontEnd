@@ -9,6 +9,9 @@ import logger from 'redux-logger' ////from example
 import axios from 'axios';
 import {herokuUrl, localHost} from '../config.js'
 
+//MISC
+import TimeFormatter from 'minutes-seconds-milliseconds'
+
 
 
 /////CONSTANTS
@@ -18,6 +21,7 @@ const SET_NEARBY_ROUTES = 'SET_NEARBY_ROUTES'
 const SET_SELECTED_ROUTE = 'SET_SELECTED_ROUTE'
 const SET_SELECTED_RACER = 'SET_SELECTED_RACER'
 const SET_USER_STATS = "SET_USER_STATS"
+const SET_FITBIT_TOKEN = "SET_FITBIT_TOKEN"
 
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
@@ -74,7 +78,17 @@ export const setUserStats = function(statsData){
 }
 
 
+export const setFitBitToken = function(access_token){
+  // console.log('this is being invoked with this token ', access_token)
+  return {
+    type: SET_FITBIT_TOKEN,
+    fitbitAccessToken: access_token
+  }
+}
+
 ////DISPATCHERS
+
+
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
@@ -98,7 +112,8 @@ export const fetchUserLocation = location => {
 
 export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId) => {
   return dispatch => {
-    return axios.post(`${localHostorHeroku}/api/runroutes`, {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId})
+    return axios.post(`${localHostorHeroku}/api/runroutes`, {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId})
+
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -176,7 +191,6 @@ export const fetchUserStats = (userId) => {
   return dispatch => {
     return axios.get(`${localHostorHeroku}/api/users/${userId}`)
     .then(res => {
-      // console.log('this is the res', res.data)
       return res.data
     })
     .then(user => {
@@ -197,7 +211,6 @@ export const fetchUserStats = (userId) => {
       return user
     })
     .then(userStatsInfo => {
-      console.log('this is the user info', userStatsInfo)
       return dispatch(setUserStats(userStatsInfo))
     })
     .catch(err => console.log(err))
@@ -205,6 +218,86 @@ export const fetchUserStats = (userId) => {
 }
 
 
+export const fetchFitBitInfo = () => {
+  return (dispatch, getState) => {
+  let storeState = getState()
+    let access_token = storeState.fitbitAccessToken
+    return axios({
+        method: 'GET',
+        url: 'https://api.fitbit.com/1/user/-/profile.json',
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+
+      })
+    .then((res) => {
+      console.log('this is the res', res)
+      return res.data
+    })
+    .then((userInfo) => {
+      console.log('basic fitbit info')
+    })
+    .catch((err) => {
+      console.error('Error: ', err);
+    });
+    }
+}
+
+export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
+  return (dispatch, getState) => {
+  let storeState = getState()
+  let dateAndTime = new Date(+timeStart)
+  // console.log('this is the timer start and end', timeStart, timeEnd)
+  let timeFormattedStart = new Date(+timeStart).toTimeString().slice(0,5)
+  let timeFormattedEnd = new Date(+timeEnd).toTimeString().slice(0,5)
+  let date = new Date(+timeStart).toDateString()
+  let dateFormatted = dateAndTime.toISOString().slice(0,10)
+    let access_token = storeState.fitbitAccessToken
+    return axios({
+        method: 'GET',
+        // url: 'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json',
+        url: `https://api.fitbit.com/1/user/-/activities/heart/date/${dateFormatted}/1d/1sec/time/${timeFormattedStart}/${timeFormattedEnd}.json`,
+        // url: 'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/11:20/11:50.json',
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+
+      })
+    .then((res) => {
+      return res.data
+    })
+    .then(heartRateInfo => {
+      // console.log('attempting to get this ', heartRateInfo["activities-heart-intraday"])
+      let heartRateData = heartRateInfo["activities-heart-intraday"].dataset
+      return heartRateData
+    })
+    .then(heartrateDataset => {
+      let heartrateArr = heartrateDataset.map(timeValPair => {
+        let fullStringToConvert = date + ' ' + timeValPair.time + ' GMT-0500 (CDT)'
+        let fullDateToConvert = new Date(fullStringToConvert)
+        let millisecondTime = fullDateToConvert.valueOf()
+        // console.log('millis ', millisecondTime)
+        return [millisecondTime, timeValPair.value]
+      })
+      return heartrateArr
+    })
+
+    .catch((err) => {
+      console.error('Error: ', err);
+    });
+    }
+}
+
+export const insertHeartRateInfo = (routetimeId, heartrateInfo) => {
+  return dispatch => {
+    // return axios.put(`${localHost}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
+    return axios.put(`${herokuUrl}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
+    .then(res => {
+      console.log('res is ', res.data)
+    })
+  }
+
+}
 
 /////////////////////////REDUCER
 const initialState = {
@@ -214,6 +307,7 @@ const initialState = {
   selectedRoute: {},
   selectedRacer: {},
   userStats: {},
+  fitbitAccessToken: '',
 }
 
 function reducer(state = initialState, action){
@@ -239,6 +333,9 @@ function reducer(state = initialState, action){
       break;
     case SET_USER_STATS:
       nextState.userStats = action.userStats
+      break;
+    case SET_FITBIT_TOKEN:
+      nextState.fitbitAccessToken = action.fitbitAccessToken
       break;
     default:
       return state;

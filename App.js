@@ -7,7 +7,7 @@
 
 import {Provider, connect } from 'react-redux'
 import store from './Components/storeAndReducer'
-import { fetchRunnerCoords } from './Components/storeAndReducer'
+import { fetchRunnerCoords, } from './Components/storeAndReducer'
 
 import React, { Component } from 'react';
 import axios from 'axios';
@@ -20,8 +20,12 @@ import {
   Button,
   Image,
   TouchableOpacity,
+  Linking
 } from 'react-native';
 
+//OAuth
+import config from './config.js';
+import qs from 'qs';
 
 //Styles
 import styles from './Styles'
@@ -34,13 +38,9 @@ import MakeRoute from './Components/MakeRoute'
 import ViewRoute from './Components/ViewRoute'
 import ChooseYourOpponent from './Components/ChooseYourOpponent'
 import RunARoute from './Components/RunARoute'
-
 import Coordinates from './Components/Coordinates'
 
 
-
-
-///////EXAMPLE BELOW- not sure it's still needed
 
 
 
@@ -81,6 +81,8 @@ const App = () => (
 
 
 class AppContainer extends Component {
+
+  
 
   addRunnerCoordsOnStore(){
     // console.log("FETCH RUNNER COORDS",this.props.fetchRunnerCoords)
