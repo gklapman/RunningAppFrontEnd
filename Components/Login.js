@@ -27,7 +27,7 @@ class Login extends Component {
     this.login=this.login.bind(this);
     this.changeTextHandlerEmail = this.changeTextHandlerEmail.bind(this)
     this.changeTextHandlerPw = this.changeTextHandlerPw.bind(this)
- 
+
   }
 
   changeTextHandlerEmail(email){//you can also do onChangeText={(email) => this.setState({email})}   down there at the textinput thing.. just for future reference
@@ -111,7 +111,7 @@ class Login extends Component {
           title="Login"
         />
         </TouchableOpacity>
-        
+
       </View>
     )
   }

@@ -138,3 +138,9 @@ export const numToRGBConverter = (num=0, range, minRGB = 0, maxRGB = 255, convTo
     return 'rgb(' + output.join(",") + ')'
   }
 }
+
+export const flatten = (arr) => {
+  return arr.reduce(function (flat, toFlatten) {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+  }, []);
+}

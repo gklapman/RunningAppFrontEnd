@@ -43,6 +43,13 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>geonames.org</key>
+			<dict>
+				<key>NSAllowsArbitraryLoads</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
