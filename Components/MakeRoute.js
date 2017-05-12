@@ -38,12 +38,14 @@ class MakeRoute extends Component {
      personalTimeMarker: [],
      checkpointTimeMarker: [],
 
+     snappedTesting: false,
      snappedPosCoords: [],//PURELY for testing (and maybe presentation?) purposes...
      unsnappedPosCoords: [],//PURELY for testing (and maybe presentation?) purposes...
    }
     this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
     this.onLocation = this.onLocation.bind(this)
+    // this.snapOption = this.snapOption.bind(this)
   }
 
   componentWillMount() {
@@ -59,7 +61,7 @@ class MakeRoute extends Component {
         })
         .then(()=>{
           BackgroundGeolocation.on('location', this.onLocation)
-      })
+        })
     }
 
   componentWillUnmount(){
@@ -75,6 +77,12 @@ class MakeRoute extends Component {
       personalTimeMarker: [0]
     })
   }
+
+  // snapOption(snapProm, rawPositionProm, bool){
+  //   this.setState({snappedTesting: bool})
+  //   if(bool) return snapProm
+  //   else return rawPositionProm
+  // }
 
   startStopButton(){
     //when we have time, we can reimplement a timer that can run in realtime when the app is in the foreground (PURELY for visual effect... not for determining whether to push points or anything)
@@ -103,36 +111,46 @@ class MakeRoute extends Component {
     }
   }
 
-    onLocation(locInp){
-    // console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
+  onLocation(locInp){
+    console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
     let lng = locInp.coords.longitude
     let lat = locInp.coords.latitude
     let rawPosition= {latitude: lat, longitude: lng}
+    let rawPositionProm=Promise.resolve(rawPosition)
+    console.log('raw is ',rawPosition)
 
     //FOR TESTING (and maybe presentation)?
     let unsnappedPosCoords = this.state.unsnappedPosCoords.slice(0)
     unsnappedPosCoords.push(rawPosition)
     this.setState({unsnappedPosCoords})
 
-     axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
-       .then(res => {
-          // console.log('in snappedLoc block')
-          let snappedLoc= res.data.snappedPoints[0].location
-          let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+    // let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
+    //    .then(res => {
+    //       // console.log('in snappedLoc block')
+    //       let snappedLoc= res.data.snappedPoints[0].location
+    //       let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+    //
+    //       let snappedPosCoords = this.state.snappedPosCoords.slice(0)
+    //       snappedPosCoords.push(snappedPosition)
+    //       this.setState({snappedPosCoords})
+    //
+    //       return snappedPosition
+    //     })
+    //    .catch(err => {
+    //      if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
+    //      else {throw err.message}
+    //    })
 
-          let snappedPosCoords = this.state.snappedPosCoords.slice(0)
-          snappedPosCoords.push(snappedPosition)
-          this.setState({snappedPosCoords})
+    //if set to true, then make axios request to googlemaps snap to roads API, and return either the snapped coordinates (or rawcoordinates if daily quota reached)
+    //if set to false, just immediately return the rawPosition
+    // this.snapOption(snapProm, rawPositionProm, true)//get this working later
 
-          return snappedPosition
-        })
-       .catch(err => {
-         if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
-         else {throw err.message}
-       })
+    // this.setState({snappedTesting: true}); snapProm
+    rawPositionProm
        .then(position=>{
+        //  console.log('resolved position is ',position)
           this.setState({ currentPosition: position })
-
+          // console.log('should not be running ',this.state.isRunning)
           if(this.state.isRunning){
               let elapsedTime= Date.now() - this.state.timerStart
               this.setState({
@@ -158,7 +176,7 @@ class MakeRoute extends Component {
           }
 
        })
-       .catch(err=>console.error(err))
+      .catch(err=>console.error(err))
   }
 
   viewRoute(){
@@ -183,7 +201,6 @@ class MakeRoute extends Component {
 
     const unsnappedPosCoords = this.state.unsnappedPosCoords
     const snappedPosCoords = this.state.snappedPosCoords
-
 
     // console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
@@ -230,14 +247,18 @@ class MakeRoute extends Component {
          onSelect={goToRaceView}
        /> */}
 
-       {/* BELOW IS FOR EITHER SNAPPED OR UNSNAPPED (depending on if google api is working)*/}
-      {/* <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} /> */}
-
-      {/* BELOW IS FOR BOTH SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers))*/}
-      <MapView.Polyline coordinates={snappedPosCoords} strokeColor='green' strokeWidth= {10} />
-      {unsnappedPosCoords.map((coord,idx)=>{
-        return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
-      })}
+      {this.state.snappedTesting && this.state.isRunning ?
+        //BELOW IS FOR *BOTH* SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers) .. note if google maps api not working there will only be unsnapped positions)
+        <View>
+            <MapView.Polyline coordinates={snappedPosCoords} strokeColor='green' strokeWidth= {10} />
+            { unsnappedPosCoords.map((coord,idx)=>{
+              console.log('marker at ',coord,' idx at ', idx)
+              return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
+            })}
+        </View> :
+        //BELOW IS FOR ONLY UNSNAPPED POSITIONS
+        <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
+      }
 
       </MapView>
        </View>

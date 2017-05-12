@@ -21,6 +21,13 @@ const SET_USER_STATS = "SET_USER_STATS"
 
 // const SET_RUNNER_COORDS = 'SET_ALL_COORDS'
 
+
+////CONFIG                          //CHANGE THIS TO MAKE ALL YOUR REQUESTS GO TO EITHER LOCALHOST OR THE DEPLOYED HEROKU SITE
+const localHostorHeroku=''
+localHostorHeroku= localHost
+// localHostorHeroku= herokuUrl
+
+
 ////ACTION CREATORS
 
 export const setUser = function(user){
@@ -71,8 +78,7 @@ export const setUserStats = function(statsData){
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
-    return axios.post(`${herokuUrl}/api/users/login`, { email, password} )
-    // return axios.post('http://localhost:3000/api/users/login', { email, password} )
+    return axios.post(`${localHostorHeroku}/api/users/login`, { email, password} )
     .then(res => res.data)
     .then(foundUser => {
       if(foundUser) dispatch(setUser(foundUser))
@@ -91,11 +97,8 @@ export const fetchUserLocation = location => {
 
 
 export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId) => {
-
   return dispatch => {
-
-    return axios.post(`${herokuUrl}/api/runroutes`, {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId})
-    // return axios.post('http://localhost:3000/api/runroutes', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId})
+    return axios.post(`${localHostorHeroku}/api/runroutes`, {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId})
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
@@ -106,11 +109,10 @@ export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMa
 
 export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
-    return axios.get(`${herokuUrl}/${selectedRouteId}`)
-    // return axios.get(`http://localhost:3000/api/runroutes/${selectedRouteId}`)
+    return axios.get(`${localHostorHeroku}/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
     .then(eagerLoadedRoute => {
-      // console.log('eager loaded route ', eagerLoadedRoute)
+      console.log('eager loaded route ', eagerLoadedRoute)
         eagerLoadedRoute.convCoords = eagerLoadedRoute.coords.map(coordPair=>{
           return {latitude:+coordPair[0], longitude:+coordPair[1]};
         })
@@ -136,10 +138,10 @@ export const fetchNearbyRoutes = (region) => {
 // http://localhost:3000/api/runroutes/?latitude=35&longitude=-119&latitudeDelta=3&longitudeDelta=1000 //this is an example of a runroute query
   return dispatch => {
     let query=`?latitude=${region.latitude}&longitude=${region.longitude}&latitudeDelta=${region.latitudeDelta}&longitudeDelta=${region.longitudeDelta}`;
-    return axios.get(`${herokuUrl}/api/runroutes/`+query)
-    // return axios.get('http://localhost:3000/api/runroutes/'+query)
+    return axios.get(`${localHostorHeroku}/api/runroutes/`+query)
     .then(res => res.data)
     .then(routes => {
+      console.log('routes are ',routes)
       let formattedRoutes = routes.map(routeWCoords => {
         let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
           return {latitude:+coordPair[0], longitude:+coordPair[1]}
@@ -155,12 +157,10 @@ export const fetchNearbyRoutes = (region) => {
 
 export const fetchSelectedRacer = (phantomRacerId) => {
   return dispatch => {
-    return axios.get(`${herokuUrl}/api/users/${opponentRoutetimeId}`)
-    // return axios.get(`${localHost}/api/users/${phantomRacerId}`)
+    return axios.get(`${localHostorHeroku}/api/users/${phantomRacerId}`)
     .then(res => {
       console.log('this is the opponent info', res.data)
       // dispatch(setSelectedRacer(res.data))
-
     })
   }
 
@@ -173,11 +173,8 @@ export const sendSelectedRacer = (racerData) => {
 }
 
 export const fetchUserStats = (userId) => {
-  // console.log('this is the user id', userId)
   return dispatch => {
-    // console.log('making request')
-    return axios.get(`${herokuUrl}/api/users/${userId}`)
-    // return axios.get(`http://localhost:3000/api/users/${userId}`)
+    return axios.get(`${localHostorHeroku}/api/users/${userId}`)
     .then(res => {
       // console.log('this is the res', res.data)
       return res.data
