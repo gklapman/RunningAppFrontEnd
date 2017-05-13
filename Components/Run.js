@@ -60,12 +60,12 @@ class Run extends Component {
     intAdjList.intersectsPerRegion()
       .then(res=>{
         if(res==='error') throw res
-        console.log('intersectionsArr in genRoute ', res)
+        // console.log('intersectionsArr in genRoute ', res)
         let intersectionsArr= res.intersections
         let querycoords = res.querycoords
         let intersectionMarkers= this.state.intersectionMarkers.slice(0)
         intersectionMarkers= intersectionMarkers.concat(intersectionsArr)
-        console.log('intersectionMarkers ', intersectionMarkers)
+        // console.log('intersectionMarkers ', intersectionMarkers)
         this.setState({intersectionMarkers, querycoords})
       })
       .catch(err=>console.error(err))
@@ -86,7 +86,7 @@ class Run extends Component {
 
   onRegionChange(region) {
     //SOMETHING IS CHANGING THE FUCKING REGION FROM THE INITIAL ONE... I DONT KNOW WHAT THE FUCK IT IS BUT YOU NEED TO FUCKING FIND OUT
-    //AND DESTROY THAT FUCKING PIECE OF SHIT CODE THAT IS FUCKING THIS SHIT UP
+    //AND FUCKING *** DESTROY *** THAT FUCKING PIECE OF SHIT CODE THAT IS FUCKING THIS SHIT UP
 
     //for onRegionChange... to prevent too many axios requests being made as a user is scrolling...  this is NOT part of state, and will NOT be changed via setState, because setting state may be too slow
     this.canMakeRequests=true;
