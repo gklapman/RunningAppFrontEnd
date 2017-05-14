@@ -23,6 +23,7 @@ import styles from '../Styles'
 import {addNewRoute, fetchFitBitHeartrateInfo} from './storeAndReducer'
 import {promisifiedGetCurrPos} from './Utils'
 import {accessKey, snapToRoad} from '../config'
+import {Btn, BtnHolder} from './Wrappers'
 
 
 class MakeRoute extends Component {
@@ -208,26 +209,28 @@ class MakeRoute extends Component {
     // console.log('this is the info ', this.state.isRunning, this.state.timerEnd)
     return (
       <View>
-       <View style={styles.mapcontainer}>
+       <View style={styles.mapcontainerNoNav}>
+         <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
-          <View style={styles.viewRoute}>
-                <TouchableOpacity onPress={this.viewRoute}>
-                  <Text>View Run</Text>
-                </TouchableOpacity>
-            </View> :
-            <View style={styles.startStop}>
-              <TouchableOpacity onPress={this.startStopButton}>
-                <Text>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
-              </TouchableOpacity>
-           </View> }
+              <Btn>
+                    {/* <TouchableOpacity onPress={this.viewRoute}> */}
+                      <Text onPress={this.viewRoute}>View Run</Text>
+                    {/* </TouchableOpacity> */}
+                </Btn> :
+                <Btn>
+                  {/* <TouchableOpacity onPress={this.startStopButton}> */}
+                    <Text onPress={this.startStopButton}>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
+                  {/* </TouchableOpacity> */}
+               </Btn> }
 
-         <View style={styles.timer}>
-           <Text>{TimeFormatter(this.state.timer)}</Text>
+             <Btn>
+               <Text>{TimeFormatter(this.state.timer)}</Text>
 
-           <Text>{this.state.currentPosition.latitude}</Text>
-           <Text>{this.state.currentPosition.longitude}</Text>
+               {/* <Text>{this.state.currentPosition.latitude}</Text>
+               <Text>{this.state.currentPosition.longitude}</Text> */}
 
-         </View>
+             </Btn>
+          </BtnHolder>
            <MapView
              region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
          style={styles.map}>

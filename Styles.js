@@ -3,6 +3,7 @@ import React from 'react';
 import {
   StyleSheet
 } from 'react-native';
+import {redish, blueish, beige} from './Components/Constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'skyblue',
+    backgroundColor: redish,
   },
   welcome: {
     fontSize: 20,
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     margin: 5,
     paddingTop: 15,
     flexDirection: 'row',
-    backgroundColor: 'grey',
+    backgroundColor: 'blue',
     position: 'absolute',
     paddingTop: 0,
     bottom: 5,
@@ -53,16 +54,20 @@ const styles = StyleSheet.create({
     width: 250
   },
   input: {
-    margin: 'auto',//CAN'T GET THIS TO CENTER NO MATTER WHAT
-    justifyContent: 'center',
-    borderColor: 'black',
-    borderWidth: 1,
-    height: 37,
-    width: 250
+    fontFamily:'AvenirNext-Heavy',
+    backgroundColor: beige,
+    margin: 'auto',
+    padding: 10,
+    textAlign: 'center',
+    borderColor: beige,
+    borderWidth: 3,
+    borderRadius: 18,
+    height: 35,
+    width: 250,
   },
   mapcontainer: {
-    height: 600,
-    width: 400,
+    height: 555,
+    width: 375,
     position: 'absolute',
     top: 0,
     left: 0,
@@ -71,7 +76,18 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     display: 'flex'
-
+  },
+  mapcontainerNoNav: {
+    height: 600,
+    width: 375,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    display: 'flex'
   },
   map: {
     position: 'absolute',
@@ -89,25 +105,37 @@ const styles = StyleSheet.create({
   },
   createRoute: {
     height: 50,
-    width: 100, 
+    width: 100,
     backgroundColor: '#b0c4de',
     zIndex: 1,
-    position: 'absolute',
-    top: 30,
-    right: 50,
+    // position: 'absolute',
+    // top: 30,
+    // right: 50,
   },
   filter: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'blue',
+    // position: 'absolute',
+    // top: 30,
+    // left: 50,
+  },
+  btnHolder: {
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1,
+    height: 50,
+    width: '100%',
+    // backgroundColor: 'orange',
     position: 'absolute',
-    top: 30,
-    left: 50,
+    top: 20,
+    alignItems: 'center',
+    justifyContent: 'space-around'
   },
     timer: {
     height: 50,
-    width: 100, 
+    width: 100,
     backgroundColor: '#b0c4de',
     zIndex: 1,
     position: 'absolute',
@@ -115,45 +143,45 @@ const styles = StyleSheet.create({
     right: 50,
   },
    startStop: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'blue',
     position: 'absolute',
     top: 30,
     left: 50,
   },
   viewRoute: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'orange',
     position: 'absolute',
     top: 30,
     left: 50,
-  }, 
+  },
     finalTime: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'blue',
     position: 'absolute',
     top: 30,
     left: 50,
   },
    submitRoute: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     bottom: 30,
     left: 50,
   },
   replayRoute: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'orange',
     position: 'absolute',
     bottom: 30,
@@ -161,7 +189,7 @@ const styles = StyleSheet.create({
   },
   finalDistance: {
     height: 50,
-    width: 100, 
+    width: 100,
     backgroundColor: '#b0c4de',
     zIndex: 1,
     position: 'absolute',
@@ -173,18 +201,61 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
     height: 200,
     width: 500,
-    justifyContent: 'center', 
+    justifyContent: 'center',
 
-  }, 
+  },
   userCity: {
     justifyContent: 'center'
-  }, 
+  },
   userName: {
     alignItems: 'center'
   },
   userStats: {
     margin: 2
+  },
+  scrollListRow: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderRadius: 15,
+    backgroundColor: 'white',
+  },
+  scrollListRowOdd: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    // backgroundColor: '#999999',
+    borderWidth: 1,
+    borderColor: beige,
+  },
+  scrollListRowEven: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    // backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: beige,
+  },
+  scrollListItem: {
+    textAlign: 'center',
+    fontFamily:'AvenirNext-Heavy',
+    fontSize: 18,
+    color: beige,
+    backgroundColor: 'transparent',
+    width: '30%',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 3, height: 3},
+    textShadowRadius: 3,
+  },
+  scrollListItem2: {
+    textAlign: 'center',
+    fontFamily:'AvenirNext-Heavy',
+    fontSize: 14,
+    color: beige,
+    backgroundColor: 'transparent',
+    width: '48%'
   }
+
   });
 
 export default styles

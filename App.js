@@ -39,6 +39,7 @@ import ViewRoute from './Components/ViewRoute'
 import ChooseYourOpponent from './Components/ChooseYourOpponent'
 import RunARoute from './Components/RunARoute'
 import Coordinates from './Components/Coordinates'
+import {redish, blueish, beige} from './Components/Constants'
 
 
 
@@ -51,9 +52,21 @@ const OurApp = TabNavigator({
   },
   {
   tabBarOptions: {
-    activeTintColor: '#e91e63',
+    activeTintColor: redish,
+    activeBackgroundColor: 'white',
+    inactiveTintColor: blueish,
+    labelStyle: {
+      fontSize: 35,
+      fontFamily: 'Airstream',
+      textShadowColor: 'black',
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 1
+    },
+    style: {
+      color: blueish,
+      backgroundColor: beige
+    }
   },
-
 });
 
 
@@ -82,7 +95,7 @@ const App = () => (
 
 class AppContainer extends Component {
 
-  
+
 
   addRunnerCoordsOnStore(){
     // console.log("FETCH RUNNER COORDS",this.props.fetchRunnerCoords)

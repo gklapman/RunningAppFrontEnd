@@ -18,6 +18,9 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
+import {Btn, BtnHolder} from './Wrappers'
+import {redish, blueish, beige} from './Constants'
+
 
 class Run extends Component {
   constructor(){
@@ -79,21 +82,29 @@ class Run extends Component {
 
         <View style={styles.mapcontainer}>
 
-        	<View style={styles.createRoute}>
-       	 		<Button
-              onPress={goToRouteMaker}
-              title="Create a Route">
-            </Button>
-       	 		</View>
-       	 		<View style={styles.filter}>
-       	 		<Button onPress={filter} title="Filter Your Routes"></Button>
-       	 		</View>
+        <View style={styles.btnHolder}>
+          <Btn>
+            <Text onPress={goToRouteMaker}>Create a Route</Text>
+          </Btn>
+       	 	<Btn>
+            <Text onPress={filter}>Filter Routes</Text>
+       	 	</Btn>
+        </View>
+
+        {/* <Btn>
+          <Text onPress={goToRouteMaker}>Create a Route</Text>
+        </Btn>
+
+        <View style={{...styles.filter, }} >
+          <Text onPress={filter}>Filter Routes</Text>
+        </View> */}
 
        	 	<MapView style={styles.map} onRegionChange={this.onRegionChange}>
 
           {routesArr.map(routeObj=>{
             let routeID = ""+routeObj.id;
-
+            let colorsArr = ['#511', '#115', '#555', 'black']
+            let routeColor = colorsArr[routeObj.id % 4]
             return(
               <View key={routeObj.id} >
 
@@ -102,7 +113,7 @@ class Run extends Component {
                <MapView.Polyline
                  coordinates={routeObj.convCoords}
 
-                   strokeColor='green'
+                   strokeColor={routeColor}
                    strokeWidth= {10}
                   //  identifier={routeID}
                   //  target={routeObj.id}
@@ -111,14 +122,14 @@ class Run extends Component {
 
                 <MapView.Marker
                   coordinate={{ latitude: routeObj.convCoords[0].latitude, longitude: routeObj.convCoords[0].longitude}}
-                  pinColor='red'
+                  pinColor={routeColor}
                   title='Start'
                   identifier={routeID}
                   onSelect={goToChooseYourOpponent}
                 />
                 <MapView.Marker
                   coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
-                  pinColor='blue'
+                  pinColor={routeColor}
                   title='End'
                   identifier={routeID}
                   onSelect={goToChooseYourOpponent}

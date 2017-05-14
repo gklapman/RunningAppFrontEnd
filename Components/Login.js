@@ -17,6 +17,7 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 //CUSTOM MODULES
 import styles from '../Styles';
 import {fetchUser} from './storeAndReducer';
+import {redish, blueish, beige} from './Constants'
 
 
 
@@ -27,7 +28,7 @@ class Login extends Component {
     this.login=this.login.bind(this);
     this.changeTextHandlerEmail = this.changeTextHandlerEmail.bind(this)
     this.changeTextHandlerPw = this.changeTextHandlerPw.bind(this)
- 
+
   }
 
   changeTextHandlerEmail(email){//you can also do onChangeText={(email) => this.setState({email})}   down there at the textinput thing.. just for future reference
@@ -51,7 +52,7 @@ class Login extends Component {
       // Activity Recognition
       stopTimeout: 1,
       // Application config
-      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+      debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
       stopOnTerminate: true,   // <-- Allow the background-service to continue tracking when user closes the app. //KEEP THIS ON TRUE... DO NOT FORGET ABOUT THIS
       startOnBoot: true,        // <-- Auto start tracking when device is powered-up. //WE MAY NEED TO HAVE THIS TURNED OFF UNTIL THIS RUN COMPONENT MOUNTS (otherwise a lot of events emitted with no listeners, causing some yellow warnings)
@@ -101,21 +102,50 @@ class Login extends Component {
 
     return (
       <View style={styles.container}>
-        <Text>Email:</Text>
-        <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
-        <Text>Password:</Text>
-        <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
-        <TouchableOpacity>
-          <Button
-          onPress={this.login}
-          title="Login"
-        />
-        </TouchableOpacity>
-        
+        <View style={{ position: 'relative', top: 30}}>
+          <View style={{height: 100, width: 350, backgroundColor: beige, zIndex: -1, borderRadius: 100}}>
+            <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', top: 10}}>PHANTOM</Text>
+          </View>
+          <Text style={{fontFamily: 'Airstream', fontSize: 120, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -50, textAlign: 'right', marginRight: 5 }}>Racer</Text>
+        </View>
+        <View style={{ alignItems: 'center'}}>
+
+          <View style={{position: 'relative', top: -30}}>
+            <Image source={require('../assets/runnin.gif')} />
+          </View>
+
+            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 20, fontWeight: '900', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Email:</Text>
+            <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
+            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 20, fontWeight: '900', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Password:</Text>
+            <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
+
+            <Text onPress={this.login} style={{fontFamily: 'Airstream', fontSize: 50, textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', textAlign: 'right', marginRight: 5, position: 'relative', top: 25 }}>Login</Text>
+            <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35}}></View>
+
+        </View>
       </View>
     )
   }
 }
+
+class Triangle extends Component {
+  render() {
+    return (
+      <View style={styles.triangle}>
+      </View>
+    )
+  }
+}
+class TriangleRight extends Component {
+  render() {
+    return (
+      <Triangle style={styles.triangleRight}>
+      </Triangle>
+    )
+  }
+}
+
+
 
 const mapDispatchToProps = {fetchUser }
 
