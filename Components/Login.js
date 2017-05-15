@@ -102,6 +102,7 @@ class Login extends Component {
 
     return (
       <View style={styles.container}>
+
         <View style={{ position: 'relative', top: 35}}>
           <Image source={require('../assets/runningred.gif')} />
           {/* <View style={{height: 100, width: 350, backgroundColor: beige, zIndex: -1, borderRadius: 100}}> */}
@@ -124,6 +125,7 @@ class Login extends Component {
             <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35, borderColor: yellowish, borderWidth: 3}}></View>
           </View>
         </View>
+
       </View>
     )
   }

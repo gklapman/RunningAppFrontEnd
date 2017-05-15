@@ -142,6 +142,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around'
   },
+  genRoute: {
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 60,
+    left: 50,
+  },
     timer: {
     height: 50,
     width: 100,
@@ -204,6 +213,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 30,
     right: 50,
+  },
+   changeView: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'orange',
+    position: 'absolute',
+    top: 30,
+    left: 50,
+  }, 
+  changeType: {
+    zIndex: 1, 
+    height: 50,
+    width: 100 , 
+    backgroundColor: 'green',
+    position: 'absolute',
+    top: 100,
+    left: 100,
   },
   userHeader: {
     display: 'flex',

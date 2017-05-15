@@ -28,8 +28,8 @@ const SET_FITBIT_TOKEN = "SET_FITBIT_TOKEN"
 
 ////CONFIG                          //CHANGE THIS TO MAKE ALL YOUR REQUESTS GO TO EITHER LOCALHOST OR THE DEPLOYED HEROKU SITE
 const localHostorHeroku=''
-localHostorHeroku= localHost
-// localHostorHeroku= herokuUrl
+// localHostorHeroku= localHost
+localHostorHeroku= herokuUrl
 
 
 ////ACTION CREATORS
@@ -250,6 +250,7 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
   // console.log('this is the timer start and end', timeStart, timeEnd)
   let timeFormattedStart = new Date(+timeStart).toTimeString().slice(0,5)
   let timeFormattedEnd = new Date(+timeEnd).toTimeString().slice(0,5)
+  console.log('timeStart', timeStart, timeFormattedStart)
   let date = new Date(+timeStart).toDateString()
   let dateFormatted = dateAndTime.toISOString().slice(0,10)
     let access_token = storeState.fitbitAccessToken
@@ -264,6 +265,7 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
 
       })
     .then((res) => {
+      console.log('RES DATA. ', res.data)
       return res.data
     })
     .then(heartRateInfo => {
@@ -275,9 +277,13 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
       let heartrateArr = heartrateDataset.map(timeValPair => {
         let fullStringToConvert = date + ' ' + timeValPair.time + ' GMT-0500 (CDT)'
         let fullDateToConvert = new Date(fullStringToConvert)
+        // console.log('full date to convert ', fullDateToConvert)
         let millisecondTime = fullDateToConvert.valueOf()
         // console.log('millis ', millisecondTime)
-        return [millisecondTime, timeValPair.value]
+        let timeValResult  = [millisecondTime - (Number(timeStart)), timeValPair.value]
+        // if (timeValResult[0] > 0 && timeValResult[0] < (timeEnd - timeStart)){ //this is taking care of the extra data we receive for the first and last minute of their route because FitBit will only deliver the whole minute
+          return timeValResult
+        // }
       })
       return heartrateArr
     })
@@ -290,8 +296,8 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
 
 export const insertHeartRateInfo = (routetimeId, heartrateInfo) => {
   return dispatch => {
-    // return axios.put(`${localHost}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
-    return axios.put(`${herokuUrl}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
+    return axios.put(`${localHostorHeroku}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
+    // return axios.put(`${herokuUrl}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
     .then(res => {
       console.log('res is ', res.data)
     })

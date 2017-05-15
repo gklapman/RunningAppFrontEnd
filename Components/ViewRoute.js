@@ -31,28 +31,46 @@ class ViewRoute extends Component {
 	constructor(props) {
 		super(props);
     this.state ={
-    view: 'lineHeatmap'
+    view: 'polylineView', 
+    type: 'speed'
+
   }
 
     this.submitRoute = this.submitRoute.bind(this)
     this.changeViewButton = this.changeViewButton.bind(this)
+    this.changeTypeButton = this.changeTypeButton.bind(this)
+    this.showHeartRate = this.showHeartRate.bind(this)
+
 
 	}
+  
+  changeTypeButton(){
+    console.log('this is being pressed', this.state.type)
+    if (this.state.type === 'speed'){
+    return this.setState({
+      type: 'heartrate'
+    })
+  } else if (this.state.type === 'heartrate'){
+    return this.setState({
+      type: 'speed'
+    })
+  }
+  }
 
   changeViewButton(){
-  if (this.state.view === 'lineHeatmap'){
+  if (this.state.view === 'polylineView'){
     return this.setState({
-      view: 'markerTimes'
+      view: 'markerView'
     })
-  } else if (this.state.view === 'markerTimes'){
+  } else if (this.state.view === 'markerView'){
     return this.setState({
-      view: 'lineHeatmap'
+      view: 'polylineView'
     })
   }
 }
 
   componentDidMount() {
-    console.log('givenprops ', this.props.navigation.state.params )
+    // console.log('givenprops ', this.props.navigation.state.params )
     let phantomRacerRouteTimeId = this.props.navigation.state.params.phantomRacerRouteTimeId
     if (phantomRacerRouteTimeId){
       this.props.fetchSelectedRacer(phantomRacerRouteTimeId)
@@ -63,10 +81,28 @@ class ViewRoute extends Component {
   submitRoute(){
 
     let {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId } = this.props.navigation.state.params
-    console.log('startTime is ', startTime)
+    // console.log('startTime is ', startTime)
     this.props.addNewRoute(checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId)
     const { navigate } = this.props.navigation;
     navigate('OurApp')
+  }
+
+  showHeartRate (){
+    console.log('RUNNING')
+    let givenprops = this.props.navigation.state.params
+
+    console.log('given props HR ', givenprops.heartrateInfo)
+    if (givenprops.heartrateInfo){
+      return (this.state.type === 'heartrate' ? <View style={styles.changeType}>
+                        <TouchableOpacity onPress={this.changeTypeButton}>
+                          <Text>View Speed</Text>
+                        </TouchableOpacity>
+                    </View> : <View style={styles.changeType}>
+                        <TouchableOpacity onPress={this.changeTypeButton}>
+                          <Text>View Heartrate</Text>
+                        </TouchableOpacity>
+                    </View>)
+    }
   }
 
   // replayRoute(){
@@ -83,7 +119,7 @@ class ViewRoute extends Component {
   // }
 
   render() {
-
+    console.log('this is the states ', this.state)
 
     let givenprops = this.props.navigation.state.params
     let personalCoords = givenprops.personalCoords.slice(0)
@@ -114,6 +150,43 @@ class ViewRoute extends Component {
       return {...coords, time: givenprops.personalTimeMarker[idx]}
     })
 
+    // console.log('routeCoordsArr ', routeCoordsArr)
+    //HEARTRATE 
+
+    let heartrateInfo = givenprops.heartrateInfo
+    // console.log('given heart rate', givenprops.heartrateInfo)
+    // console.log('heartrateInfo', heartrateInfo, givenprops.personalTimeMarker)
+    let heartrateCoordsArr;
+     if (heartrateInfo){ 
+    let tracker = 0
+      heartrateCoordsArr = givenprops.personalTimeMarker.map((time, idx) => {
+      // console.log('time ', time, heartrateInfo)
+      let timeLess;
+      let timeMore; 
+      for (tracker; tracker < heartrateInfo.length; tracker++){
+        // console.log('heart info', heartrateInfo)
+        // let info = heartrateInfo[tracker][0]
+        // console.log('infooo ', info)
+        if (+heartrateInfo[tracker][0] > time){
+          timeMore = +heartrateInfo[tracker][0]
+          timeLess = +heartrateInfo[tracker - 1][0]
+          break; 
+        }
+      }
+        // console.log(timeMore, timeLess, heartrateInfo[tracker], heartrateInfo[tracker - 1])
+        let heartRateValCloser = (timeMore - time) > (time - timeLess) ? heartrateInfo[tracker][1] : heartrateInfo[tracker - 1][1]
+        // console.log('heartRateValCloser', heartRateValCloser)
+        return {coords: givenprops.personalCoords[idx], heartrate: +heartRateValCloser}
+        
+    })
+    // console.log('RESULT', givenprops.personalTimeMarker, heartrateCoordsArr)
+
+
+  }
+
+    // for each time... look in the heartRateArr for the closest time (- or postive)
+    // one find the closest, save the coords and the value of the heartrate
+
 
     // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
     // let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
@@ -123,6 +196,7 @@ class ViewRoute extends Component {
 
     return (
       <View>
+
          <View style={styles.mapcontainerNoNav}>
 
             <BtnHolder>
@@ -134,7 +208,13 @@ class ViewRoute extends Component {
                   <BtnSm>
                         <Text onPress={this.changeViewButton}>View Heatmap</Text>
                   </BtnSm>
+
             }
+    
+              
+            {this.showHeartRate()}   
+                  
+            
 
 
 
@@ -154,13 +234,14 @@ class ViewRoute extends Component {
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005}}
             style={styles.map}>
 
-            { this.state.view === 'markerTimes' &&
+             {(this.state.view === 'markerView' && this.state.type === 'speed') &&
+               
               routeCoordsArr.map((coords, idx) =>{
                 let speed = 0
 
 
                 idx > 0 ? speed = geolib.getSpeed(routeCoordsArr[idx-1], coords, {unit: 'mph'}) : speed = 0
-                console.log("SPEED", speed)
+                // console.log("SPEED", speed)
                 let speedColor = numToRGBConverter(speed,22, 100, 220, false)
                 return (
                   <MapView.Marker
@@ -173,24 +254,41 @@ class ViewRoute extends Component {
                   </MapView.Marker>
                 )
               })
+            } 
+             {(this.state.view === 'markerView' && this.state.type === 'heartrate') &&
+              heartrateCoordsArr.map((info, idx) =>{
+                  console.log('info if ', info)
+                  let heartrateColor = numToRGBConverter(info.heartrate, 50, 100, 220, false)
+
+                return (
+                  <MapView.Marker
+                    key={idx}
+                    coordinate={info.coords}
+                    pinColor={heartrateColor}
+                    title={ info.heartrate + ' bpm'}
+                    style={{height: 10, width: 10, backgroundColor: heartrateColor, borderRadius: 10}}
+                  >
+                  </MapView.Marker>
+                )
+              })
             }
             {
-              (this.state.view === 'lineHeatmap' &&
+              (this.state.view === 'polylineView' &&
               ////////SWITCH TO THIS FOR POLYLINE
 
               personalCoords.length) && personalCoords.map((coords, idx) => {
                 let speed = 0
                 speed = (idx > 0) ? geolib.getSpeed(routeCoordsArr[idx-1], routeCoordsArr[idx], {unit: 'mph'}) : 0
-                console.log('routecoordsarr ',routeCoordsArr)
-                console.log("SPEED", speed)
-                let speedColor = numToRGBConverter(speed,22, 5, 13, true)
+                // console.log('routecoordsarr ',routeCoordsArr)
+                // console.log("SPEED", speed)
+                let speedColor = numToRGBConverter(speed, 22, 5, 13, true)
                 // console.log("SPEEDCOLOR", speedColor)
 
                 let firstCoord = personalCoords[idx - 1] || coords
-                console.log("Firstcoords, ", firstCoord, 'coords ',coords)
+                // console.log("Firstcoords, ", firstCoord, 'coords ',coords)
 
                 return (
-                  <View>
+                  <View key={idx}>
 
                   <MapView.Polyline
                     key={idx}
