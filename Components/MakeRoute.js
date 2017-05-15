@@ -128,29 +128,29 @@ class MakeRoute extends Component {
     unsnappedPosCoords.push(rawPosition)
     this.setState({unsnappedPosCoords})
 
-    // let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
-    //    .then(res => {
-    //       // console.log('in snappedLoc block')
-    //       let snappedLoc= res.data.snappedPoints[0].location
-    //       let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
-    //
-    //       let snappedPosCoords = this.state.snappedPosCoords.slice(0)
-    //       snappedPosCoords.push(snappedPosition)
-    //       this.setState({snappedPosCoords})
-    //
-    //       return snappedPosition
-    //     })
-    //    .catch(err => {
-    //      if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
-    //      else {throw err.message}
-    //    })
+    let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
+       .then(res => {
+          // console.log('in snappedLoc block')
+          let snappedLoc= res.data.snappedPoints[0].location
+          let snappedPosition = {latitude: snappedLoc.latitude, longitude: snappedLoc.longitude }
+
+          let snappedPosCoords = this.state.snappedPosCoords.slice(0)
+          snappedPosCoords.push(snappedPosition)
+          this.setState({snappedPosCoords})
+
+          return snappedPosition
+        })
+       .catch(err => {
+         if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
+         else {throw err.message}
+       })
 
     //if set to true, then make axios request to googlemaps snap to roads API, and return either the snapped coordinates (or rawcoordinates if daily quota reached)
     //if set to false, just immediately return the rawPosition
     // this.snapOption(snapProm, rawPositionProm, true)//get this working later
 
-    // this.setState({snappedTesting: true}); snapProm
-    rawPositionProm
+    this.setState({snappedTesting: true}); snapProm
+    // rawPositionProm
        .then(position=>{
         //  console.log('resolved position is ',position)
           this.setState({ currentPosition: position })
