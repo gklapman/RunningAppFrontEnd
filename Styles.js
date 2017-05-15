@@ -3,7 +3,7 @@ import React from 'react';
 import {
   StyleSheet
 } from 'react-native';
-import {redish, blueish, beige} from './Components/Constants'
+import {redish, blueish, yellowish} from './Components/Constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -12,6 +12,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: redish,
+  },
+  container2: {
+    // display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
   },
   welcome: {
     fontSize: 20,
@@ -54,12 +61,14 @@ const styles = StyleSheet.create({
     width: 250
   },
   input: {
-    fontFamily:'AvenirNext-Heavy',
-    backgroundColor: beige,
+    color: yellowish,
+    fontFamily:'Ghoulish Intent',
+    fontSize: 20,
+    backgroundColor: 'black',
     margin: 'auto',
     padding: 10,
     textAlign: 'center',
-    borderColor: beige,
+    borderColor: 'black',
     borderWidth: 3,
     borderRadius: 18,
     height: 35,
@@ -213,6 +222,24 @@ const styles = StyleSheet.create({
   userStats: {
     margin: 2
   },
+  scrollListHeader: {
+    fontFamily: 'Magnum',
+    fontWeight: '900',
+    width: '33%',
+    height: 35,
+    color: yellowish,
+    textAlign: 'center',
+    fontSize: 20,
+    padding: 3,
+    paddingTop: 7,
+    backgroundColor: 'black',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: yellowish
+  },
   scrollListRow: {
     flex: 0,
     flexDirection: 'row',
@@ -226,7 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     // backgroundColor: '#999999',
     borderWidth: 1,
-    borderColor: beige,
+    borderColor: yellowish,
   },
   scrollListRowEven: {
     flex: 0,
@@ -234,13 +261,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     // backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: beige,
+    borderColor: yellowish,
   },
   scrollListItem: {
     textAlign: 'center',
-    fontFamily:'AvenirNext-Heavy',
+    fontFamily: 'Ghoulish Intent',
     fontSize: 18,
-    color: beige,
+    color: yellowish,
     backgroundColor: 'transparent',
     width: '30%',
     textShadowColor: 'black',
@@ -249,9 +276,9 @@ const styles = StyleSheet.create({
   },
   scrollListItem2: {
     textAlign: 'center',
-    fontFamily:'AvenirNext-Heavy',
+    fontFamily: 'Ghoulish Intent',
     fontSize: 14,
-    color: beige,
+    color: yellowish,
     backgroundColor: 'transparent',
     width: '48%'
   }

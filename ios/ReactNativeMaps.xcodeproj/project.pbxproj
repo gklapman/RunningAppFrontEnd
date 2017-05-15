@@ -49,6 +49,9 @@
 		8D02F38850B145B2B36E0823 /* AIRSTREA .ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */; };
 		8D35C39BBE234D03ADC9FB4C /* AIRSTREA.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */; };
 		E6216CEDB71F4ABCBDD8BF8E /* budmo jigglish.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */; };
+		2A8A122733E24421BE9F57C7 /* ghoulishintent.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */; };
+		112367C7881647B9AD34F54A /* MAGNUM__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */; };
+		91C0EAD846084CF5B2021814 /* vicioushunger.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -374,6 +377,9 @@
 		3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */ = {isa = PBXFileReference; name = "AIRSTREA .ttf"; path = "../assets/fonts/AIRSTREA .ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */ = {isa = PBXFileReference; name = "AIRSTREA.TTF"; path = "../assets/fonts/AIRSTREA.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */ = {isa = PBXFileReference; name = "budmo jigglish.ttf"; path = "../assets/fonts/budmo jigglish.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */ = {isa = PBXFileReference; name = "ghoulishintent.ttf"; path = "../assets/fonts/ghoulishintent.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */ = {isa = PBXFileReference; name = "MAGNUM__.TTF"; path = "../assets/fonts/MAGNUM__.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */ = {isa = PBXFileReference; name = "vicioushunger.ttf"; path = "../assets/fonts/vicioushunger.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -676,6 +682,9 @@
 				3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */,
 				393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */,
 				7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */,
+				0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */,
+				D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */,
+				86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */,
 			);
 			name = Resources;
 			path = "";
@@ -1160,6 +1169,9 @@
 				8D02F38850B145B2B36E0823 /* AIRSTREA .ttf in Resources */,
 				8D35C39BBE234D03ADC9FB4C /* AIRSTREA.TTF in Resources */,
 				E6216CEDB71F4ABCBDD8BF8E /* budmo jigglish.ttf in Resources */,
+				2A8A122733E24421BE9F57C7 /* ghoulishintent.ttf in Resources */,
+				112367C7881647B9AD34F54A /* MAGNUM__.TTF in Resources */,
+				91C0EAD846084CF5B2021814 /* vicioushunger.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

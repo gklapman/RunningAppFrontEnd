@@ -17,7 +17,7 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 //CUSTOM MODULES
 import styles from '../Styles';
 import {fetchUser} from './storeAndReducer';
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish} from './Constants'
 
 
 
@@ -102,48 +102,33 @@ class Login extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={{ position: 'relative', top: 30}}>
-          <View style={{height: 100, width: 350, backgroundColor: beige, zIndex: -1, borderRadius: 100}}>
-            <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', top: 10}}>PHANTOM</Text>
-          </View>
-          <Text style={{fontFamily: 'Airstream', fontSize: 120, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -50, textAlign: 'right', marginRight: 5 }}>Racer</Text>
+        <View style={{ position: 'relative', top: 35}}>
+          <Image source={require('../assets/runningred.gif')} />
+          {/* <View style={{height: 100, width: 350, backgroundColor: beige, zIndex: -1, borderRadius: 100}}> */}
+            <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', top: -25}}>PHANTOM</Text>
+          {/* </View> */}
+          <Text style={{fontFamily: 'Airstream', fontSize: 120, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -70, textAlign: 'right', marginRight: 10 }}>Racer</Text>
         </View>
         <View style={{ alignItems: 'center'}}>
 
           <View style={{position: 'relative', top: -30}}>
-            <Image source={require('../assets/runnin.gif')} />
+            {/* <Image source={require('../assets/runningred.gif')} /> */}
           </View>
-
-            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 20, fontWeight: '900', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Email:</Text>
+          <View style={{alignItems: 'center', position: 'relative', top: -50}}>
+            <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Email:</Text>
             <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
-            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 20, fontWeight: '900', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Password:</Text>
+            <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, marginTop: 10}}>Password:</Text>
             <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
 
-            <Text onPress={this.login} style={{fontFamily: 'Airstream', fontSize: 50, textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', textAlign: 'right', marginRight: 5, position: 'relative', top: 25 }}>Login</Text>
-            <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35}}></View>
-
+            <Text onPress={this.login} style={{fontFamily: 'Magnum', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', textAlign: 'right', marginRight: 5, marginTop: 10, position: 'relative', top: 10 }}>Login</Text>
+            <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35, borderColor: yellowish, borderWidth: 3}}></View>
+          </View>
         </View>
       </View>
     )
   }
 }
 
-class Triangle extends Component {
-  render() {
-    return (
-      <View style={styles.triangle}>
-      </View>
-    )
-  }
-}
-class TriangleRight extends Component {
-  render() {
-    return (
-      <Triangle style={styles.triangleRight}>
-      </Triangle>
-    )
-  }
-}
 
 
 

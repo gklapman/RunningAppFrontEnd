@@ -10,6 +10,7 @@ import {
   Linking
 } from 'react-native';
 import styles from '../Styles'
+import {redish, blueish, beige, yellowish} from './Constants'
 
 // export class Btn extends React.Component {
 //   render(){
@@ -27,8 +28,8 @@ export class Btn extends React.Component {
   render(){
     return(
       <View style={{alignItems: 'center', position: 'relative', top: -20, justifyContent: 'space-around'}}>
-        <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 18, textAlign: 'center', color: '#DDDDCC', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 28, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
-        <View style={{height: 50, width: 160, backgroundColor: '#111155', zIndex: -1, borderRadius: 100}}></View>
+        <Text style={{fontFamily: 'Magnum', fontSize: 22, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 26, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
+        <View style={{height: 50, width: 160, backgroundColor: blueish, zIndex: -1, borderRadius: 100, borderWidth: 3, borderColor: yellowish}}></View>
       </View>
     )
   }
@@ -38,8 +39,8 @@ export class BtnSm extends React.Component {
   render(){
     return(
       <View style={{alignItems: 'center', position: 'relative', top: -20, justifyContent: 'space-around'}}>
-        <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontSize: 15, textAlign: 'center', color: '#DDDDCC', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 26, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
-        <View style={{height: 50, width: 120, backgroundColor: '#111155', zIndex: -1, borderRadius: 100}}></View>
+        <Text style={{fontFamily: 'Magnum', fontSize: 20, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 26, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
+        <View style={{height: 50, width: 120, backgroundColor: blueish, zIndex: -1, borderRadius: 100, borderWidth: 3, borderColor: yellowish}}></View>
       </View>
     )
   }
@@ -49,8 +50,8 @@ export class BigBtn extends React.Component {
   render(){
     return(
       <View style={{alignItems: 'center', position: 'relative', bottom: 10}}>
-        <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: '#DDDDCC', textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: -53, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
-        <View style={{height: 50, width: 250, backgroundColor: '#111155', zIndex: -1, borderRadius: 100}}></View>
+        <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: -53, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
+        <View style={{height: 50, width: 250, backgroundColor: blueish, zIndex: -1, borderRadius: 100, borderWidth: 3, borderColor: yellowish}}></View>
       </View>
     )
   }

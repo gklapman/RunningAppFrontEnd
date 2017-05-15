@@ -21,7 +21,7 @@ import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBit
 import config from '../config'
 import qs from 'qs'
 import  {Btn, BigBtn} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish, orangeish} from './Constants'
 
 function OAuth(client_id, cb) {
 
@@ -122,16 +122,16 @@ class Stats extends Component {
     let userStats = this.props.userStats
 
     return (
-      <View style={styles.container}>
-        <View style={{top: 5, width: 300, height: 70, backgroundColor: blueish, alignItems: 'center', borderRadius: 50}}>
-          <Text style={{color: beige, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, fontFamily: 'Airstream', fontSize: 40, backgroundColor: 'transparent', zIndex: 1}}>{userStats.username}</Text>
-          <Text style={{fontFamily: 'budmo', fontSize: 25, color: 'white', position: 'relative', top: -15, zIndex: 0}}>{userStats.city}</Text>
+      <View style={styles.container2}>
+        <View style={{ width: 375, height: 100, backgroundColor: redish, alignItems: 'center'}}>
+          <Text style={{color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, fontFamily: 'Airstream', fontSize: 45, backgroundColor: 'transparent', zIndex: 1, paddingTop: 10}}>{userStats.username}</Text>
+          <Text style={{fontFamily: 'budmo', fontSize: 40, color: 'black', position: 'relative', top: -10, zIndex: 0 }}>{userStats.city}</Text>
         </View>
-        <View style={{top: 10, flex: 1, padding: 3, backgroundColor: redish}}>
+        <View style={{ flex: 1, backgroundColor: 'black'}}>
           <View style={{flex: 0, flexDirection: 'row', justifyContent: 'space-around', marginBottom: 5}}>
-            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontWeight: '900', width: '33%', height: 30, color: redish, textAlign: 'center', fontSize: 20, padding: 3, backgroundColor: 'white'}}>Route ID</Text>
-            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontWeight: '900', width: '33%', height: 30, color: blueish, textAlign: 'center', fontSize: 20, padding: 3, backgroundColor: beige}}>Distance</Text>
-            <Text style={{fontFamily: 'AvenirNext-HeavyItalic', fontWeight: '900', width: '33%', height: 30, color: blueish, textAlign: 'center', fontSize: 20, padding: 3, backgroundColor: beige}}>Time(s)</Text>
+            <Text style={styles.scrollListHeader}>Route ID</Text>
+            <Text style={styles.scrollListHeader}>Distance (mi)</Text>
+            <Text style={styles.scrollListHeader}>Time(s)</Text>
           </View>
 
 
@@ -140,14 +140,14 @@ class Stats extends Component {
           let rowStyle = route.id % 2 === 0 ? styles.scrollListRowEven : styles.scrollListRowOdd
           return (<View key={route.id} style={rowStyle} key={route.id}>
                       <Text style={styles.scrollListItem}> {route.id} </Text>
-                      <Text style={styles.scrollListItem}>{route.totalDist} miles</Text>
+                      <Text style={styles.scrollListItem}>{route.totalDist}</Text>
                       {route.routetimes.map(routetime => {
                         let id = {routetimeId: routetime.id, personalCoords: routetime.personalCoords, personalTimeMarker: routetime.personalTimeMarker, startTime: routetime.startTime, endTime: routetime.endTime, phantomRacerRoutetimeId: routetime.routetimeId, heartrateInfo: routetime.heartrateInfo}
                         return (<TouchableOpacity
                           style={styles.scrollListItem}
                           onPress={this.viewRoute.bind(this, id)}
                           key={routetime.id}>
-                          <Text style={{fontFamily:'AvenirNext-Heavy', fontSize: 18, textAlign: 'right', color: beige,     textShadowColor: 'black',
+                          <Text style={{fontFamily: 'Ghoulish Intent', fontSize: 18, textAlign: 'right', color: yellowish,     textShadowColor: 'black',
                               textShadowOffset: {width: 3, height: 3},
                               textShadowRadius: 3,}}>{routetime.runtime}</Text>
                           </TouchableOpacity>)

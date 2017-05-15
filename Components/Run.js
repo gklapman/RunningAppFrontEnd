@@ -103,7 +103,7 @@ class Run extends Component {
 
           {routesArr.map(routeObj=>{
             let routeID = ""+routeObj.id;
-            let colorsArr = ['#511', '#115', '#555', 'black']
+            let colorsArr = ['#610', '#134', '#D90', 'black']
             let routeColor = colorsArr[routeObj.id % 4]
             return(
               <View key={routeObj.id} >
