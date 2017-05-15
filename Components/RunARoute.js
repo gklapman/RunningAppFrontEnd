@@ -276,6 +276,7 @@ class RunARoute extends Component {
   startStopButton() {
 
     	if(this.state.isRunning){
+        clearInterval(this.timerInterval)
     		//this represents stopping the interval when a person manually chooses to stop by clicking the stop button (end early)
     		this.setState({
     			isRunning: false,

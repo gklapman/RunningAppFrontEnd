@@ -16,7 +16,7 @@ import {connect} from 'react-redux'
 import BackgroundGeolocation from "react-native-background-geolocation";
 //CUSTOM MODULES
 import styles from '../Styles';
-import {fetchUser} from './storeAndReducer';
+import {fetchUser, fetchSession} from './storeAndReducer';
 
 
 
@@ -82,6 +82,16 @@ class Login extends Component {
     BackgroundGeolocation.un('location', this.onLocation)
   }
 
+  componentDidMount(){
+    const { navigate } = this.props.navigation;
+    this.props.fetchSession()
+    .then(user => {
+      if (user){
+        navigate('OurApp')
+      }
+    })
+  }
+
   login(){
     const { navigate } = this.props.navigation;
     this.state={email: 'Charles@charles.com', password: '1234'}//COMMENT THIS WHEN WE ARE READY TO DO OUR PRESENTATION
@@ -117,7 +127,7 @@ class Login extends Component {
   }
 }
 
-const mapDispatchToProps = {fetchUser }
+const mapDispatchToProps = {fetchUser, fetchSession}
 
 const mapStateToProps = null;
 

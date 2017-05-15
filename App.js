@@ -47,6 +47,7 @@ import Coordinates from './Components/Coordinates'
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
+  // Logout: {screen: Login}
 
   },
   {

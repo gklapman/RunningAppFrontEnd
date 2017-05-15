@@ -17,7 +17,7 @@ import {StackNavigator} from 'react-navigation';
 import {connect} from 'react-redux'
 //CUSTOM MODULES
 import styles from '../Styles'
-import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken} from './storeAndReducer'
+import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken, logout} from './storeAndReducer'
 import config from '../config'
 import qs from 'qs'
 
@@ -80,6 +80,7 @@ class Stats extends Component {
 
     this.viewRoute = this.viewRoute.bind(this)
     this.connectToFitBit = this.connectToFitBit.bind(this)
+    this.logout = this.logout.bind(this)
   }
 
    viewRoute(event){
@@ -87,16 +88,23 @@ class Stats extends Component {
         let userId = this.props.user.id
         let oldRoute = true
         // let heartRateInfo;
-        console.log('this props ', this.props, heartrateInfo)
+        // console.log('this props ', this.props, heartrateInfo)
         if (this.props.fitbitAccessToken && !heartrateInfo){
           console.log('about to fetch')
         return this.props.fetchFitBitHeartrateInfo(startTime, endTime, routetimeId)
         .then((heartRateInfoReceived) => {
-          console.log('and we got this info ', heartRateInfoReceived)
-          heartrateInfo = heartRateInfoReceived
+          // console.log('and we got this info ', heartRateInfoReceived)
+          if (typeof(heartRateInfoReceived) === 'string'){
+            alert('Your heartrate data is not available yet')
+          }
+          else { heartrateInfo = heartRateInfoReceived
           this.props.insertHeartRateInfo(routetimeId, heartrateInfo)
+          }
           const { navigate } = this.props.navigation
           navigate('ViewRoute', {personalCoords, personalTimeMarker, userId, startTime, endTime, oldRoute, phantomRacerRoutetimeId, heartrateInfo})
+        })
+        .catch(err => {
+          console.log(err)
         })
         } else {
         const { navigate } = this.props.navigation;
@@ -117,9 +125,14 @@ class Stats extends Component {
 
   }
 
+  logout () {
+    this.props.logout()
+    const { navigate } = this.props.navigation;
+    navigate('Login')
+  }
 
   render() {
-    // console.log('user info', this.props.userStats)
+    console.log('user info', this.props.fitbitAccessToken)
     let userStats = this.props.userStats
 
     return (
@@ -146,11 +159,18 @@ class Stats extends Component {
                   </View>)
         }) }
         </ScrollView>
-
+        
+        {!this.props.fitbitAccessToken ?
         <TouchableOpacity>
           <Button
           onPress={this.connectToFitBit}
           title="Connect To FitBit"
+        />
+        </TouchableOpacity> : null }
+        <TouchableOpacity>
+          <Button
+          onPress={this.logout}
+          title="Logout"
         />
         </TouchableOpacity>
 
@@ -159,7 +179,7 @@ class Stats extends Component {
   }
 }
 
-const mapDispatchToProps = {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken}
+const mapDispatchToProps = {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken, logout}
 
 function mapStateToProps(state){
   return {
