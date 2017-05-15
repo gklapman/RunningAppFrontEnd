@@ -31,13 +31,13 @@ class ViewRoute extends Component {
 	constructor(props) {
 		super(props);
     this.state ={
-    view: 'polylineView', 
-    type: 'speed', 
+    view: 'polylineView',
+    type: 'speed',
     currentRunnerPointer: 0,
     phantomRacerPointer: 0,
     replayTimerStart: 0,
     timer: 0,
-    replayingRun: false, 
+    replayingRun: false,
     phantomRacerInfo: {},
     heartrateCoordsArr: [],
 
@@ -54,7 +54,7 @@ class ViewRoute extends Component {
 
 
 	}
-  
+
 
   changeTypeSpeed(){
     this.setState({
@@ -93,12 +93,12 @@ class ViewRoute extends Component {
     // console.log('given heart rate', givenprops.heartrateInfo)
     // console.log('heartrateInfo', heartrateInfo, givenprops.personalTimeMarker)
     let heartrateCoordsArr = this.state.heartrateCoordsArr
-     if (heartrateInfo && !heartrateCoordsArr.length){ 
+     if (heartrateInfo && !heartrateCoordsArr.length){
     let tracker = 0
       heartrateCoordsArr = givenprops.personalTimeMarker.map((time, idx) => {
       // console.log('time ', time, heartrateInfo)
       let timeLess;
-      let timeMore; 
+      let timeMore;
       for (tracker; tracker < heartrateInfo.length; tracker++){
         // console.log('heart info', heartrateInfo)
         // let info = heartrateInfo[tracker][0]
@@ -106,14 +106,14 @@ class ViewRoute extends Component {
         if (+heartrateInfo[tracker][0] > time){
           timeMore = +heartrateInfo[tracker][0]
           timeLess = +heartrateInfo[tracker - 1][0]
-          break; 
+          break;
         }
       }
         // console.log(timeMore, timeLess, heartrateInfo[tracker], heartrateInfo[tracker - 1])
         let heartRateValCloser = (timeMore - time) > (time - timeLess) ? heartrateInfo[tracker][1] : heartrateInfo[tracker - 1][1]
         // console.log('heartRateValCloser', heartRateValCloser)
         return {coords: givenprops.personalCoords[idx], heartrate: +heartRateValCloser}
-        
+
       })
       this.setState({heartrateCoordsArr: heartrateCoordsArr})
     }
@@ -164,7 +164,7 @@ class ViewRoute extends Component {
       })
     } else {
     this.setState({
-      replayTimer: Date.now(), 
+      replayTimer: Date.now(),
       replayingRun: true,
     })
     // console.log('inside of replay and this is the info ', givenprops)
@@ -176,7 +176,7 @@ class ViewRoute extends Component {
       // let selectedRacer= this.props.selectedRacer
       let personalTimeMarker = this.props.personalTimeMarker
       // console.log('this is the PR info ', this.state.phantomRacerInfo)
-      
+
       // let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
       // let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
       this.replayInterval = setInterval (() => {
@@ -257,7 +257,7 @@ class ViewRoute extends Component {
     })
 
     // console.log('routeCoordsArr ', routeCoordsArr)
-    //HEARTRATE 
+    //HEARTRATE
 
     let heartrateCoordsArr = this.state.heartrateCoordsArr;
 
@@ -265,7 +265,7 @@ class ViewRoute extends Component {
     // console.log('SPEED ', routeCoordsArr)
 
 
-  
+
 
     return (
       <View>
@@ -283,8 +283,8 @@ class ViewRoute extends Component {
                   </BtnSm>
 
             }
-  
-            {this.showHeartRate()}   
+
+            {this.showHeartRate()}
             <View style={styles.changeTypeSpeed}>
                   <TouchableOpacity onPress={this.changeTypeSpeed}>
                     <Text>View Speed</Text>
@@ -314,7 +314,7 @@ class ViewRoute extends Component {
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.008, longitudeDelta: 0.008}}
             style={styles.map}>
 
-          
+
 
           {/*----REPLAY MARKERS----*/}
             {this.state.phantomRacerInfo.personalCoords && this.state.replayingRun ? <MapView.Marker
@@ -332,12 +332,12 @@ class ViewRoute extends Component {
               >
               </MapView.Marker> : null}
 
-        
 
-           
+
+
             {/*----MARKER/SPEED----*/}
             {(this.state.view === 'markerView' && this.state.type === 'speed') &&
-               
+
               routeCoordsArr.map((coords, idx) =>{
                 let speed = 0
 
@@ -356,7 +356,7 @@ class ViewRoute extends Component {
                   </MapView.Marker>
                 )
               })
-            } 
+            }
 
             {/*----MARKER/HEARTRATE----*/}
               {(this.state.view === 'markerView' && this.state.type === 'heartrate') &&
@@ -380,7 +380,7 @@ class ViewRoute extends Component {
              {/*----MARKER/REGULAR----*/}
               {(this.state.view === 'markerView' && this.state.type === 'regular') &&
                 givenprops.personalCoords.map((coords, idx) =>{
-                 
+
                 return (
                   <MapView.Marker
                     key={idx}
@@ -427,12 +427,12 @@ class ViewRoute extends Component {
 
           {/*----POLYLINE/HEARTRATE----*/}
              {(this.state.view === 'polylineView' && this.state.type === "heartrate") &&
-            
+
 
                heartrateCoordsArr.map((info, idx) => {
                 // console.log('this is the info ', info, idx, heartrateCoordsArr[idx + 1])
                let heartrateColor = numToRGBConverter(info.heartrate, 100, 100, 220, false)
-               let firstCoord = heartrateCoordsArr[idx].coords 
+               let firstCoord = heartrateCoordsArr[idx].coords
                let nextCoord;
                if (heartrateCoordsArr[idx + 1]){
                   nextCoord = heartrateCoordsArr[idx + 1].coords
@@ -443,7 +443,7 @@ class ViewRoute extends Component {
                 return (
                   <View key={idx}>
 
-                 
+
                   <MapView.Polyline
                     key={idx}
                     // coordinates={[runDataCoords[idx-1], coords]}
@@ -459,17 +459,17 @@ class ViewRoute extends Component {
             }
 
 
-//             <BigBtn>
-//                   <Text>Final Time: {TimeFormatter(finalTime)}</Text>
-//                   <Text>Final Distance: {totalDistance} Miles</Text>
-//             </BigBtn>
+             {/* <BigBtn>
+                   <Text>Final Time: {TimeFormatter(finalTime)}</Text>
+                   <Text>Final Distance: {totalDistance} Miles</Text>
+             </BigBtn> */}
 
 
             {/*----POLYLINE/REGULAR----*/}
             {(this.state.view === 'polylineView' && this.state.type === "regular") &&
               <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {10} />
             }
-                
+
 
 
 
@@ -490,7 +490,7 @@ class ViewRoute extends Component {
             <View style={styles.replayRoute}>
                 <TouchableOpacity onPress={this.replayRoute}>
                   {!this.state.replayingRun ? <Text>Replay Run</Text> : <Text>Pause Replay</Text>}
-               </TouchableOpacity> 
+               </TouchableOpacity>
             </View>
             {this.state.replayingRun ? <View style={styles.replayTimer}>
               <Text>{TimeFormatter(this.state.timer)}</Text>
@@ -498,7 +498,7 @@ class ViewRoute extends Component {
 
 
           </View>
-          
+
         </View>
     )
   }

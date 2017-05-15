@@ -120,7 +120,7 @@ class Stats extends Component {
   }
 
   componentWillMount() {
-    
+
     let userId = this.props.user.id
     // console.log('this is front end fetch stats', userId)
     this.props.fetchUserStats(userId)
@@ -174,8 +174,8 @@ class Stats extends Component {
                   </View>)
         }) }
         </ScrollView>
-      
-        
+
+
         {!this.props.fitbitAccessToken ?
         <TouchableOpacity>
           <Button
@@ -183,7 +183,7 @@ class Stats extends Component {
           title="Connect To FitBit"
           />
         </TouchableOpacity> : null }
-        
+
           <TouchableOpacity>
             <Button
             onPress={this.logout}
@@ -191,11 +191,11 @@ class Stats extends Component {
             />
           </TouchableOpacity>
 
-//         <BigBtn>
-//           <Text onPress={this.connectToFitBit}>
-//             Connect to FitBit
-//           </Text>
-//         </BigBtn>
+         {/* <BigBtn>
+           <Text onPress={this.connectToFitBit}>
+             Connect to FitBit
+           </Text>
+         </BigBtn> */}
 
          </View>
       </View>
