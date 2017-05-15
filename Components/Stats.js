@@ -17,9 +17,11 @@ import {StackNavigator} from 'react-navigation';
 import {connect} from 'react-redux'
 //CUSTOM MODULES
 import styles from '../Styles'
-import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken} from './storeAndReducer'
+import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken, logout} from './storeAndReducer'
 import config from '../config'
 import qs from 'qs'
+import  {Btn, BigBtn} from './Wrappers'
+import {redish, blueish, beige, yellowish, orangeish} from './Constants'
 
 function OAuth(client_id, cb) {
 
@@ -80,6 +82,7 @@ class Stats extends Component {
 
     this.viewRoute = this.viewRoute.bind(this)
     this.connectToFitBit = this.connectToFitBit.bind(this)
+    this.logout = this.logout.bind(this)
   }
 
    viewRoute(event){
@@ -87,16 +90,23 @@ class Stats extends Component {
         let userId = this.props.user.id
         let oldRoute = true
         // let heartRateInfo;
-        console.log('this props ', this.props, heartrateInfo)
+        // console.log('this props ', this.props, heartrateInfo)
         if (this.props.fitbitAccessToken && !heartrateInfo){
           console.log('about to fetch')
         return this.props.fetchFitBitHeartrateInfo(startTime, endTime, routetimeId)
         .then((heartRateInfoReceived) => {
-          console.log('and we got this info ', heartRateInfoReceived)
-          heartrateInfo = heartRateInfoReceived
+          // console.log('and we got this info ', heartRateInfoReceived)
+          if (typeof(heartRateInfoReceived) === 'string'){
+            alert('Your heartrate data is not available yet')
+          }
+          else { heartrateInfo = heartRateInfoReceived
           this.props.insertHeartRateInfo(routetimeId, heartrateInfo)
+          }
           const { navigate } = this.props.navigation
           navigate('ViewRoute', {personalCoords, personalTimeMarker, userId, startTime, endTime, oldRoute, phantomRacerRoutetimeId, heartrateInfo})
+        })
+        .catch(err => {
+          console.log(err)
         })
         } else {
         const { navigate } = this.props.navigation;
@@ -117,49 +127,83 @@ class Stats extends Component {
 
   }
 
+  logout () {
+    this.props.logout()
+    const { navigate } = this.props.navigation;
+    navigate('Login')
+  }
 
   render() {
-    // console.log('user info', this.props.userStats)
+    console.log('user info', this.props.fitbitAccessToken)
     let userStats = this.props.userStats
 
     return (
-      <View>
-        <View style={styles.userHeader}>
-          <Text style={styles.userName}>{userStats.username}</Text>
-          <Text style={styles.userCity}>{userStats.city}</Text>
+      <View style={styles.container2}>
+        <View style={{ width: 375, height: 100, backgroundColor: redish, alignItems: 'center'}}>
+          <Text style={{color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, fontFamily: 'Airstream', fontSize: 45, backgroundColor: 'transparent', zIndex: 1, paddingTop: 10}}>{userStats.username}</Text>
+          <Text style={{fontFamily: 'budmo', fontSize: 40, color: 'black', position: 'relative', top: -10, zIndex: 0 }}>{userStats.city}</Text>
         </View>
-        <ScrollView style={{height: 200}}>
+        <View style={{ flex: 1, backgroundColor: 'black'}}>
+          <View style={{flex: 0, flexDirection: 'row', justifyContent: 'space-around', marginBottom: 5}}>
+            <Text style={styles.scrollListHeader}>Route ID</Text>
+            <Text style={styles.scrollListHeader}>Distance (mi)</Text>
+            <Text style={styles.scrollListHeader}>Time(s)</Text>
+          </View>
+
+
+        <ScrollView>
         {userStats.routes && userStats.routes.map(route => {
-          return (<View style={styles.userStats}key={route.id}>
-                      <Text> Route Id: {route.id} </Text>
-                      <Text>Time(s): </Text>{route.routetimes.map(routetime => {
+          let rowStyle = route.id % 2 === 0 ? styles.scrollListRowEven : styles.scrollListRowOdd
+          return (<View key={route.id} style={rowStyle} key={route.id}>
+                      <Text style={styles.scrollListItem}> {route.id} </Text>
+                      <Text style={styles.scrollListItem}>{route.totalDist}</Text>
+                      {route.routetimes.map(routetime => {
                         let id = {routetimeId: routetime.id, personalCoords: routetime.personalCoords, personalTimeMarker: routetime.personalTimeMarker, startTime: routetime.startTime, endTime: routetime.endTime, phantomRacerRoutetimeId: routetime.routetimeId, heartrateInfo: routetime.heartrateInfo}
-                        return (<TouchableOpacity
-                          style={{margin: 2}}
+                        return (
+                          <TouchableOpacity
+                          style={styles.scrollListItem}
                           onPress={this.viewRoute.bind(this, id)}
                           key={routetime.id}>
-                          <Text>{routetime.runtime}</Text>
+                              <Text style={{fontFamily: 'Ghoulish Intent', fontSize: 18, textAlign: 'right', color: yellowish,     textShadowColor: 'black',
+                              textShadowOffset: {width: 3, height: 3},
+                              textShadowRadius: 3,}}>
+                                 {routetime.runtime}
+                              </Text>
                           </TouchableOpacity>)
                       })}
-                      <Text>Total Dist: {route.totalDist}</Text>
-
                   </View>)
         }) }
         </ScrollView>
-
+      
+        
+        {!this.props.fitbitAccessToken ?
         <TouchableOpacity>
           <Button
           onPress={this.connectToFitBit}
           title="Connect To FitBit"
-        />
-        </TouchableOpacity>
+          />
+        </TouchableOpacity> : null }
+        
+          <TouchableOpacity>
+            <Button
+            onPress={this.logout}
+            title="Logout"
+            />
+          </TouchableOpacity>
 
+//         <BigBtn>
+//           <Text onPress={this.connectToFitBit}>
+//             Connect to FitBit
+//           </Text>
+//         </BigBtn>
+
+         </View>
       </View>
     )
   }
 }
 
-const mapDispatchToProps = {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken}
+const mapDispatchToProps = {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken, logout}
 
 function mapStateToProps(state){
   return {

@@ -16,7 +16,10 @@ import {connect} from 'react-redux'
 import BackgroundGeolocation from "react-native-background-geolocation";
 //CUSTOM MODULES
 import styles from '../Styles';
-import {fetchUser} from './storeAndReducer';
+
+import {fetchUser, fetchSession} from './storeAndReducer';
+import {redish, blueish, beige, yellowish} from './Constants'
+
 
 
 
@@ -82,6 +85,16 @@ class Login extends Component {
     BackgroundGeolocation.un('location', this.onLocation)
   }
 
+  componentDidMount(){
+    const { navigate } = this.props.navigation;
+    this.props.fetchSession()
+    .then(user => {
+      if (user){
+        navigate('OurApp')
+      }
+    })
+  }
+
   login(){
     const { navigate } = this.props.navigation;
     this.state={email: 'Charles@charles.com', password: '1234'}//COMMENT THIS WHEN WE ARE READY TO DO OUR PRESENTATION
@@ -101,23 +114,37 @@ class Login extends Component {
 
     return (
       <View style={styles.container}>
-        <Text>Email:</Text>
-        <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
-        <Text>Password:</Text>
-        <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
-        <TouchableOpacity>
-          <Button
-          onPress={this.login}
-          title="Login"
-        />
-        </TouchableOpacity>
+
+        <View style={{ position: 'relative', top: 35}}>
+          <Image source={require('../assets/runningred.gif')} />
+          {/* <View style={{height: 100, width: 350, backgroundColor: beige, zIndex: -1, borderRadius: 100}}> */}
+            <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', top: -25}}>PHANTOM</Text>
+          {/* </View> */}
+          <Text style={{fontFamily: 'Airstream', fontSize: 120, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -70, textAlign: 'right', marginRight: 10 }}>Racer</Text>
+        </View>
+        <View style={{ alignItems: 'center'}}>
+
+          <View style={{position: 'relative', top: -30}}>
+            {/* <Image source={require('../assets/runningred.gif')} /> */}
+          </View>
+          <View style={{alignItems: 'center', position: 'relative', top: -50}}>
+            <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Email:</Text>
+            <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
+            <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, marginTop: 10}}>Password:</Text>
+            <TextInput style={styles.input} onChangeText={this.changeTextHandlerPw} />
+
+            <Text onPress={this.login} style={{fontFamily: 'Magnum', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', textAlign: 'right', marginRight: 5, marginTop: 10, position: 'relative', top: 10 }}>Login</Text>
+            <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35, borderColor: yellowish, borderWidth: 3}}></View>
+          </View>
+        </View>
 
       </View>
     )
   }
 }
 
-const mapDispatchToProps = {fetchUser }
+
+const mapDispatchToProps = {fetchUser, fetchSession}
 
 const mapStateToProps = null;
 

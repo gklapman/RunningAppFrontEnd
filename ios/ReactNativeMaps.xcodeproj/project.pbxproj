@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -44,6 +43,15 @@
 		98BD375A1EC156260047310A /* TSBackgroundFetch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98BD37591EC156260047310A /* TSBackgroundFetch.framework */; };
 		98BD375C1EC15AEE0047310A /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 98BD375B1EC15AEE0047310A /* RNBackgroundFetch+AppDelegate.m */; };
 		A978EF24208F495792709C1F /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01845E575DFC47F2B33FD6B9 /* libAirMaps.a */; };
+		DFF90AF650B448329835BBB0 /* ASENINE_.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 25E3E745F60D47C2B5F72083 /* ASENINE_.ttf */; };
+		3D6A73A205DB40CEACCAC5DB /* budmo jiggler.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CB2FE4FEA0E41DABF0BBF86 /* budmo jiggler.ttf */; };
+		B20A3CC5FE9C4AC0A5F46D75 /* HAMBH___.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 278B7546B8684C77B01E7AEA /* HAMBH___.TTF */; };
+		8D02F38850B145B2B36E0823 /* AIRSTREA .ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */; };
+		8D35C39BBE234D03ADC9FB4C /* AIRSTREA.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */; };
+		E6216CEDB71F4ABCBDD8BF8E /* budmo jigglish.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */; };
+		2A8A122733E24421BE9F57C7 /* ghoulishintent.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */; };
+		112367C7881647B9AD34F54A /* MAGNUM__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */; };
+		91C0EAD846084CF5B2021814 /* vicioushunger.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -363,6 +371,15 @@
 		98BD37571EC155970047310A /* TSLocationManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSLocationManager.framework; path = "../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/TSLocationManager.framework"; sourceTree = "<group>"; };
 		98BD37591EC156260047310A /* TSBackgroundFetch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSBackgroundFetch.framework; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.framework"; sourceTree = "<group>"; };
 		98BD375B1EC15AEE0047310A /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RNBackgroundFetch+AppDelegate.m"; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
+		25E3E745F60D47C2B5F72083 /* ASENINE_.ttf */ = {isa = PBXFileReference; name = "ASENINE_.ttf"; path = "../assets/fonts/ASENINE_.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6CB2FE4FEA0E41DABF0BBF86 /* budmo jiggler.ttf */ = {isa = PBXFileReference; name = "budmo jiggler.ttf"; path = "../assets/fonts/budmo jiggler.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		278B7546B8684C77B01E7AEA /* HAMBH___.TTF */ = {isa = PBXFileReference; name = "HAMBH___.TTF"; path = "../assets/fonts/HAMBH___.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */ = {isa = PBXFileReference; name = "AIRSTREA .ttf"; path = "../assets/fonts/AIRSTREA .ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */ = {isa = PBXFileReference; name = "AIRSTREA.TTF"; path = "../assets/fonts/AIRSTREA.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */ = {isa = PBXFileReference; name = "budmo jigglish.ttf"; path = "../assets/fonts/budmo jigglish.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */ = {isa = PBXFileReference; name = "ghoulishintent.ttf"; path = "../assets/fonts/ghoulishintent.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */ = {isa = PBXFileReference; name = "MAGNUM__.TTF"; path = "../assets/fonts/MAGNUM__.TTF"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */ = {isa = PBXFileReference; name = "vicioushunger.ttf"; path = "../assets/fonts/vicioushunger.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -588,6 +605,7 @@
 				00E356EF1AD99517003FC87E /* ReactNativeMapsTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				98BD37541EC154F40047310A /* Frameworks */,
+				4D1386796C1C4DCD9AC7921A /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -653,6 +671,23 @@
 				F09BD2711EBB630F00CC0FC0 /* libAirMaps.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4D1386796C1C4DCD9AC7921A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				25E3E745F60D47C2B5F72083 /* ASENINE_.ttf */,
+				6CB2FE4FEA0E41DABF0BBF86 /* budmo jiggler.ttf */,
+				278B7546B8684C77B01E7AEA /* HAMBH___.TTF */,
+				3E4AF19EC6C344428E35457A /* AIRSTREA .ttf */,
+				393AF6130D9048DF9DF6A879 /* AIRSTREA.TTF */,
+				7B133E4D081D430F936B7D71 /* budmo jigglish.ttf */,
+				0E6D1B37651F4731AC642748 /* ghoulishintent.ttf */,
+				D02BD0262EF644CF8718C348 /* MAGNUM__.TTF */,
+				86592F08C5E040D2A40D1EC5 /* vicioushunger.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1128,6 +1163,15 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				DFF90AF650B448329835BBB0 /* ASENINE_.ttf in Resources */,
+				3D6A73A205DB40CEACCAC5DB /* budmo jiggler.ttf in Resources */,
+				B20A3CC5FE9C4AC0A5F46D75 /* HAMBH___.TTF in Resources */,
+				8D02F38850B145B2B36E0823 /* AIRSTREA .ttf in Resources */,
+				8D35C39BBE234D03ADC9FB4C /* AIRSTREA.TTF in Resources */,
+				E6216CEDB71F4ABCBDD8BF8E /* budmo jigglish.ttf in Resources */,
+				2A8A122733E24421BE9F57C7 /* ghoulishintent.ttf in Resources */,
+				112367C7881647B9AD34F54A /* MAGNUM__.TTF in Resources */,
+				91C0EAD846084CF5B2021814 /* vicioushunger.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

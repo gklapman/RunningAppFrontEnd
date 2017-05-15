@@ -23,6 +23,8 @@ import geolib from 'geolib'
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } from './Utils'
+import {Btn, BtnHolder} from './Wrappers'
+import {redish, blueish, beige} from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -61,8 +63,8 @@ class RunARoute extends Component {
       phantomRacerPointer: 1,//this represents index of the !!!NEXT POINT!!! that the phantom phantomRacer will get to (it's index of BOTH the selected route coord AND +1 the phantomRacer's time array)
       // phantomRacerTimesArrPointer: 1,
 
-			isRunning: false,
-      showStart: false,
+			isRunning: true,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
+      showStart: true,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
 
   		timer: 0,
 			timerStart: 0,
@@ -211,7 +213,7 @@ class RunARoute extends Component {
 
                     const { navigate } = this.props.navigation;
 
-                    
+
 
                     BackgroundGeolocation.un('location', this.onLocation)//not sure why, but navigating to another component unmounts it
                     navigate('ViewRoute', {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId})
@@ -276,6 +278,7 @@ class RunARoute extends Component {
   startStopButton() {
 
     	if(this.state.isRunning){
+        clearInterval(this.timerInterval)
     		//this represents stopping the interval when a person manually chooses to stop by clicking the stop button (end early)
     		this.setState({
     			isRunning: false,
@@ -327,28 +330,31 @@ class RunARoute extends Component {
 
     return (
       <View>
-      	<View style={styles.mapcontainer}>
+      	<View style={styles.mapcontainerNoNav}>
 
+
+        <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
-          <View style={styles.viewRoute}>
-                <TouchableOpacity onPress={this.viewRoute}>
-                  <Text>View Run</Text>
-                </TouchableOpacity>
-            </View> : this.state.showStart ?
+          <Btn>
+                {/* <TouchableOpacity onPress={this.viewRoute}> */}
+                  <Text onPress={this.viewRoute}>View Run</Text>
+                {/* </TouchableOpacity> */}
+            </Btn> : this.state.showStart ?
 
-            <View style={styles.startStop}>
-              <TouchableOpacity onPress={this.startStopButton}>
-                <Text>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
-              </TouchableOpacity>
-           </View> : null }
+            <Btn style={styles.startStop}>
+              {/* <TouchableOpacity onPress={this.startStopButton}> */}
+                <Text onPress={this.startStopButton}>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
+              {/* </TouchableOpacity> */}
+           </Btn> : null }
 
-      		<View style={styles.timer}>
+      		<Btn>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
-      			<Text>{position.latitude}</Text>
-      			<Text>{position.longitude}</Text>
+      			{/* <Text>{position.latitude}</Text>
+      			<Text>{position.longitude}</Text> */}
 
-      		</View>
+      		</Btn>
+        </BtnHolder>
        	 	<MapView
             region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .005, longitudeDelta: .005}}
           // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
