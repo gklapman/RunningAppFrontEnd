@@ -32,29 +32,46 @@ class ViewRoute extends Component {
 		super(props);
     this.state ={
     view: 'polylineView', 
-    type: 'speed'
+    type: 'speed', 
+    currentRunnerPointer: 0,
+    phantomRacerPointer: 0,
+    replayTimerStart: 0,
+    timer: 0,
+    replayingRun: false, 
+    phantomRacerInfo: {},
+    heartrateCoordsArr: [],
 
   }
 
     this.submitRoute = this.submitRoute.bind(this)
     this.changeViewButton = this.changeViewButton.bind(this)
-    this.changeTypeButton = this.changeTypeButton.bind(this)
     this.showHeartRate = this.showHeartRate.bind(this)
+    this.replayRoute = this.replayRoute.bind(this)
+    this.home = this.home.bind(this)
+    this.changeTypeSpeed = this.changeTypeSpeed.bind(this)
+    this.changeTypeHeartRate = this.changeTypeHeartRate.bind(this)
+    this.changeTypeRegular = this.changeTypeRegular.bind(this)
 
 
 	}
   
-  changeTypeButton(){
-    console.log('this is being pressed', this.state.type)
-    if (this.state.type === 'speed'){
-    return this.setState({
-      type: 'heartrate'
-    })
-  } else if (this.state.type === 'heartrate'){
-    return this.setState({
+
+  changeTypeSpeed(){
+    this.setState({
       type: 'speed'
     })
   }
+
+  changeTypeHeartRate(){
+    this.setState({
+      type: 'heartrate'
+    })
+  }
+
+  changeTypeRegular(){
+    this.setState({
+      type: 'regular'
+    })
   }
 
   changeViewButton(){
@@ -70,94 +87,13 @@ class ViewRoute extends Component {
 }
 
   componentDidMount() {
+    let givenprops = this.props.navigation.state.params
     // console.log('givenprops ', this.props.navigation.state.params )
-    let phantomRacerRouteTimeId = this.props.navigation.state.params.phantomRacerRouteTimeId
-    if (phantomRacerRouteTimeId){
-      this.props.fetchSelectedRacer(phantomRacerRouteTimeId)
-    }
-  }
-
-
-  submitRoute(){
-
-    let {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId } = this.props.navigation.state.params
-    // console.log('startTime is ', startTime)
-    this.props.addNewRoute(checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId)
-    const { navigate } = this.props.navigation;
-    navigate('OurApp')
-  }
-
-  showHeartRate (){
-    console.log('RUNNING')
-    let givenprops = this.props.navigation.state.params
-
-    console.log('given props HR ', givenprops.heartrateInfo)
-    if (givenprops.heartrateInfo){
-      return (this.state.type === 'heartrate' ? <View style={styles.changeType}>
-                        <TouchableOpacity onPress={this.changeTypeButton}>
-                          <Text>View Speed</Text>
-                        </TouchableOpacity>
-                    </View> : <View style={styles.changeType}>
-                        <TouchableOpacity onPress={this.changeTypeButton}>
-                          <Text>View Heartrate</Text>
-                        </TouchableOpacity>
-                    </View>)
-    }
-  }
-
-  // replayRoute(){
-  //     let selectedRoutePointer= this.state.selectedRoutePointer
-  //     let selectedRacer= this.props.selectedRacer
-  //     let racerCoordsPointer= this.state.racerCoordsPointer
-  //     let racerTimesArrPointer= this.state.racerTimesArrPointer
-  //     let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
-  //     let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
-
-  //     if(this.state.timer > phantomRacerTimeToCheck-200 && this.state.timer < phantomRacerTimeToCheck+200){
-  //       this.setState({racerCoordsPointer: racerCoordsPointer+1, racerTimesArrPointer: racerTimesArrPointer+1});
-  //     }
-  // }
-
-  render() {
-    console.log('this is the states ', this.state)
-
-    let givenprops = this.props.navigation.state.params
-    let personalCoords = givenprops.personalCoords.slice(0)
-    // console.log('this is given props', givenprops)
-    let startPosition = givenprops.personalCoords[0] //This is setting the view of map to the start of the route
-    // console.log('givenprops is ', givenprops)
-    let finalTime = givenprops.personalTimeMarker[givenprops.personalTimeMarker.length-1]
-    let totalDistance = (geolib.getPathLength(givenprops.personalCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
-
-    // console.log('this is the total distance', totalDistance)
-    let oldRoute = givenprops.oldRoute //this will determine if the submit button is available
-
-    //console.log('this is the total distance', totalDistance)
-
-    // I THREW THESE IN TO POSSIBLY HELP SET THE BOUNDS OF THE MAP BASED ON THE ROUTE'S COORDINATES, SO THE ENTIRE ROUTE WOULD BE IN VIEW BY DEFAULT
-    let nBound = startPosition.latitude
-    let sBound = startPosition.latitude
-    let eBound = startPosition.longitude
-    let wBound = startPosition.longitude
-
-    console.log("GIVEN PROPS", givenprops)
-
-    let routeCoordsArr = givenprops.personalCoords.map((coords, idx) => { //NEED TO FEED THE ACUTAL COORDS THROUGH THIS MAP LATER ON
-      nBound = Math.max(nBound, coords.latitude)
-      sBound = Math.min(sBound, coords.latitude)
-      eBound = Math.min(eBound, coords.longitude)
-      wBound = Math.max(wBound, coords.longitude)
-      return {...coords, time: givenprops.personalTimeMarker[idx]}
-    })
-
-    // console.log('routeCoordsArr ', routeCoordsArr)
-    //HEARTRATE 
-
     let heartrateInfo = givenprops.heartrateInfo
     // console.log('given heart rate', givenprops.heartrateInfo)
     // console.log('heartrateInfo', heartrateInfo, givenprops.personalTimeMarker)
-    let heartrateCoordsArr;
-     if (heartrateInfo){ 
+    let heartrateCoordsArr = this.state.heartrateCoordsArr
+     if (heartrateInfo && !heartrateCoordsArr.length){ 
     let tracker = 0
       heartrateCoordsArr = givenprops.personalTimeMarker.map((time, idx) => {
       // console.log('time ', time, heartrateInfo)
@@ -178,21 +114,158 @@ class ViewRoute extends Component {
         // console.log('heartRateValCloser', heartRateValCloser)
         return {coords: givenprops.personalCoords[idx], heartrate: +heartRateValCloser}
         
-    })
-    // console.log('RESULT', givenprops.personalTimeMarker, heartrateCoordsArr)
+      })
+      this.setState({heartrateCoordsArr: heartrateCoordsArr})
+    }
 
-
+    let phantomRacerRoutetimeId = this.props.navigation.state.params.phantomRacerRoutetimeId
+    console.log('phantom racer id. ', phantomRacerRoutetimeId)
+    if (phantomRacerRoutetimeId){
+      this.props.fetchSelectedRacer(phantomRacerRoutetimeId)
+      .then(phantomRacerInfo => {
+        // console.log('phantom info ', phantomRacerInfo) //do I have to hold this on the state?
+        this.setState({phantomRacerInfo: phantomRacerInfo})
+      })
+    }
   }
 
-    // for each time... look in the heartRateArr for the closest time (- or postive)
-    // one find the closest, save the coords and the value of the heartrate
+
+  submitRoute(){
+
+    let {checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, phantomRacerRouteTimeId, routeId } = this.props.navigation.state.params
+    // console.log('startTime is ', startTime)
+    this.props.addNewRoute(checkpointTimeMarker, personalCoords, personalTimeMarker, userId, startTime, endTime, routeId, phantomRacerRouteTimeId)
+    const { navigate } = this.props.navigation;
+    navigate('OurApp')
+  }
+
+  showHeartRate (){
+    // console.log('RUNNING')
+    let givenprops = this.props.navigation.state.params
+
+    // console.log('given props HR ', givenprops.heartrateInfo)
+    if (givenprops.heartrateInfo){
+      return (<View style={styles.changeTypeHeartRate}>
+                        <TouchableOpacity onPress={this.changeTypeHeartRate}>
+                          <Text>View Heart Rate</Text>
+                        </TouchableOpacity>
+                    </View>: null)
+    }
+  }
+
+  replayRoute(){
+    let givenprops = this.props.navigation.state.params
+    // console.log('this is phantom racer info ', phantomRacerInfo)
+    if (this.state.replayingRun){
+      clearInterval(this.replayInterval)
+      clearInterval(this.timerInterval)
+      this.setState({
+        replayingRun: false
+      })
+    } else {
+    this.setState({
+      replayTimer: Date.now(), 
+      replayingRun: true,
+    })
+    // console.log('inside of replay and this is the info ', givenprops)
+
+      this.timerInterval = setInterval (()=> {//purely for visual purposes
+        this.setState({timer: Date.now() - this.state.replayTimer})
+      }, 50)
+    // console.log('given props ', givenprops)
+      // let selectedRacer= this.props.selectedRacer
+      let personalTimeMarker = this.props.personalTimeMarker
+      // console.log('this is the PR info ', this.state.phantomRacerInfo)
+      
+      // let phantomRacerTimeToCheck= selectedRacer.routetimes[0].timesArr[racerTimesArrPointer]
+      // let phantomRacerCurrPos= this.props.selectedRoute.convCoords[racerCoordsPointer]
+      this.replayInterval = setInterval (() => {
+        let timeToCheck = Date.now() - this.state.replayTimer
+        let currentRunnerPointer= this.state.currentRunnerPointer
+        let phantomRacerInfo = this.state.phantomRacerInfo
+        let phantomRacerPointer = this.state.phantomRacerPointer
+        if (phantomRacerInfo.personalCoords){
+          // console.log('step one ')
+          if (phantomRacerInfo.personalTimeMarker[phantomRacerPointer]-500 < timeToCheck){
+            // console.log('step two')
+            this.setState({
+              phantomRacerPointer: phantomRacerPointer+1
+            })
+          }
+        }
+        // console.log('given props time', givenprops.personalTimeMarker[currentRunnerPointer], timeToCheck)
+        if (givenprops.personalTimeMarker[currentRunnerPointer]- 500 < timeToCheck){
+          if (currentRunnerPointer < givenprops.personalCoords.length){
+            this.setState({
+            currentRunnerPointer: currentRunnerPointer+1,
+            timer: Date.now()-this.state.replayTimer,
+            })
+          }
+        } else if (currentRunnerPointer === givenprops.personalCoords.length){
+            clearInterval(this.timerInterval)
+            this.setState({replayingRun: false})
+        }
 
 
-    // console.log("THIS PROPS IS", this.props.navigation.state.params.completeRouteCoords)
-    // let routeCoordsArr = this.props.navigation.state.params.completeRouteCoords
-    // let routeCoordsArr = this.state.selectedRoute.convCoords // do we even need this?
+      }, 1000)
+    }
+  }
 
-    // console.log('this is what we receive', this.props.navigation.state.params, this.props.selectedRacer)
+   home(){
+    const { navigate } = this.props.navigation;
+    navigate('OurApp');
+  }
+
+  render() {
+    // console.log('this is the states ', this.state)
+    console.log('phantom info ', this.state.phantomRacerInfo)
+    let phantomRacerInfo = this.state.phantomRacerInfo
+    if (this.state.phantomRacerInfo.personalCoords){
+      // console.log('phantom racer info ', phantomRacerInfo)
+    // console.log('phantom position ', phantomRacerInfo.personalCoords[this.state.phantomRacerPointer])
+    }
+
+
+    let givenprops = this.props.navigation.state.params
+     // console.log('current runner position ', givenprops.personalCoords[this.state.currentRunnerPointer] )
+    let personalCoords = givenprops.personalCoords.slice(0)
+    // console.log('this is given props', givenprops)
+    let startPosition = givenprops.personalCoords[0] //This is setting the view of map to the start of the route
+    // console.log('givenprops is ', givenprops)
+    let finalTime = givenprops.personalTimeMarker[givenprops.personalTimeMarker.length-1]
+    let totalDistance = (geolib.getPathLength(givenprops.personalCoords) * 0.000621371).toFixed(2)//the .000 whatvs is to convert meters to miles (to fixed is making it go to 2 decimal points)
+
+    // console.log('this is the total distance', totalDistance)
+    let oldRoute = givenprops.oldRoute //this will determine if the submit button is available
+
+    //console.log('this is the total distance', totalDistance)
+
+    // I THREW THESE IN TO POSSIBLY HELP SET THE BOUNDS OF THE MAP BASED ON THE ROUTE'S COORDINATES, SO THE ENTIRE ROUTE WOULD BE IN VIEW BY DEFAULT
+    let nBound = startPosition.latitude
+    let sBound = startPosition.latitude
+    let eBound = startPosition.longitude
+    let wBound = startPosition.longitude
+
+    // console.log("GIVEN PROPS", givenprops)
+
+    let routeCoordsArr = givenprops.personalCoords.map((coords, idx) => { //NEED TO FEED THE ACUTAL COORDS THROUGH THIS MAP LATER ON
+      nBound = Math.max(nBound, coords.latitude)
+      sBound = Math.min(sBound, coords.latitude)
+      eBound = Math.min(eBound, coords.longitude)
+      wBound = Math.max(wBound, coords.longitude)
+      return {...coords, time: givenprops.personalTimeMarker[idx]}
+    })
+
+    // console.log('routeCoordsArr ', routeCoordsArr)
+    //HEARTRATE 
+
+    let heartrateCoordsArr = this.state.heartrateCoordsArr;
+
+    // console.log('HEART RATE', heartrateCoordsArr)
+    // console.log('SPEED ', routeCoordsArr)
+
+
+  
 
     return (
       <View>
@@ -210,12 +283,19 @@ class ViewRoute extends Component {
                   </BtnSm>
 
             }
-    
-              
+  
             {this.showHeartRate()}   
-                  
-            
-
+            <View style={styles.changeTypeSpeed}>
+                  <TouchableOpacity onPress={this.changeTypeSpeed}>
+                    <Text>View Speed</Text>
+                  </TouchableOpacity>
+            </View>
+             <View style={styles.changeTypeRegular}>
+                  <TouchableOpacity onPress={this.changeTypeRegular}>
+                    <Text>View Regular</Text>
+                  </TouchableOpacity>
+            </View>
+            {/*view regular is bad name... this is for route with no color change*/}
 
 
 
@@ -231,10 +311,32 @@ class ViewRoute extends Component {
             </BtnHolder>
 
          <MapView
-              region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005}}
+              region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.008, longitudeDelta: 0.008}}
             style={styles.map}>
 
-             {(this.state.view === 'markerView' && this.state.type === 'speed') &&
+          
+
+          {/*----REPLAY MARKERS----*/}
+            {this.state.phantomRacerInfo.personalCoords && this.state.replayingRun ? <MapView.Marker
+              coordinate={phantomRacerInfo.personalCoords[this.state.phantomRacerPointer]}
+              pinColor='green'
+              style={{height: 10, width: 10, borderRadius: 10}}
+              title='phantom racer'
+            /> : null}
+
+            {this.state.replayingRun ? <MapView.Marker
+                coordinate={givenprops.personalCoords[this.state.currentRunnerPointer]}
+                pinColor='red'
+                style={{height: 10, width: 10, borderRadius: 10}}
+                title='current runner'
+              >
+              </MapView.Marker> : null}
+
+        
+
+           
+            {/*----MARKER/SPEED----*/}
+            {(this.state.view === 'markerView' && this.state.type === 'speed') &&
                
               routeCoordsArr.map((coords, idx) =>{
                 let speed = 0
@@ -255,10 +357,12 @@ class ViewRoute extends Component {
                 )
               })
             } 
-             {(this.state.view === 'markerView' && this.state.type === 'heartrate') &&
+
+            {/*----MARKER/HEARTRATE----*/}
+              {(this.state.view === 'markerView' && this.state.type === 'heartrate') &&
               heartrateCoordsArr.map((info, idx) =>{
-                  console.log('info if ', info)
-                  let heartrateColor = numToRGBConverter(info.heartrate, 50, 100, 220, false)
+                  // console.log('info if ', info)
+                  let heartrateColor = numToRGBConverter(info.heartrate, 100, 100, 220, false)
 
                 return (
                   <MapView.Marker
@@ -272,8 +376,25 @@ class ViewRoute extends Component {
                 )
               })
             }
-            {
-              (this.state.view === 'polylineView' &&
+
+             {/*----MARKER/REGULAR----*/}
+              {(this.state.view === 'markerView' && this.state.type === 'regular') &&
+                givenprops.personalCoords.map((coords, idx) =>{
+                 
+                return (
+                  <MapView.Marker
+                    key={idx}
+                    coordinate={coords}
+                    pinColor='green'
+                    style={{height: 10, width: 10, borderRadius: 10}}
+                  >
+                  </MapView.Marker>
+                )
+              })
+            }
+
+            {/*----POLYLINE/SPEED----*/}
+              {((this.state.view === 'polylineView' && this.state.type === "speed") &&
               ////////SWITCH TO THIS FOR POLYLINE
 
               personalCoords.length) && personalCoords.map((coords, idx) => {
@@ -304,20 +425,80 @@ class ViewRoute extends Component {
               })
             }
 
+          {/*----POLYLINE/HEARTRATE----*/}
+             {(this.state.view === 'polylineView' && this.state.type === "heartrate") &&
+            
+
+               heartrateCoordsArr.map((info, idx) => {
+                // console.log('this is the info ', info, idx, heartrateCoordsArr[idx + 1])
+               let heartrateColor = numToRGBConverter(info.heartrate, 100, 100, 220, false)
+               let firstCoord = heartrateCoordsArr[idx].coords 
+               let nextCoord;
+               if (heartrateCoordsArr[idx + 1]){
+                  nextCoord = heartrateCoordsArr[idx + 1].coords
+               } else {
+                nextCoord = heartrateCoordsArr[idx].coords
+               }
+               // console.log('firstCoord ', firstCoord, 'next', nextCoord)
+                return (
+                  <View key={idx}>
+
+                 
+                  <MapView.Polyline
+                    key={idx}
+                    // coordinates={[runDataCoords[idx-1], coords]}
+                    coordinates={[firstCoord, nextCoord]}
+                    strokeColor={heartrateColor}
+                    // strokeColor={'red'}
+                    strokeWidth={10}
+                    // title={''+speed}
+                  />
+                  </View>
+                )
+              })
+            }
 
 
-            <BigBtn>
-                  <Text>Final Time: {TimeFormatter(finalTime)}</Text>
-                  <Text>Final Distance: {totalDistance} Miles</Text>
-            </BigBtn>
+//             <BigBtn>
+//                   <Text>Final Time: {TimeFormatter(finalTime)}</Text>
+//                   <Text>Final Distance: {totalDistance} Miles</Text>
+//             </BigBtn>
 
 
+            {/*----POLYLINE/REGULAR----*/}
+            {(this.state.view === 'polylineView' && this.state.type === "regular") &&
+              <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {10} />
+            }
+                
 
-            {/* <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {4} /> */}
+
 
           </MapView>
 
+            <View style={styles.homeButton}>
+              <TouchableOpacity onPress={this.home}>
+                <Text>Home</Text>
+              </TouchableOpacity>
+            </View>
+          {!oldRoute &&
+            <View style={styles.submitRoute}>
+                <TouchableOpacity onPress={this.submitRoute}>
+                  <Text>Submit Run</Text>
+               </TouchableOpacity>
+            </View> }
+
+            <View style={styles.replayRoute}>
+                <TouchableOpacity onPress={this.replayRoute}>
+                  {!this.state.replayingRun ? <Text>Replay Run</Text> : <Text>Pause Replay</Text>}
+               </TouchableOpacity> 
+            </View>
+            {this.state.replayingRun ? <View style={styles.replayTimer}>
+              <Text>{TimeFormatter(this.state.timer)}</Text>
+            </View> : null}
+
+
           </View>
+          
         </View>
     )
   }

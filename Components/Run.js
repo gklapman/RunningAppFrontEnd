@@ -119,9 +119,9 @@ class Run extends Component {
    	}
 
     const goToChooseYourOpponent = (evt) => {
-      const routeID = ''+evt.nativeEvent.id
+      let routeID = evt
+      // console.log('this is the id ',routeID)
       this.props.fetchSelectedRoute(routeID)
-      console.log('this is the route id', routeID)
       navigate('ChooseYourOpponent')
     }
 
@@ -198,24 +198,22 @@ class Run extends Component {
 
                    strokeColor={routeColor}
                    strokeWidth= {10}
-                  //  identifier={routeID}
-                  //  target={routeObj.id}
-                  //  onPress={goToChooseYourOpponent}
+                   onPress={goToChooseYourOpponent.bind(this, routeObj.id)}
                  />
 
                 <MapView.Marker
                   coordinate={{ latitude: routeObj.convCoords[0].latitude, longitude: routeObj.convCoords[0].longitude}}
                   pinColor={routeColor}
                   title='Start'
-                  identifier={routeID}
-                  onSelect={goToChooseYourOpponent}
+                  // identifier={routeID}
+                  // onSelect={goToChooseYourOpponent}
                 />
                 <MapView.Marker
                   coordinate={{latitude: routeObj.convCoords[routeObj.convCoords.length-1].latitude, longitude: routeObj.convCoords[routeObj.convCoords.length-1].longitude}}
                   pinColor={routeColor}
                   title='End'
-                  identifier={routeID}
-                  onSelect={goToChooseYourOpponent}
+                  // identifier={routeID}
+                  // onSelect={goToChooseYourOpponent}
                 />
               </View>
             )

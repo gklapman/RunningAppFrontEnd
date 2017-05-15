@@ -165,7 +165,7 @@ class MakeRoute extends Component {
             let newtimeMarker = this.state.personalTimeMarker
             let newcheckpointTimeMarker = this.state.checkpointTimeMarker
 
-            if (newrouteCoords.length % 10){
+            if (newrouteCoords.length % 10 === 0){
                 newcheckpointTimeMarker.push(elapsedTime)
             }
 

@@ -48,6 +48,7 @@ import {redish, blueish, beige, yellowish, orangeish, darkGrey, lightGrey} from 
 const OurApp = TabNavigator({
   Stats: {screen: Stats },
   Run: {screen: Run},
+  // Logout: {screen: Login}
 
   },
   {

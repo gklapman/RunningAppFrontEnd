@@ -28,8 +28,8 @@ const SET_FITBIT_TOKEN = "SET_FITBIT_TOKEN"
 
 ////CONFIG                          //CHANGE THIS TO MAKE ALL YOUR REQUESTS GO TO EITHER LOCALHOST OR THE DEPLOYED HEROKU SITE
 const localHostorHeroku=''
-// localHostorHeroku= localHost
-localHostorHeroku= herokuUrl
+localHostorHeroku= localHost
+// localHostorHeroku= herokuUrl
 
 
 ////ACTION CREATORS
@@ -89,10 +89,25 @@ export const setFitBitToken = function(access_token){
 ////DISPATCHERS
 
 
+export const fetchSession = ()=> {
+  return dispatch => {
+    return axios.get(`${localHostorHeroku}/api/me`)
+    .then(res => {
+      console.log('DATAAA ', res.data)
+      return res.data
+    })
+    .then(user => {
+      dispatch(setUser(user))
+      return user
+    })
+    .catch(err => {
+      console.log(err)})
+  }
+}
 
 export const fetchUser = ({email, password}) => {
   return dispatch => {
-    return axios.post(`${localHostorHeroku}/api/users/login`, { email, password} )
+    return axios.post(`${localHostorHeroku}/api/me/login`, { email, password} )
     .then(res => res.data)
     .then(foundUser => {
       if(foundUser) dispatch(setUser(foundUser))
@@ -102,6 +117,18 @@ export const fetchUser = ({email, password}) => {
   }
 }
 
+
+export const logout = () => {
+  return dispatch => {
+    return axios.post(`${localHostorHeroku}/api/me/logout`)
+    .then(loggedout => {
+      dispatch(setUser({}))
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+}
 
 export const fetchUserLocation = location => {
   return dispatch => {
@@ -117,6 +144,7 @@ export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMa
     .then(response => {
           console.log('this is the response', response.data)
           //INVOKE THUNK TO RELOAD ALL ROUTES
+          dispatch(fetchUserStats(userId))
     })
 
   }
@@ -124,6 +152,7 @@ export const addNewRoute = (checkpointTimeMarker, personalCoords, personalTimeMa
 
 export const fetchSelectedRoute = selectedRouteId => {
   return dispatch => {
+  console.log('fetching with ', selectedRouteId)
     return axios.get(`${localHostorHeroku}/api/runroutes/${selectedRouteId}`)
     .then(res => res.data)
     .then(eagerLoadedRoute => {
@@ -170,12 +199,18 @@ export const fetchNearbyRoutes = (region) => {
 }
 
 
-export const fetchSelectedRacer = (phantomRacerId) => {
+export const fetchSelectedRacer = (phantomRacerRoutetimeId) => {
   return dispatch => {
-    return axios.get(`${localHostorHeroku}/api/users/${phantomRacerId}`)
+    // return axios.get(`${localHostorHeroku}/api/users/${phantomRacerId}`)
+    return axios.get(`${localHostorHeroku}/api/runroutes/routetime/${phantomRacerRoutetimeId}`)
     .then(res => {
-      console.log('this is the opponent info', res.data)
-      // dispatch(setSelectedRacer(res.data))
+      return res.data
+    })
+    .then(phantomRacerInfo => {
+      phantomRacerInfo.personalCoords = phantomRacerInfo.personalCoords.map(coordPair => {
+        return {latitude:+coordPair[0], longitude:+coordPair[1]};
+      })
+      return phantomRacerInfo
     })
   }
 
@@ -279,7 +314,6 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
         let fullDateToConvert = new Date(fullStringToConvert)
         // console.log('full date to convert ', fullDateToConvert)
         let millisecondTime = fullDateToConvert.valueOf()
-        // console.log('millis ', millisecondTime)
         let timeValResult  = [millisecondTime - (Number(timeStart)), timeValPair.value]
         // if (timeValResult[0] > 0 && timeValResult[0] < (timeEnd - timeStart)){ //this is taking care of the extra data we receive for the first and last minute of their route because FitBit will only deliver the whole minute
           return timeValResult
@@ -289,7 +323,8 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
     })
 
     .catch((err) => {
-      console.error('Error: ', err);
+      return ('error fetching fitbit data')
+      // console.error('Error: ', err);
     });
     }
 }
@@ -297,7 +332,6 @@ export const fetchFitBitHeartrateInfo = (timeStart, timeEnd, routetimeId) => {
 export const insertHeartRateInfo = (routetimeId, heartrateInfo) => {
   return dispatch => {
     return axios.put(`${localHostorHeroku}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
-    // return axios.put(`${herokuUrl}/api/runroutes/routetime/${routetimeId}`, {heartrateInfo})
     .then(res => {
       console.log('res is ', res.data)
     })
