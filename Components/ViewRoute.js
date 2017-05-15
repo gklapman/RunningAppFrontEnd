@@ -22,6 +22,9 @@ import styles from '../Styles'
 import {addNewRoute, fetchSelectedRacer} from './storeAndReducer'
 import {runDataCoords, runDataTimes} from './RunData'
 import {numToRGBConverter} from './Utils'
+import {Btn, BtnSm, BigBtn, BtnHolder} from './Wrappers'
+import {redish, blueish, beige} from './Constants'
+
 
 
 class ViewRoute extends Component {
@@ -266,21 +269,19 @@ class ViewRoute extends Component {
 
     return (
       <View>
-         <View style={styles.mapcontainer}>
-            <View style={styles.finalTime}>
-                    {/* <Text>Final Time: {TimeFormatter(finalTime)}</Text> */}
-                  </View>
-            {this.state.view === 'polylineView' ?
-                <View style={styles.changeView}>
-                      <TouchableOpacity onPress={this.changeViewButton}>
-                        <Text>Marker View</Text>
-                      </TouchableOpacity>
-                  </View> :
-                  <View style={styles.changeView}>
-                      <TouchableOpacity onPress={this.changeViewButton}>
-                        <Text>Line View</Text>
-                      </TouchableOpacity>
-                  </View>
+
+         <View style={styles.mapcontainerNoNav}>
+
+            <BtnHolder>
+            { ////////// I NEED TO FIX THIS- THIS NEW BUTTON IS COVERING UP THE OLD ONE
+              this.state.view === 'lineHeatmap' ?
+                  <BtnSm>
+                        <Text onPress={this.changeViewButton}>View Speed</Text>
+                  </BtnSm> :
+                  <BtnSm>
+                        <Text onPress={this.changeViewButton}>View Heatmap</Text>
+                  </BtnSm>
+
             }
   
             {this.showHeartRate()}   
@@ -297,10 +298,17 @@ class ViewRoute extends Component {
             {/*view regular is bad name... this is for route with no color change*/}
 
 
-           <View style={styles.finalDistance}>
-                    <Text>Final Time: {TimeFormatter(finalTime)}</Text>
-                    <Text>Final Distance: {totalDistance} Miles</Text>
-          </View>
+
+              {!oldRoute &&
+                <BtnSm>
+                      <Text onPress={this.submitRoute}>Submit Run</Text>
+                </BtnSm> }
+
+                <BtnSm>
+                      <Text onPress={this.replayRoute}>Replay Run</Text>
+                </BtnSm>
+
+            </BtnHolder>
 
          <MapView
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.008, longitudeDelta: 0.008}}
@@ -435,6 +443,7 @@ class ViewRoute extends Component {
                 return (
                   <View key={idx}>
 
+                 
                   <MapView.Polyline
                     key={idx}
                     // coordinates={[runDataCoords[idx-1], coords]}
@@ -450,6 +459,12 @@ class ViewRoute extends Component {
             }
 
 
+//             <BigBtn>
+//                   <Text>Final Time: {TimeFormatter(finalTime)}</Text>
+//                   <Text>Final Distance: {totalDistance} Miles</Text>
+//             </BigBtn>
+
+
             {/*----POLYLINE/REGULAR----*/}
             {(this.state.view === 'polylineView' && this.state.type === "regular") &&
               <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {10} />
@@ -459,6 +474,7 @@ class ViewRoute extends Component {
 
 
           </MapView>
+
             <View style={styles.homeButton}>
               <TouchableOpacity onPress={this.home}>
                 <Text>Home</Text>
@@ -479,6 +495,8 @@ class ViewRoute extends Component {
             {this.state.replayingRun ? <View style={styles.replayTimer}>
               <Text>{TimeFormatter(this.state.timer)}</Text>
             </View> : null}
+
+
           </View>
           
         </View>

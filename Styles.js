@@ -3,6 +3,7 @@ import React from 'react';
 import {
   StyleSheet
 } from 'react-native';
+import {redish, blueish, yellowish} from './Components/Constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -10,7 +11,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'skyblue',
+    backgroundColor: redish,
+  },
+  container2: {
+    // display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
   },
   welcome: {
     fontSize: 20,
@@ -26,7 +34,7 @@ const styles = StyleSheet.create({
     margin: 5,
     paddingTop: 15,
     flexDirection: 'row',
-    backgroundColor: 'grey',
+    backgroundColor: 'blue',
     position: 'absolute',
     paddingTop: 0,
     bottom: 5,
@@ -53,16 +61,22 @@ const styles = StyleSheet.create({
     width: 250
   },
   input: {
-    margin: 'auto',//CAN'T GET THIS TO CENTER NO MATTER WHAT
-    justifyContent: 'center',
+    color: yellowish,
+    fontFamily:'Ghoulish Intent',
+    fontSize: 20,
+    backgroundColor: 'black',
+    margin: 'auto',
+    padding: 10,
+    textAlign: 'center',
     borderColor: 'black',
-    borderWidth: 1,
-    height: 37,
-    width: 250
+    borderWidth: 3,
+    borderRadius: 18,
+    height: 35,
+    width: 250,
   },
   mapcontainer: {
-    height: 600,
-    width: 400,
+    height: 555,
+    width: 375,
     position: 'absolute',
     top: 0,
     left: 0,
@@ -71,7 +85,18 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     display: 'flex'
-
+  },
+  mapcontainerNoNav: {
+    height: 600,
+    width: 375,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    display: 'flex'
   },
   map: {
     position: 'absolute',
@@ -92,18 +117,30 @@ const styles = StyleSheet.create({
     width: 100,
     backgroundColor: '#b0c4de',
     zIndex: 1,
-    position: 'absolute',
-    top: 30,
-    right: 50,
+    // position: 'absolute',
+    // top: 30,
+    // right: 50,
   },
   filter: {
     zIndex: 1,
     height: 50,
     width: 100 ,
     backgroundColor: 'blue',
+    // position: 'absolute',
+    // top: 30,
+    // left: 50,
+  },
+  btnHolder: {
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1,
+    height: 50,
+    width: '100%',
+    // backgroundColor: 'orange',
     position: 'absolute',
-    top: 30,
-    left: 50,
+    top: 20,
+    alignItems: 'center',
+    justifyContent: 'space-around'
   },
   genRoute: {
     zIndex: 1,
@@ -257,7 +294,68 @@ const styles = StyleSheet.create({
   },
   userStats: {
     margin: 2
+  },
+  scrollListHeader: {
+    fontFamily: 'Magnum',
+    fontWeight: '900',
+    width: '33%',
+    height: 35,
+    color: yellowish,
+    textAlign: 'center',
+    fontSize: 20,
+    padding: 3,
+    paddingTop: 7,
+    backgroundColor: 'black',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: yellowish
+  },
+  scrollListRow: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderRadius: 15,
+    backgroundColor: 'white',
+  },
+  scrollListRowOdd: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    // backgroundColor: '#999999',
+    borderWidth: 1,
+    borderColor: yellowish,
+  },
+  scrollListRowEven: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    // backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: yellowish,
+  },
+  scrollListItem: {
+    textAlign: 'center',
+    fontFamily: 'Ghoulish Intent',
+    fontSize: 18,
+    color: yellowish,
+    backgroundColor: 'transparent',
+    width: '30%',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 3, height: 3},
+    textShadowRadius: 3,
+  },
+  scrollListItem2: {
+    textAlign: 'center',
+    fontFamily: 'Ghoulish Intent',
+    fontSize: 14,
+    color: yellowish,
+    backgroundColor: 'transparent',
+    width: '48%'
   }
+
   });
 
 export default styles
