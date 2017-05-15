@@ -20,7 +20,7 @@ import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
 import {Btn, BtnHolder} from './Wrappers'
 import {redish, blueish, beige} from './Constants'
-import { IntersectADJLIST } from './utils/genRoute'
+import { IntersectADJLIST, GenerateRoutes } from './utils/genRoute'
 
 
 class Run extends Component {
@@ -36,40 +36,56 @@ class Run extends Component {
       },
       intersectionMarkers: [],
       querycoords: [],
+      streetLookup: {},
+      adjList: {},
+      generatedRoutes: [],
+      genRouteNum: 0,
   }
     this.canMakeRequests= false
     this.scrollWaitInterval
     this.onRegionChange=this.onRegionChange.bind(this)
     this.genRoute= this.genRoute.bind(this)
+    this.incrementRouteNum= this.incrementRouteNum.bind(this)
+  }
+
+  incrementRouteNum(){
+    let newgenRouteNum=this.state.genRouteNum+1
+    this.setState({genRouteNum: newgenRouteNum})
   }
 
   genRoute(){
-    // console.log('genRoute button clicked')
     let region = this.state.region
-    console.log('region ', region)
+    // console.log('region ', region)
     let intAdjList= new IntersectADJLIST(region)
-
-    // intAdjList.intersectQueryBulk({latitude: region.latitude, longitude: region.longitude})
-    //   .then(res=>{
-    //     console.log('intersectionsArr in genRoute ', res)
-    //     let intersectionsArr= res
-    //     let intersectionMarkers= this.state.intersectionMarkers.slice(0)
-    //     intersectionMarkers= intersectionMarkers.concat(intersectionsArr)
-    //     console.log('intersectionMarkers ', intersectionMarkers)
-    //     this.setState({intersectionMarkers: intersectionMarkers})
-    //   })
-    //   .catch(err=>console.error(err))
 
     intAdjList.intersectsPerRegion()
       .then(res=>{
         if(res==='error') throw res
         // console.log('intersectionsArr in genRoute ', res)
-        let intersectionsArr= res.intersections
+        // let intersectionsArr= res.intersections
         let querycoords = res.querycoords
-        let intersectionMarkers= this.state.intersectionMarkers.slice(0)
-        intersectionMarkers= intersectionMarkers.concat(intersectionsArr)
+        // let intersectionMarkers= this.state.intersectionMarkers.slice(0)
+        // intersectionMarkers= intersectionMarkers.concat(intersectionsArr)//When you can, start transitioning to getting this directly from the instance
+
         // console.log('intersectionMarkers ', intersectionMarkers)
-        this.setState({intersectionMarkers, querycoords})
+        intAdjList.sortStreetLookup()
+        intAdjList.connectIntersectNodes()
+        let intersectionMarkers=Object.keys(intAdjList.adjList).map(key=>intAdjList.adjList[key])
+        let streetLookup= intAdjList.streetLookup
+        let adjList= intAdjList.adjList
+        console.dir(intAdjList, {depth: 5})
+        this.setState({ intersectionMarkers, querycoords, streetLookup, adjList })
+
+        return intAdjList.intersectQuery({latitude: region.latitude, longitude: region.longitude})//this is not dry at all.. doing another query in the center -_-   .. fix this later
+      })
+      .then(res=>{
+        let startingCoord= res
+        let startingKey=startingCoord.latitude+','+startingCoord.longitude
+        let startingNode= intAdjList.adjList[startingKey]
+        let genRoute= new GenerateRoutes(startingNode,startingNode,1500)
+        let generatedRoutes= genRoute.getRoutes()
+        console.log('routes generated ',generatedRoutes)
+        this.setState({generatedRoutes})
       })
       .catch(err=>console.error(err))
   }
@@ -125,13 +141,21 @@ class Run extends Component {
       navigate('ChooseYourOpponent')
     }
 
+    const consoleLogIntersection = (evt) => {
+      let id= evt.nativeEvent.id
+      console.log(this.state.adjList[id])
+    }
+
     const filter = () => {
     	// console.log('this will be for filters')
     }
 
     let intersectionMarkers= this.state.intersectionMarkers
+    let streetLookup= this.state.streetLookup
     let querycoords= this.state.querycoords
-    console.log('this.state ',this.state)
+    let generatedRoutes= this.state.generatedRoutes
+    let genRouteNum= this.state.genRouteNum
+    console.log('this.state ',this.state.genRouteNum)
 
     return (
       <View>
@@ -161,28 +185,66 @@ class Run extends Component {
        	 		<Button onPress={this.genRoute} title="Generate Route"></Button>
        	 	</View>
 
+          <View style={styles.incrementRouteNum}>
+            <Button onPress={this.incrementRouteNum} title="See Next Generated Route"></Button>
+          </View>
+
        	 	<MapView style={styles.map}
             onRegionChange={this.onRegionChange}
             initialRegion={{latitude: 41.88782633760493, longitude: -87.64045111093955, latitudeDelta: .005, longitudeDelta: .005}}>
-
 
           {querycoords.map(coord=>{
             return(<MapView.Marker
               coordinate={{ latitude: coord.latitude, longitude: coord.longitude}}
               // coordinate={{ latitude: 41.88782633760493, longitude: -87.64045111093955}}
-              pinColor='red'
+              pinColor='purple'
               title='querycoord'
             />)
           })}
 
-          {intersectionMarkers.map(intersection=>{
-            return(<MapView.Marker
+          {/* {intersectionMarkers.map(intersection=>{
+            return(
+
+              intersection.connections.length>=4
+
+              ?
+
+              (<MapView.Marker
               coordinate={{ latitude: intersection.latitude, longitude: intersection.longitude}}
-              // coordinate={{ latitude: 41.88782633760493, longitude: -87.64045111093955}}
+              identifier={ intersection.latitude+','+intersection.longitude }
+              onSelect= { consoleLogIntersection }
               pinColor='black'
-              title='intersection'
-            />)
-          })}
+              title={intersection.latitude+','+intersection.longitude}
+              />)
+
+              :
+
+              (<MapView.Marker
+              coordinate={{ latitude: intersection.latitude, longitude: intersection.longitude}}
+              identifier={ intersection.latitude+','+intersection.longitude }
+              onSelect= { consoleLogIntersection }
+              pinColor='grey'
+              title={intersection.latitude+','+intersection.longitude}
+              />)
+
+            )
+          })} */}
+
+          { Object.keys(streetLookup).map(key=>{//THIS IS FOR DRAWING LINES BETWEEN INTERSECTIONS
+            if(key!=='Alley'){
+              let streetLineArr= streetLookup[key].map(intersectNode=>{
+                return {latitude: intersectNode.latitude, longitude: intersectNode.longitude}
+              })
+              return(
+                <MapView.Polyline
+                  coordinates={streetLineArr}
+                  // coordinates={[{latitude: 41.88782633760493, longitude: -87.64045111093955}, {latitude: 41.88782633760493, longitude: -87.64085111093955}]}
+                  strokeColor='grey'
+                  strokeWidth= {2}
+                />
+              )
+            }
+          }) }
 
           {routesArr.map(routeObj=>{
             let routeID = ""+routeObj.id;
@@ -215,6 +277,40 @@ class Run extends Component {
                   // identifier={routeID}
                   // onSelect={goToChooseYourOpponent}
                 />
+              </View>
+            )
+          })}
+
+          {generatedRoutes.map((route,idx)=>{
+            // console.log('on this route: ',route)
+            return idx=== genRouteNum && (
+              <View key={idx} >
+               <MapView.Polyline
+                 coordinates={route.map(intersectionNode=>{return {latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}})}
+                   strokeColor='yellow'
+                   strokeWidth= {10}
+                 />
+
+                {route.map((intersectionNode,idx)=>{
+                  return(
+                    <MapView.Marker
+                      coordinate={{ latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}}
+                      pinColor='blue'
+                      title={JSON.stringify(idx)}
+                    />
+                  )
+                })}
+
+                {/* <MapView.Marker
+                  coordinate={{ latitude: route[0].latitude, longitude: route[0].longitude}}
+                  pinColor='red'
+                  title='Start'
+                />
+                <MapView.Marker
+                  coordinate={{latitude: route[route.length-1].latitude, longitude: route[route.length-1].longitude}}
+                  pinColor='blue'
+                  title='End'
+                /> */}
               </View>
             )
           })}

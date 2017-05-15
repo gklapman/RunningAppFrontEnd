@@ -148,10 +148,19 @@ const styles = StyleSheet.create({
     width: 100 ,
     backgroundColor: 'blue',
     position: 'absolute',
-    top: 60,
+    top: 65,
     left: 50,
   },
-    timer: {
+  incrementRouteNum: {
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 100,
+    left: 50,
+  },
+  timer: {
     height: 50,
     width: 100,
     backgroundColor: '#b0c4de',
@@ -215,9 +224,9 @@ const styles = StyleSheet.create({
     right: 50,
   },
    changeView: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'orange',
     position: 'absolute',
     top: 30,
@@ -235,7 +244,7 @@ const styles = StyleSheet.create({
   changeTypeSpeed: {
     zIndex: 1, 
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     top: 100,
