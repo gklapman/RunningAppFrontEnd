@@ -156,7 +156,7 @@ export const fetchNearbyRoutes = (region) => {
     return axios.get(`${localHostorHeroku}/api/runroutes/`+query)
     .then(res => res.data)
     .then(routes => {
-      console.log('routes are ',routes)
+      // console.log('routes are ',routes)
       let formattedRoutes = routes.map(routeWCoords => {
         let formattedCoordsPerRoute = routeWCoords.coords.map(coordPair => {
           return {latitude:+coordPair[0], longitude:+coordPair[1]}
