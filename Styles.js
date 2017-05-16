@@ -494,6 +494,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 200,
     left: 50,
+  },
   scrollListItemOppNameOdd: {
     alignItems: 'center',
     width: '48%',
@@ -523,7 +524,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'black',
     textShadowRadius: 1,
     textShadowOffset: {width : 1, height: 1}
-  },
+  }
 
   });
 
