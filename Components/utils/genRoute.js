@@ -33,12 +33,21 @@ IntersectADJLIST.prototype.intersectQueryBulk= function (centercoord){//for gett
   // console.log('centerCoord is ', centercoord)
   return axios.get(`${localHostorHeroku}/api/geonames/bulk/?latitude=${centercoord.latitude}&longitude=${centercoord.longitude}&username=CharlesinCharge43&max=8`)
     .then(res=>{
-      let intersectionsArr= res.data
-      return intersectionsArr.map(intersection=>{
-        intersection.latitude= +intersection.lat
-        intersection.longitude= +intersection.lng
+      if(!Array.isArray(res.data)){
+        let intersection= res.data//SHOULD MOST OF THE TIME BE INTERSECTIONSARR.. BUT BECAUSE THESE PPL AT GEONAMES ARENT BEING CONSISTENT WITH THE TYPE OF DATA THEY ARE RETURNING WE NEED TO WRITE THIS EXTRA CODE
+        res.data.latitude=+res.data.lat
+        res.data.longitude=+res.data.lng
         return intersection
-      })
+      }
+      else {
+        let intersectionsArr= res.data
+        intersectionsArr= intersectionsArr.map(intersection=>{
+          intersection.latitude= +intersection.lat
+          intersection.longitude= +intersection.lng
+          return intersection
+        })
+        return intersectionsArr
+      }
     })
     .catch(err=>err)
 }
@@ -70,7 +79,10 @@ IntersectADJLIST.prototype.intersectsPerRegion= function(){
     querycoord.longitude= leftEdge
     while(querycoord.longitude<rightEdge){
       querycoords.push(Object.assign({},querycoord))//Remember you don't want to push the original object.. otherwise you'll just end up with multiple references to the same object
-      queryPromiseArr.push(this.intersectQueryBulk(querycoord))
+      queryBulkProm=
+      this.intersectQueryBulk(querycoord)
+        .catch(err=>err)
+      queryPromiseArr.push(queryBulkProm)
       querycoord.longitude=querycoord.longitude+.0025
     }
     querycoord.latitude=querycoord.latitude+.0020
@@ -78,8 +90,8 @@ IntersectADJLIST.prototype.intersectsPerRegion= function(){
 
   return Promise.all(queryPromiseArr)
     .then(arrIntArr=>{
+      console.log('unflattened ' ,arrIntArr)
       let arrInt=flatten(arrIntArr)
-      this.allintersections=arrInt
       this.makeAdjList(arrInt)
       return { querycoords, geonamesRes: arrInt}
       //arrInt represents the original array of consolidated intersections objects returned from geonames
@@ -96,37 +108,51 @@ IntersectADJLIST.prototype.makeAdjList= function (arrInt){
     //http://api.geonames.org/findNearestIntersectionJSON?lat=41.954153&lng=-87.678783&username=CharlesinCharge43&maxRows=2 for a good example)
 
     if(!this.adjList[intersection.lat+','+intersection.lng]){//if doesn't exist... make a new intersection node
-      let intersectNodeInstance= new IntersectNode(intersection)
-
+      let intersectNodeInstance= this.createNode(intersection)
       //modify adjacency list
-      this.adjList[intersection.lat+','+intersection.lng]=intersectNodeInstance
-      intersection.street1 && intersectNodeInstance.streets.push(intersection.street1)
-      intersection.street2 && intersectNodeInstance.streets.push(intersection.street2)
-
-      //modify street lookup
-      if(intersection.street1){
-        if(!this.streetLookup[intersection.street1]) this.streetLookup[intersection.street1]=[intersectNodeInstance]
-        else this.streetLookup[intersection.street1].push(intersectNodeInstance)
-      }
-      if(intersection.street2){
-        if(!this.streetLookup[intersection.street2]) this.streetLookup[intersection.street2]=[intersectNodeInstance]
-        else this.streetLookup[intersection.street2].push(intersectNodeInstance)
-      }
+      this.adjList[intersectNodeInstance.id]=intersectNodeInstance
     }
     else {//if it does exist, modify an existing intersection node
       let intersectNodeInstance= this.adjList[intersection.lat+','+intersection.lng]
-      if(intersection.street1 && intersectNodeInstance.streets.indexOf(intersection.street1)===-1) {
-        intersectNodeInstance.streets.push(intersection.street1)
-        if(!this.streetLookup[intersection.street1]) this.streetLookup[intersection.street1]=[intersectNodeInstance]
-        else this.streetLookup[intersection.street1].push(intersectNodeInstance)
-      }
-      if(intersection.street2 && intersectNodeInstance.streets.indexOf(intersection.street2)===-1) {
-        intersectNodeInstance.streets.push(intersection.street2)
-        if(!this.streetLookup[intersection.street2]) this.streetLookup[intersection.street2]=[intersectNodeInstance]
-        else this.streetLookup[intersection.street2].push(intersectNodeInstance)
-      }
+      this.mergeIntoNode(intersectNodeInstance, intersection)
     }
   }
+  console.log('what  ',this.allintersections,' adjlist is ', this.adjList)
+  this.allintersections=Object.keys(this.adjList).map(key=>this.adjList[key])
+}
+
+IntersectADJLIST.prototype.createNode=function(geonamesIntersect){
+  let intersectNodeInstance= new IntersectNode(geonamesIntersect)
+  //modify node
+  geonamesIntersect.street1 && intersectNodeInstance.streets.push(geonamesIntersect.street1)
+  geonamesIntersect.street2 && intersectNodeInstance.streets.push(geonamesIntersect.street2)
+
+  //modify street lookup
+  if(geonamesIntersect.street1){
+    if(!this.streetLookup[geonamesIntersect.street1]) this.streetLookup[geonamesIntersect.street1]=[intersectNodeInstance]
+    else this.streetLookup[geonamesIntersect.street1].push(intersectNodeInstance)
+  }
+  if(geonamesIntersect.street2){
+    if(!this.streetLookup[geonamesIntersect.street2]) this.streetLookup[geonamesIntersect.street2]=[intersectNodeInstance]
+    else this.streetLookup[geonamesIntersect.street2].push(intersectNodeInstance)
+  }
+  return intersectNodeInstance
+}
+
+IntersectADJLIST.prototype.mergeIntoNode=function(intersectNodeInstance, geonamesIntersect){
+  //merge geonames Intersection streets data (from the geonames request) into an existing intersect Node instance instance (and update StreetLookup accordingly)
+  //used in the rare instance when more than one intersection were returned by geonames with the same coordinates (or very similar coordinates... see the makeAdjList method)
+  if(geonamesIntersect.street1 && intersectNodeInstance.streets.indexOf(geonamesIntersect.street1)===-1) {
+    intersectNodeInstance.streets.push(geonamesIntersect.street1)
+    if(!this.streetLookup[geonamesIntersect.street1]) this.streetLookup[geonamesIntersect.street1]=[intersectNodeInstance]
+    else this.streetLookup[geonamesIntersect.street1].push(intersectNodeInstance)
+  }
+  if(geonamesIntersect.street2 && intersectNodeInstance.streets.indexOf(geonamesIntersect.street2)===-1) {
+    intersectNodeInstance.streets.push(geonamesIntersect.street2)
+    if(!this.streetLookup[geonamesIntersect.street2]) this.streetLookup[geonamesIntersect.street2]=[intersectNodeInstance]
+    else this.streetLookup[geonamesIntersect.street2].push(intersectNodeInstance)
+  }
+  return intersectNodeInstance
 }
 
 IntersectADJLIST.prototype.sortStreetLookup= function(){
@@ -195,7 +221,7 @@ IntersectADJLIST.prototype.connectIntersectNodes= function(){
   for(let streetKey in this.streetLookup){
     if (streetKey==='Alley') continue
     let streetVal= this.streetLookup[streetKey]
-    for(let i=0;i<streetVal.length-1;i++){//length - 2 because you cant have a leaf node (in a street, i.e., i of length-1) connect to a nonexisted node of higher i
+    for(let i=0;i<streetVal.length-1;i++){//length - 1 because you cant have a leaf node (in a street, i.e., i of length-1) connect to a nonexisted node of higher i
       let firstNode=streetVal[i]
       let secondNode=streetVal[i+1]
       let distance=geolib.getDistance(firstNode,secondNode)
@@ -213,38 +239,81 @@ IntersectADJLIST.prototype.connectIntersectNodes= function(){
   }
 }
 
-//I wonder... should I also make a street object?  the street object can have street properties with array of associated intersect Nodes
+IntersectADJLIST.prototype.sortConnections= function(){
+  for(let intersectNode of this.allintersections){
+    intersectNode.connections.sort(function(a,b){return b.dist-a.dist})
+  }
+}
+
 export function IntersectNode(intersection){//takes in intersection object (returned by geonames.org)
+  this.id=intersection.latitude+','+intersection.longitude
   this.latitude=intersection.latitude
   this.longitude=intersection.longitude
   this.streets=[]
   this.connections=[]
+  this.distToEnd=1000000
+  this.distToStart=-1000000
 }
 
-export function GenerateRoutes(start, end, distance){//takes in start and ending intersection nodes, and distance (in meters)
+export function GenerateRoutes(start, end, distance, intersectADJLIST){//takes in start and ending intersection nodes, and distance (in meters)
   this.start=start
   this.end=end
   this.distance=distance
+  this.intersectADJLISTCOPY= intersectADJLIST
+  // this.intersectADJLISTCOPY=Object.assign({},intersectADJLIST)
+  this.debugStats={
+    toofar:0,
+    toofardistExc:0,
+    turnback:0,
+    returnEarly:0,
+    returnTooMuch:0,
+    endPointEarlyorLate:0,
+    totalIterations:0,
+  }
+  this.memo={}
+  this.potentialRoutes=[]
+  this.maxIterations=2000000
 }
 
 GenerateRoutes.prototype.getRoutes=function(){
-  return this.run(null,null,this.start,[],{})
+  console.log('getting routes from ',this.start, 'to ', this.end)
+  try{
+    this.run(null,null,this.start,[],{})
+    this.sortPotentialRoutes
+    console.log(this.debugStats)
+  }
+  catch(e) {
+    console.log(e)
+    console.log(this.debugStats)
+  }
+}
+
+GenerateRoutes.prototype.setRouteNodesDist= function(){
+  for(let routeNode of this.intersectADJLISTCOPY.allintersections){//route nodes are like the vanilla intersect adjacency list nodes, but with added information specific to route generation (such as distance)
+    try {
+      routeNode.distToEnd=geolib.getDistance(routeNode,this.end)
+      routeNode.distToStart=geolib.getDistance(routeNode,this.start)
+    }
+    catch(e){
+      console.log(e)
+      console.log('culprit: ',routeNode)
+      console.log('start... ',this.start, 'end ... ',this.end)
+    }
+  }
+}
+
+GenerateRoutes.prototype.sortPotentialRoutes= function(){
+  this.potentialRoutes.sort(function(a,b){return a.length-b.length})
+}
+
+GenerateRoutes.prototype.memoize= function(routeNode, depth){
+  //base case
+
 }
 
 GenerateRoutes.prototype.run= function(prevprevPoint, prevPoint, currentPoint, route, pointsPassed, turnBackCount=0, depth=0, distanceTraveled=0){
-  //UPDATE DELETE THE COMMENT BELOW IF POINTSPASSED REALLY DOESNT NEED TO BE USED
-  // ***pointsPassed is NOT the same as the route from start point (of each of the many traversals).  Pointspassed is an object (NOT ARRAY)
-  // containing intersection Nodes that have already been encountered as properties (this makes it faster to check if a position
-  // has been traveeld to before, because indexOf can be computationally expensive)
-
-  //turnBackCount will increment when the traversal revisits the prevpoint immediately after moving away from it (the prevprevPoint)
-  //turnBackCount value persists by passing it to all children stacks
-
-  //the ***route array is the array that actually contains the ORDER of points passed for each of the many traversals
-  //it should be a COPY of the route from the parent recursive stack so mutating it won't mutate the earlier route
-
-  console.log('moved to/now at currentpoint: ',currentPoint, ' from prevpoint: ', prevPoint )
-
+try{  this.debugStats.totalIterations+=1
+  if(this.debugStats.totalIterations > this.maxIterations) return null
   let prevRoute= route
   let newRoute= prevRoute.slice(0)
   newRoute.push(currentPoint)
@@ -252,60 +321,164 @@ GenerateRoutes.prototype.run= function(prevprevPoint, prevPoint, currentPoint, r
   let key= currentPoint.latitude+','+currentPoint.longitude
   let newpointsPassed=Object.assign({},pointsPassed)
   newpointsPassed[key]= newpointsPassed[key] ? newpointsPassed[key]+1 : 1
-  console.log('points passed hash ',newpointsPassed)
+  // console.log('points passed hash ',newpointsPassed)
 
-  // let distanceTraveled=geolib.getPathLength(route)
   turnBackCount = currentPoint===prevprevPoint ? turnBackCount+1 : turnBackCount
+  let remainingAllowedDist= this.distance*1.2- distanceTraveled
 
-
-  //base case 1: distance is too far
-  if(distanceTraveled>this.distance*1.2){
-    console.log('distance is too far at ',distanceTraveled)
+  //base case 1: traversal has reached a point where it simply cant get to endpoint anymore (remaining distance allowed is less than the distance to endpoint at a current position)
+  if(remainingAllowedDist<currentPoint.distToEnd){
+    // console.log('distance is too far, no way to get to endpoint, Remaining allowed (',remainingAllowedDist,') is < ',currentPoint.distToEnd)
+    // this.debugStats.toofar+=1
+    return null
+  }
+  //base case 1.2: distance has exceeded specified distance (realistically. this won't happen because base case 1.2 will almost always ensure it.. but just in case)
+  else if(remainingAllowedDist<0){
+    // console.log('distance exceeded specified distance ',distanceTraveled)
+    // this.debugStats.toofardistExc+=1
     return null
   }
   //base case 1.5: at a position that has been previously visited before the halfway point (or at least .8 of the specified distance)
   // else if(newpointsPassed[key]===2 && distanceTraveled< this.distance*0.4){//.4 is causing it to create a lot of super weird shapes (even tho they do work.. its just too weird.. also i think it cause it to do more calculations too)
-  else if(newpointsPassed[key]===2 && distanceTraveled< this.distance*0.8){
-    console.log('returning to an old point way too soon, ', distanceTraveled)
+  else if(newpointsPassed[key]===2 && distanceTraveled< this.distance*0.9){
+    // console.log('returning to an old point way too soon, ', distanceTraveled)
+    // this.debugStats.turnback+=1
     return null
   }
   //base case 2: at a position that has been previously visited before twice or more
   else if(newpointsPassed[key]>2){
-    console.log('returning to an old point way too many times ', newpointsPassed[key])
+    // console.log('returning to an old point way too many times ', newpointsPassed[key])
+    // this.debugStats.returnEarly+=1
     return null
   }
   //base case 3: if traversal turned back immediately more than once
   else if(turnBackCount>=2){
-    console.log('turned backed too many times: ',turnBackCount)
+    // console.log('turned backed too many times: ',turnBackCount)
+    // this.debugStats.returnTooMuch+=1
     return null
   }
   //base case 4: if traversal has reached the endpoint, but the distance is not within a reasonable range of the distance specified by user
   else if(currentPoint===this.end && depth>0){
-    if(distanceTraveled<this.distance*0.8 || distanceTraveled>this.distance*1.2){
-      console.log('endpoint reached, but distance so far not near specified distance',distanceTraveled)
+    if(distanceTraveled<this.distance*0.9 || distanceTraveled>this.distance*1.2){//consider taking out the > 1.2 distance part.. that's already taken care of
+      // console.log('endpoint reached, but distance so far not near specified distance',distanceTraveled)
+      // this.debugStats.endPointEarlyorLate+=1
       return null
     }
     else{
   //base case 5 (WINNER): if traversal has reached the endpoint, but the distance is within a reasonable range of the distance specified by user
-      console.log('endpoint reached, returning potential route .. distance is ',distanceTraveled)
-      console.log('returning route: ', newRoute)
-      return [newRoute]
+      // console.log('endpoint reached, returning potential route .. distance is ',distanceTraveled)
+      this.potentialRoutes.push(newRoute)
     }
   }
   //recursive case
   else {
-    console.log('recursive case ')
+    // if(!this.memo[currentPoint.id]) this.memo[currentPoint.id]={}//initialize memo for this node if it doesn't already exist
 
     let potentialRoutes=[]//should be an array of arrays (array of routes arrays)
     let connections=currentPoint.connections
+
     for(let connectionObj of connections){
+
       let potentialMove= connectionObj.node
       let newdistance= distanceTraveled+connectionObj.dist
-      let runResult= this.run(prevPoint, currentPoint, potentialMove, newRoute, newpointsPassed, turnBackCount, depth+1, newdistance)
-      if(runResult) potentialRoutes=potentialRoutes.concat(runResult)
+      this.run(prevPoint, currentPoint, potentialMove, newRoute, newpointsPassed, turnBackCount, depth+1, newdistance)
     }
-    console.log('potential routes is updated to be ', potentialRoutes)
-    return potentialRoutes
+    // console.log('potential routes is updated to be ', potentialRoutes)
+  }}
+  catch (e){
+    console.log(e,'wtfff... ', this.currentPoint)
   }
 
+
+  // return this.memo[currentPoint.id]
 }
+
+// GenerateRoutes.prototype.run= function(prevprevPoint, prevPoint, currentPoint, route, pointsPassed, turnBackCount=0, depth=0, distanceTraveled=0){
+//   //UPDATE DELETE THE COMMENT BELOW IF POINTSPASSED REALLY DOESNT NEED TO BE USED
+//   // ***pointsPassed is NOT the same as the route from start point (of each of the many traversals).  Pointspassed is an object (NOT ARRAY)
+//   // containing intersection Nodes that have already been encountered as properties (this makes it faster to check if a position
+//   // has been traveeld to before, because indexOf can be computationally expensive)
+//
+//   //turnBackCount will increment when the traversal revisits the prevpoint immediately after moving away from it (the prevprevPoint)
+//   //turnBackCount value persists by passing it to all children stacks
+//
+//   //the ***route array is the array that actually contains the ORDER of points passed for each of the many traversals
+//   //it should be a COPY of the route from the parent recursive stack so mutating it won't mutate the earlier route
+//
+//   // console.log('moved to/now at currentpoint: ',currentPoint, ' from prevpoint: ', prevPoint )
+//
+//   let prevRoute= route
+//   let newRoute= prevRoute.slice(0)
+//   newRoute.push(currentPoint)
+//
+//   let key= currentPoint.latitude+','+currentPoint.longitude
+//   let newpointsPassed=Object.assign({},pointsPassed)
+//   newpointsPassed[key]= newpointsPassed[key] ? newpointsPassed[key]+1 : 1
+//   // console.log('points passed hash ',newpointsPassed)
+//
+//   turnBackCount = currentPoint===prevprevPoint ? turnBackCount+1 : turnBackCount
+//   let remainingAllowedDist= this.distance*1.2- distanceTraveled
+//
+//   //base case 1: traversal has reached a point where it simply cant get to endpoint anymore (remaining distance allowed is less than the distance to endpoint at a current position)
+//   if(remainingAllowedDist<currentPoint.distToEnd){
+//     // console.log('distance is too far, no way to get to endpoint, Remaining allowed (',remainingAllowedDist,') is < ',currentPoint.distToEnd)
+//     this.debugStats.toofar+=1
+//     return null
+//   }
+//   //base case 1.2: distance has exceeded specified distance (realistically. this won't happen because base case 1.2 will almost always ensure it.. but just in case)
+//   else if(remainingAllowedDist<0){
+//     // console.log('distance exceeded specified distance ',distanceTraveled)
+//     this.debugStats.toofardistExc+=1
+//     return null
+//   }
+//
+//   //base case 1.5: at a position that has been previously visited before the halfway point (or at least .8 of the specified distance)
+//   // else if(newpointsPassed[key]===2 && distanceTraveled< this.distance*0.4){//.4 is causing it to create a lot of super weird shapes (even tho they do work.. its just too weird.. also i think it cause it to do more calculations too)
+//   else if(newpointsPassed[key]===2 && distanceTraveled< this.distance*0.9){
+//     // console.log('returning to an old point way too soon, ', distanceTraveled)
+//     this.debugStats.turnback+=1
+//     return null
+//   }
+//   //base case 2: at a position that has been previously visited before twice or more
+//   else if(newpointsPassed[key]>2){
+//     // console.log('returning to an old point way too many times ', newpointsPassed[key])
+//     this.debugStats.returnEarly+=1
+//     return null
+//   }
+//   //base case 3: if traversal turned back immediately more than once
+//   else if(turnBackCount>=2){
+//     // console.log('turned backed too many times: ',turnBackCount)
+//     this.debugStats.returnTooMuch+=1
+//     return null
+//   }
+//   //base case 4: if traversal has reached the endpoint, but the distance is not within a reasonable range of the distance specified by user
+//   else if(currentPoint===this.end && depth>0){
+//     if(distanceTraveled<this.distance*0.9 || distanceTraveled>this.distance*1.2){//consider taking out the > 1.2 distance part.. that's already taken care of
+//       // console.log('endpoint reached, but distance so far not near specified distance',distanceTraveled)
+//       this.debugStats.endPointEarlyorLate+=1
+//       return null
+//     }
+//     else{
+//   //base case 5 (WINNER): if traversal has reached the endpoint, but the distance is within a reasonable range of the distance specified by user
+//       // console.log('endpoint reached, returning potential route .. distance is ',distanceTraveled)
+//       // console.log('returning route: ', newRoute)
+//       return [newRoute]
+//     }
+//   }
+//   //recursive case
+//   else {
+//     // console.log('recursive case ')
+//
+//     let potentialRoutes=[]//should be an array of arrays (array of routes arrays)
+//     let connections=currentPoint.connections
+//     for(let connectionObj of connections){
+//       let potentialMove= connectionObj.node
+//       let newdistance= distanceTraveled+connectionObj.dist
+//       let runResult= this.run(prevPoint, currentPoint, potentialMove, newRoute, newpointsPassed, turnBackCount, depth+1, newdistance)
+//       if(runResult) potentialRoutes=potentialRoutes.concat(runResult)
+//     }
+//     // console.log('potential routes is updated to be ', potentialRoutes)
+//     return potentialRoutes
+//   }
+//
+// }

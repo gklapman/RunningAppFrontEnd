@@ -409,6 +409,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: '48%'
   },
+  genRouteStatus:{
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 400,
+    left: 50,
+  },
+  setStartEnd: {
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 200,
+    left: 50,
   scrollListItemOppNameOdd: {
     alignItems: 'center',
     width: '48%',
@@ -439,50 +456,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 1,
     textShadowOffset: {width : 1, height: 1}
   },
-  triangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'black',
-    borderStyle: 'solid',
-    borderLeftWidth: 190,
-    borderRightWidth: 190,
-    borderBottomWidth: 50,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: darkGrey,
-    position: 'relative',
-    zIndex: -1
-  },
-  triangle2: {
-    width: 0,
-    height: 0,
-    backgroundColor: blueish,
-    borderStyle: 'solid',
-    borderLeftWidth: 190,
-    borderRightWidth: 190,
-    borderBottomWidth: 50,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: lightGrey,
-    position: 'relative',
-    top: -20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  median: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 100,
-    borderRightWidth: 100,
-    borderBottomWidth: 50,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: yellowish,
-    position: 'relative',
-    zIndex: -1
-  }
 
   });
 
