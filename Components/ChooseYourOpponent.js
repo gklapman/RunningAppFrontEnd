@@ -13,6 +13,7 @@ import {
 import styles from '../Styles'
 import {StackNavigator} from 'react-navigation'
 import MapView from 'react-native-maps'
+import TimeFormatter from 'minutes-seconds-milliseconds'
 
 //added for react-redux
 import {connect} from 'react-redux'
@@ -84,7 +85,8 @@ class OpponentsView extends Component {
                   <View style={nameStyle}>
                     <Text style={styles.scrollListItemOppName} ref={idx} onPress={() => this.goToRace(idx)}>{placeHolderNames[idx]}</Text>
                   </View>
-                  <Text style={styles.scrollListItem2}>{userRuntime}</Text>
+                  <Text style={styles.scrollListItem2}>{TimeFormatter(userRuntime)}</Text>
+
                 </View>
               )
             })
