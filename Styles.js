@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     zIndex: 1,
-    height: '100%',
-    width: '50%',
+    height: 50,
+    width: 100,
     // backgroundColor: 'orange',
-    position: 'relative',
-    left: -100,
+    position: 'absolute',
+    left: 25,
     top: 20,
     alignItems: 'flex-start',
     justifyContent: 'space-around'
@@ -494,6 +494,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 200,
     left: 50,
+  },
   scrollListItemOppNameOdd: {
     alignItems: 'center',
     width: '48%',
@@ -523,7 +524,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'black',
     textShadowRadius: 1,
     textShadowOffset: {width : 1, height: 1}
-  },
+  }
 
   });
 
