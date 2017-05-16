@@ -18,7 +18,7 @@ import BackgroundGeolocation from "react-native-background-geolocation"
 import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
-import {Btn, BtnHolder} from './Wrappers'
+import {Btn, BtnHolder, BtnHolderVert, BtnRun} from './Wrappers'
 import {redish, blueish, beige} from './Constants'
 import { IntersectADJLIST, GenerateRoutes } from './utils/genRoute'
 //CUSTOM IMAGES
@@ -212,16 +212,17 @@ class Run extends Component {
 
         <View style={styles.mapcontainer}>
 
-
-        <View style={styles.btnHolder}>
-          <Btn>
+        <BtnHolderVert>
+          <BtnRun>
             <Text onPress={goToRouteMaker}>Create a Route</Text>
-          </Btn>
-       	 	<Btn>
+          </BtnRun>
+          <BtnRun>
+            <Text onPress={this.genRoute}>Generate Route</Text>
+          </BtnRun>
+       	 	<BtnRun>
             <Text onPress={filter}>Filter Routes</Text>
-       	 	</Btn>
-        </View>
-
+       	 	</BtnRun>
+        </BtnHolderVert>
         {/* <Btn>
           <Text onPress={goToRouteMaker}>Create a Route</Text>
         </Btn>
@@ -231,9 +232,9 @@ class Run extends Component {
         </View> */}
 
 
-          <View style={styles.genRoute}>
+          {/* <View style={styles.genRoute}>
        	 		<Button onPress={this.genRoute} title="Generate Route"></Button>
-       	 	</View>
+       	 	</View> */}
 
           <View style={styles.incrementRouteNum}>
             <Button onPress={this.incrementRouteNum} title="See Next Gen Route"></Button>{/* This is a test button alyssa, no need to style this! */}

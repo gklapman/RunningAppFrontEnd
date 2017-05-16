@@ -20,8 +20,8 @@ import styles from '../Styles'
 import {fetchUserStats, fetchFitBitHeartrateInfo, insertHeartRateInfo, setFitBitToken, logout} from './storeAndReducer'
 import config from '../config'
 import qs from 'qs'
-import  {Btn, BigBtn} from './Wrappers'
-import {redish, blueish, beige, yellowish, orangeish} from './Constants'
+import  {Btn, BigBtn, BtnHolder, BtnHolderLow, BtnTwo} from './Wrappers'
+import {redish, blueish, beige, yellowish, orangeish, lightGrey} from './Constants'
 
 function OAuth(client_id, cb) {
 
@@ -136,13 +136,20 @@ class Stats extends Component {
   render() {
     console.log('user info', this.props.fitbitAccessToken)
     let userStats = this.props.userStats
-
+    //{{borderWidth: 3, borderColor: 'red'}}
+    //textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3,
     return (
       <View style={styles.container2}>
-        <View style={{ width: 375, height: 100, backgroundColor: redish, alignItems: 'center'}}>
-          <Text style={{color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, fontFamily: 'Airstream', fontSize: 45, backgroundColor: 'transparent', zIndex: 1, paddingTop: 10}}>{userStats.username}</Text>
-          <Text style={{fontFamily: 'budmo', fontSize: 40, color: 'black', position: 'relative', top: -10, zIndex: 0 }}>{userStats.city}</Text>
+        <Image source={require('../assets/chicagoSkylineSmaller.jpg')}>
+        <View style={{ width: 375, height: 60, backgroundColor: 'transparent', alignItems: 'center', zIndex: 0}}>
+          {/* <Text style={{color: 'black', fontFamily: 'budmo', fontSize: 60, backgroundColor: 'transparent', zIndex: 3, paddingTop: 10}}>{userStats.username}</Text> CHANGE IT BACK TO THIS AFTER ADDING USERS W/ SHORTER USERNAMES */}
+          <Text style={{color: 'black', fontFamily: 'budmo', fontSize: 60, backgroundColor: 'transparent', zIndex: 3, paddingTop: 10}}>HardCoded</Text>
+          <Text style={{fontFamily: 'Magnum', fontSize: 65, color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 10, left: -70, zIndex: 3 }}>{userStats.city}</Text>
         </View>
+      </Image>
+
+        {/* <Triangle /> */}
+
         <View style={{ flex: 1, backgroundColor: 'black'}}>
           <View style={{flex: 0, flexDirection: 'row', justifyContent: 'space-around', marginBottom: 5}}>
             <Text style={styles.scrollListHeader}>Route ID</Text>
@@ -164,7 +171,7 @@ class Stats extends Component {
                           style={styles.scrollListItem}
                           onPress={this.viewRoute.bind(this, id)}
                           key={routetime.id}>
-                              <Text style={{fontFamily: 'Ghoulish Intent', fontSize: 18, textAlign: 'right', color: yellowish,     textShadowColor: 'black',
+                              <Text style={{fontFamily: 'Ghoulish Intent', fontSize: 25, textAlign: 'right', color: yellowish,     textShadowColor: 'black',
                               textShadowOffset: {width: 3, height: 3},
                               textShadowRadius: 3,}}>
                                  {routetime.runtime}
@@ -175,22 +182,16 @@ class Stats extends Component {
         }) }
         </ScrollView>
 
-
+        <BtnHolderLow>
         {!this.props.fitbitAccessToken ?
-        <TouchableOpacity>
-          <Button
-          onPress={this.connectToFitBit}
-          title="Connect To FitBit"
-          />
-        </TouchableOpacity> : null }
+        <BtnTwo>
+          <Text onPress={this.connectToFitBit}>Connect to Fitbit</Text>
+        </BtnTwo> : null }
 
-          <TouchableOpacity>
-            <Button
-            onPress={this.logout}
-            title="Logout"
-            />
-          </TouchableOpacity>
-
+          <BtnTwo>
+            <Text onPress={this.logout}>Logout</Text>
+          </BtnTwo>
+        </BtnHolderLow>
          {/* <BigBtn>
            <Text onPress={this.connectToFitBit}>
              Connect to FitBit

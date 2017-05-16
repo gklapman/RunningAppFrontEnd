@@ -23,7 +23,9 @@ import styles from '../Styles'
 import {addNewRoute, fetchFitBitHeartrateInfo} from './storeAndReducer'
 import {promisifiedGetCurrPos} from './Utils'
 import {accessKey, snapToRoad} from '../config'
-import {Btn, BtnHolder} from './Wrappers'
+import {Btn, BtnHolder, BtnMakeRoute} from './Wrappers'
+import {redish, blueish, beige, yellowish, orangeish, lightGrey} from './Constants'
+
 
 
 class MakeRoute extends Component {
@@ -213,24 +215,24 @@ class MakeRoute extends Component {
        <View style={styles.mapcontainerNoNav}>
          <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
-              <Btn>
+              <BtnMakeRoute>
                     {/* <TouchableOpacity onPress={this.viewRoute}> */}
                       <Text onPress={this.viewRoute}>View Run</Text>
                     {/* </TouchableOpacity> */}
-                </Btn> :
-                <Btn>
+                </BtnMakeRoute> :
+                <BtnMakeRoute>
                   {/* <TouchableOpacity onPress={this.startStopButton}> */}
                     <Text onPress={this.startStopButton}>{this.state.isRunning ? 'Stop' : 'Start'}</Text>
                   {/* </TouchableOpacity> */}
-               </Btn> }
+               </BtnMakeRoute> }
 
-             <Btn>
+             <BtnMakeRoute>
                <Text>{TimeFormatter(this.state.timer)}</Text>
 
                {/* <Text>{this.state.currentPosition.latitude}</Text>
                <Text>{this.state.currentPosition.longitude}</Text> */}
 
-             </Btn>
+             </BtnMakeRoute>
           </BtnHolder>
            <MapView
              region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .0005, longitudeDelta: .0005}}
@@ -262,6 +264,7 @@ class MakeRoute extends Component {
       {this.state.snappedTesting && this.state.isRunning ?
         //BELOW IS FOR *BOTH* SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers) .. note if google maps api not working there will only be unsnapped positions)
         <View>
+
             <MapView.Polyline coordinates={snappedPosCoords} strokeColor='green' strokeWidth= {10} />
 
             {/* for some reason... the unsnappedPosCoords thing at the bottom won't work here in this view,
@@ -271,10 +274,10 @@ class MakeRoute extends Component {
               // console.log('marker at ',coord,' idx at ', idx)
               return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
             })} */}
-
+      
         </View> :
         //BELOW IS FOR ONLY UNSNAPPED POSITIONS
-        <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
+        <MapView.Polyline coordinates={routerDisplayCoords} strokeColor={redish} strokeWidth= {10} />
       }
 
       </MapView>

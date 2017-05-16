@@ -1,4 +1,5 @@
-export const redish = '#651100'
+export const redish = '#650500'
+export const darkRed = '#401000'
 export const blueish = '#113344'
 export const beige = '#CCC999'
 export const yellowish = '#DD9900'

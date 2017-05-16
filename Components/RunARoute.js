@@ -24,7 +24,7 @@ import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } from './Utils'
 import {Btn, BtnHolder} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish, darkGrey, lightGrey} from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -63,7 +63,7 @@ class RunARoute extends Component {
       phantomRacerPointer: 1,//this represents index of the !!!NEXT POINT!!! that the phantom phantomRacer will get to (it's index of BOTH the selected route coord AND +1 the phantomRacer's time array)
       // phantomRacerTimesArrPointer: 1,
 
-			isRunning: true,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
+			isRunning: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
       showStart: true,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
 
   		timer: 0,
@@ -329,7 +329,6 @@ class RunARoute extends Component {
       <View>
       	<View style={styles.mapcontainerNoNav}>
 
-
         <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
           <Btn>
@@ -352,6 +351,8 @@ class RunARoute extends Component {
 
       		</Btn>
         </BtnHolder>
+
+
        	 	<MapView
             region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .005, longitudeDelta: .005}}
           // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
@@ -359,28 +360,39 @@ class RunARoute extends Component {
 
             { phantomRacerCurrPos && <MapView.Marker
               coordinate={phantomRacerCurrPos}
-              pinColor='orange'
+              pinColor='black'
               title='phantom racer'
               identifier='3'
             />}
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
-              let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
+              let pinColor= idx < this.state.checkpointConvCoordsPointer ? darkGrey : yellowish
               return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint' />)
             })
             }
 
-           <MapView.Marker coordinate={position} pinColor='purple' title='human runner' identifier={JSON.stringify(this.props.user.id)} />
+           <MapView.Marker coordinate={position} pinColor={redish} title='human runner' identifier={JSON.stringify(this.props.user.id)} />
 
-    			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
+    			 <MapView.Polyline coordinates={convCoords} strokeColor={redish} strokeWidth= {5} />
 
 			 </MapView>
       	</View>
+        {//HERE'S THE POPUP MESSAGE, BELOW
+      }
+        <View style={{ position: 'absolute', top: 400}}>
+          <Image source={require('../assets/runningredPopup.gif')} />
+          <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -219}}></View>
+          <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>Faster!</Text>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>PHANTOM Gabi</Text>
+          <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>is on your tail!</Text>
+        </View>
 
       </View>
     )
   }
 }
+
+
 
 const mapDispatchToProps = null
 
