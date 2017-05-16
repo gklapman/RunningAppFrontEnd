@@ -122,7 +122,6 @@ class RunARoute extends Component {
     let rawPosition = {latitude: lat, longitude: lng}
     let rawPositionProm=Promise.resolve(rawPosition)
 
-
     // let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
     //   .then(res => {
     //      // console.log('in snappedLoc block')
@@ -134,8 +133,6 @@ class RunARoute extends Component {
     //     if(err.message.includes('code 429') || err.message.includes('Network Error')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
     //     else {throw err.message}
     //   })
-
-
 
     // snapProm
     rawPositionProm

@@ -231,18 +231,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 30,
     left: 50,
-  }, 
+  },
   changeTypeHeartRate: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     top: 100,
     left: 10,
   },
   changeTypeSpeed: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
     width: 100 ,
     backgroundColor: 'green',
@@ -251,36 +251,36 @@ const styles = StyleSheet.create({
     left: 100,
   },
   changeTypeRegular: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     top: 100,
     left: 190,
   },
    replayRoute: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'yellow',
     position: 'absolute',
     top: 100,
     right: 10,
   },
   homeButton: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'red',
     position: 'absolute',
     bottom: 200,
     left: 200,
   },
   replayTimer: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'purple',
     position: 'absolute',
     bottom: 100,
@@ -363,7 +363,28 @@ const styles = StyleSheet.create({
     color: yellowish,
     backgroundColor: 'transparent',
     width: '48%'
+  },
+  genRouteStatus:{
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 400,
+    left: 50,
+  },
+  setStartEnd: {
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 200,
+    left: 50,
   }
+  // blink_me: {//get something like this to work somehow?
+  //   animation: blinker 1s linear infinite;
+  // }
 
   });
 

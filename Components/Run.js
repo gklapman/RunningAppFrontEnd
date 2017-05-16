@@ -21,6 +21,9 @@ import RunARoute from './RunARoute';
 import {Btn, BtnHolder} from './Wrappers'
 import {redish, blueish, beige} from './Constants'
 import { IntersectADJLIST, GenerateRoutes } from './utils/genRoute'
+//CUSTOM IMAGES
+import intersectImgMajor from '../assets/IntersectionMajor.png'
+import intersectImgMinor from '../assets/IntersectionMinor.png'
 
 
 class Run extends Component {
@@ -40,12 +43,19 @@ class Run extends Component {
       adjList: {},
       generatedRoutes: [],
       genRouteNum: 0,
+      status: null,
+
+      startCoord: null,
+      endCoord: null,
+      setStartEndVal: null,
   }
     this.canMakeRequests= false
     this.scrollWaitInterval
     this.onRegionChange=this.onRegionChange.bind(this)
     this.genRoute= this.genRoute.bind(this)
     this.incrementRouteNum= this.incrementRouteNum.bind(this)
+    this.setStartEnd= this.setStartEnd.bind(this)
+    this.setClickCoordinate= this.setClickCoordinate.bind(this)
   }
 
   incrementRouteNum(){
@@ -53,41 +63,81 @@ class Run extends Component {
     this.setState({genRouteNum: newgenRouteNum})
   }
 
-  genRoute(){
+  genRoute(startCoord, endCoord){//startCoord and endCoord are optional
     let region = this.state.region
-    // console.log('region ', region)
+    let startIntersect
+    let endIntersect
+
     let intAdjList= new IntersectADJLIST(region)
+    this.setState({status: 'Constructing City Layout'})
 
     intAdjList.intersectsPerRegion()
       .then(res=>{
         if(res==='error') throw res
-        // console.log('intersectionsArr in genRoute ', res)
+
+        this.setState({status: 'Generating Route'})
         // let intersectionsArr= res.intersections
         let querycoords = res.querycoords
         // let intersectionMarkers= this.state.intersectionMarkers.slice(0)
         // intersectionMarkers= intersectionMarkers.concat(intersectionsArr)//When you can, start transitioning to getting this directly from the instance
-
-        // console.log('intersectionMarkers ', intersectionMarkers)
         intAdjList.sortStreetLookup()
         intAdjList.connectIntersectNodes()
+        intAdjList.sortConnections()
         let intersectionMarkers=Object.keys(intAdjList.adjList).map(key=>intAdjList.adjList[key])
         let streetLookup= intAdjList.streetLookup
         let adjList= intAdjList.adjList
         console.dir(intAdjList, {depth: 5})
         this.setState({ intersectionMarkers, querycoords, streetLookup, adjList })
-
-        return intAdjList.intersectQuery({latitude: region.latitude, longitude: region.longitude})//this is not dry at all.. doing another query in the center -_-   .. fix this later
+        return Promise.all([intAdjList.intersectQuery({latitude: region.latitude, longitude: region.longitude}),//this is not dry at all.. doing another query in the center -_-   .. fix this later
+          startCoord && intAdjList.intersectQuery({latitude: startCoord.latitude, longitude: startCoord.longitude}),
+          endCoord && intAdjList.intersectQuery({latitude: endCoord.latitude, longitude: endCoord.longitude}),
+        ])
       })
       .then(res=>{
-        let startingCoord= res
-        let startingKey=startingCoord.latitude+','+startingCoord.longitude
-        let startingNode= intAdjList.adjList[startingKey]
-        let genRoute= new GenerateRoutes(startingNode,startingNode,1500)
-        let generatedRoutes= genRoute.getRoutes()
+        let currentCoord= res[0]
+        let startingCoord= res[1]
+        let endingCoord= res[2]
+
+        let startingKey= startingCoord && startingCoord.latitude+','+startingCoord.longitude
+        let endingKey= endingCoord && endingCoord.latitude+','+endingCoord.longitude
+        if(intAdjList.adjList[startingKey] && intAdjList.adjList[endingKey]){
+          startingNode= intAdjList.adjList[startingKey]
+          endingNode= intAdjList.adjList[endingKey]
+        }
+        else{
+          startingKey= currentCoord.latitude+','+currentCoord.longitude
+          startingNode= intAdjList.adjList[startingKey]
+          endingNode= startingNode
+        }
+
+        let genRoute= new GenerateRoutes(startingNode,endingNode,4800,intAdjList)
+        genRoute.setRouteNodesDist()
+        genRoute.getRoutes()
+        genRoute.sortPotentialRoutes()
+        let generatedRoutes= genRoute.potentialRoutes
+        console.log('intAdjList inst updated ', intAdjList)
         console.log('routes generated ',generatedRoutes)
-        this.setState({generatedRoutes})
+        this.setState({generatedRoutes, status: null})
       })
       .catch(err=>console.error(err))
+  }
+
+  setStartEnd(){
+    if(!this.state.setStartEndVal) {this.setState({setStartEndVal: 'start'})}
+    else this.setState({setStartEndVal: null})
+  }
+
+  setClickCoordinate(e){
+    let coord=e.nativeEvent.coordinate
+    console.log('coord is ',coord,'startCoord is ', this.state.startCoord)
+    if(this.state.setStartEndVal==='start'){
+      this.setState({startCoord: coord, setStartEndVal: 'end'})
+    }
+    else if(this.state.setStartEndVal==='end'){
+      this.setState({setStartEndVal: null})
+      this.genRoute(this.state.startCoord, coord)
+    }
+
   }
 
   onLocation(){
@@ -155,7 +205,7 @@ class Run extends Component {
     let querycoords= this.state.querycoords
     let generatedRoutes= this.state.generatedRoutes
     let genRouteNum= this.state.genRouteNum
-    console.log('this.state ',this.state.genRouteNum)
+    console.log('this.state ',this.state)
 
     return (
       <View>
@@ -186,34 +236,45 @@ class Run extends Component {
        	 	</View>
 
           <View style={styles.incrementRouteNum}>
-            <Button onPress={this.incrementRouteNum} title="See Next Generated Route"></Button>
+            <Button onPress={this.incrementRouteNum} title="See Next Gen Route"></Button>{/* This is a test button alyssa, no need to style this! */}
           </View>
 
+          <View style={styles.setStartEnd}>
+            <Button onPress={this.setStartEnd}
+              title={this.state.setStartEndVal==='start' ? 'Press StartPoint' : this.state.setStartEndVal==='end' ? 'Press EndPoint' : 'Generate Route Start/End'}
+              ></Button>
+          </View>
+
+          { this.state.status ?
+          <View style={styles.genRouteStatus}>
+            <Text> {this.state.status} </Text>
+          </View> : null }
+
        	 	<MapView style={styles.map}
+            onPress={this.state.setStartEndVal ? this.setClickCoordinate : null}
             onRegionChange={this.onRegionChange}
             initialRegion={{latitude: 41.88782633760493, longitude: -87.64045111093955, latitudeDelta: .005, longitudeDelta: .005}}>
 
-          {querycoords.map(coord=>{
+          {/* {querycoords.map(coord=>{
             return(<MapView.Marker
               coordinate={{ latitude: coord.latitude, longitude: coord.longitude}}
               // coordinate={{ latitude: 41.88782633760493, longitude: -87.64045111093955}}
               pinColor='purple'
               title='querycoord'
             />)
-          })}
+          })} */}
 
-          {/* {intersectionMarkers.map(intersection=>{
+          {intersectionMarkers.map(intersection=>{
             return(
-
               intersection.connections.length>=4
-
               ?
 
               (<MapView.Marker
               coordinate={{ latitude: intersection.latitude, longitude: intersection.longitude}}
               identifier={ intersection.latitude+','+intersection.longitude }
               onSelect= { consoleLogIntersection }
-              pinColor='black'
+              image={intersectImgMajor}
+              // pinColor='black'
               title={intersection.latitude+','+intersection.longitude}
               />)
 
@@ -223,12 +284,12 @@ class Run extends Component {
               coordinate={{ latitude: intersection.latitude, longitude: intersection.longitude}}
               identifier={ intersection.latitude+','+intersection.longitude }
               onSelect= { consoleLogIntersection }
-              pinColor='grey'
+              image={intersectImgMinor}
+              // pinColor='grey'
               title={intersection.latitude+','+intersection.longitude}
               />)
-
             )
-          })} */}
+          })}
 
           { Object.keys(streetLookup).map(key=>{//THIS IS FOR DRAWING LINES BETWEEN INTERSECTIONS
             if(key!=='Alley'){
@@ -282,26 +343,27 @@ class Run extends Component {
           })}
 
           {generatedRoutes.map((route,idx)=>{
-            // console.log('on this route: ',route)
-            return idx=== genRouteNum && (
-              <View key={idx} >
-               <MapView.Polyline
-                 coordinates={route.map(intersectionNode=>{return {latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}})}
-                   strokeColor='yellow'
-                   strokeWidth= {10}
-                 />
+            if(idx=== genRouteNum){
+              console.log('intersections to cross on this route: ',route.length)
+              return (
+                  <View key={idx} >
+                    <MapView.Polyline
+                      coordinates={route.map(intersectionNode=>{return {latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}})}
+                      strokeColor='yellow'
+                      strokeWidth= {10}
+                    />
 
-                {route.map((intersectionNode,idx)=>{
-                  return(
-                    <MapView.Marker
+                    {/* {route.map((intersectionNode,idx)=>{
+                      return(
+                      <MapView.Marker
                       coordinate={{ latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}}
                       pinColor='blue'
                       title={JSON.stringify(idx)}
                     />
                   )
-                })}
+                })} */}
 
-                {/* <MapView.Marker
+                <MapView.Marker
                   coordinate={{ latitude: route[0].latitude, longitude: route[0].longitude}}
                   pinColor='red'
                   title='Start'
@@ -310,9 +372,10 @@ class Run extends Component {
                   coordinate={{latitude: route[route.length-1].latitude, longitude: route[route.length-1].longitude}}
                   pinColor='blue'
                   title='End'
-                /> */}
+                />
               </View>
-            )
+              )
+            }
           })}
 
        	 </MapView>

@@ -53,7 +53,7 @@ class MakeRoute extends Component {
   componentWillMount() {
       promisifiedGetCurrPos()//BackgroundGeolocation is still far superior to navigator.geolocation.getCurrentPosition, but the latter is still good to use for getting position at a specified time
         .then((position) => {
-          console.log('here')
+          // console.log('here')
           let lng = position.coords.longitude
           let lat = position.coords.latitude
           let newPosition = {latitude: lat, longitude: lng}
@@ -62,7 +62,7 @@ class MakeRoute extends Component {
           })
         })
         .then(()=>{
-          console.log('attaching geolocation listener')
+          // console.log('attaching geolocation listener')
           BackgroundGeolocation.on('location', this.onLocation)
         })
     }
@@ -116,19 +116,19 @@ class MakeRoute extends Component {
   }
 
   onLocation(locInp){
-    console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
+    // console.log('onLoc listeners invoked (make sure this is NOT being run when outside components like makeroute and runaroute that need to watch location!)')
     let lng = locInp.coords.longitude
     let lat = locInp.coords.latitude
     let rawPosition= {latitude: lat, longitude: lng}
     let rawPositionProm=Promise.resolve(rawPosition)
-    console.log('raw is ',rawPosition)
+    // console.log('raw is ',rawPosition)
 
     //FOR TESTING (and maybe presentation)?
     let unsnappedPosCoords = this.state.unsnappedPosCoords.slice(0)
     unsnappedPosCoords.push(rawPosition)
     this.setState({unsnappedPosCoords})
 
-    let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
+    let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyAxTRVcG76wG9oMYdRVNPCIcfXKBlljBVc`)
        .then(res => {
           // console.log('in snappedLoc block')
           let snappedLoc= res.data.snappedPoints[0].location
@@ -141,8 +141,9 @@ class MakeRoute extends Component {
           return snappedPosition
         })
        .catch(err => {
-         if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
-         else {throw err.message}
+        //  if(err.message.includes('code 429')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
+        //  else {throw err.message}
+         return rawPosition
        })
 
     //if set to true, then make axios request to googlemaps snap to roads API, and return either the snapped coordinates (or rawcoordinates if daily quota reached)
@@ -253,14 +254,24 @@ class MakeRoute extends Component {
          onSelect={goToRaceView}
        /> */}
 
+       { unsnappedPosCoords.map((coord,idx)=>{
+        //  console.log('marker at ',coord,' idx at ', idx)
+         return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
+       })}
+
       {this.state.snappedTesting && this.state.isRunning ?
         //BELOW IS FOR *BOTH* SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers) .. note if google maps api not working there will only be unsnapped positions)
         <View>
             <MapView.Polyline coordinates={snappedPosCoords} strokeColor='green' strokeWidth= {10} />
-            { unsnappedPosCoords.map((coord,idx)=>{
-              console.log('marker at ',coord,' idx at ', idx)
+
+            {/* for some reason... the unsnappedPosCoords thing at the bottom won't work here in this view,
+            but it will work outside (see above the snapped testing and is running code block) */}
+
+            {/* { unsnappedPosCoords.map((coord,idx)=>{
+              // console.log('marker at ',coord,' idx at ', idx)
               return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
-            })}
+            })} */}
+
         </View> :
         //BELOW IS FOR ONLY UNSNAPPED POSITIONS
         <MapView.Polyline coordinates={routerDisplayCoords} strokeColor='green' strokeWidth= {10} />
