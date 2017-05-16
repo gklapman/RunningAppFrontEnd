@@ -22,8 +22,8 @@ import styles from '../Styles'
 import {addNewRoute, fetchSelectedRacer} from './storeAndReducer'
 import {runDataCoords, runDataTimes} from './RunData'
 import {numToRGBConverter} from './Utils'
-import {Btn, BtnSm, BigBtn, BtnHolder} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {Btn, BtnSm, BigBtn, BtnHolder, BtnHolderVert, BtnViewRoute, BtnHome} from './Wrappers'
+import {redish, blueish, beige, yellowish} from './Constants'
 
 
 
@@ -145,11 +145,9 @@ class ViewRoute extends Component {
 
     // console.log('given props HR ', givenprops.heartrateInfo)
     if (givenprops.heartrateInfo){
-      return (<View style={styles.changeTypeHeartRate}>
-                        <TouchableOpacity onPress={this.changeTypeHeartRate}>
-                          <Text>View Heart Rate</Text>
-                        </TouchableOpacity>
-                    </View>: null)
+      return (<BtnViewRoute style={styles.changeTypeHeartRate}>
+                <Text onPress={this.changeTypeHeartRate}>View Heart Rate</Text>
+              </BtnViewRoute>: null)
     }
   }
 
@@ -272,43 +270,28 @@ class ViewRoute extends Component {
 
          <View style={styles.mapcontainerNoNav}>
 
-            <BtnHolder>
-            { ////////// I NEED TO FIX THIS- THIS NEW BUTTON IS COVERING UP THE OLD ONE
-              this.state.view === 'lineHeatmap' ?
-                  <BtnSm>
-                        <Text onPress={this.changeViewButton}>View Speed</Text>
-                  </BtnSm> :
-                  <BtnSm>
-                        <Text onPress={this.changeViewButton}>View Heatmap</Text>
-                  </BtnSm>
+            <BtnHolderVert>
 
-            }
-
-            {this.showHeartRate()}
-            <View style={styles.changeTypeSpeed}>
-                  <TouchableOpacity onPress={this.changeTypeSpeed}>
-                    <Text>View Speed</Text>
-                  </TouchableOpacity>
-            </View>
-             <View style={styles.changeTypeRegular}>
-                  <TouchableOpacity onPress={this.changeTypeRegular}>
-                    <Text>View Regular</Text>
-                  </TouchableOpacity>
-            </View>
-            {/*view regular is bad name... this is for route with no color change*/}
+              {this.showHeartRate()}
+              <BtnViewRoute>
+                      <Text onPress={this.changeTypeSpeed}>View Speed</Text>
+              </BtnViewRoute>
+               <BtnViewRoute>
+                      <Text onPress={this.changeTypeRegular}>View Path</Text>
+              </BtnViewRoute>
 
 
 
-              {!oldRoute &&
-                <BtnSm>
-                      <Text onPress={this.submitRoute}>Submit Run</Text>
-                </BtnSm> }
+            {!oldRoute &&
+              <BtnViewRoute style={styles.submitRoute}>
+                    <Text onPress={this.submitRoute}>Submit Run</Text>
+              </BtnViewRoute> }
 
-                <BtnSm>
-                      <Text onPress={this.replayRoute}>Replay Run</Text>
-                </BtnSm>
+              <BtnViewRoute style={styles.replayRoute}>
+                    {!this.state.replayingRun ? <Text onPress={this.replayRoute}>Replay Run</Text> : <Text onPress={this.replayRoute}>Pause {TimeFormatter(this.state.timer)}</Text>}
+              </BtnViewRoute>
 
-            </BtnHolder>
+            </BtnHolderVert>
 
          <MapView
               region={{latitude: startPosition.latitude, longitude: startPosition.longitude, latitudeDelta: 0.008, longitudeDelta: 0.008}}
@@ -319,14 +302,14 @@ class ViewRoute extends Component {
           {/*----REPLAY MARKERS----*/}
             {this.state.phantomRacerInfo.personalCoords && this.state.replayingRun ? <MapView.Marker
               coordinate={phantomRacerInfo.personalCoords[this.state.phantomRacerPointer]}
-              pinColor='green'
+              pinColor='black'
               style={{height: 10, width: 10, borderRadius: 10}}
               title='phantom racer'
             /> : null}
 
             {this.state.replayingRun ? <MapView.Marker
                 coordinate={givenprops.personalCoords[this.state.currentRunnerPointer]}
-                pinColor='red'
+                pinColor={redish}
                 style={{height: 10, width: 10, borderRadius: 10}}
                 title='current runner'
               >
@@ -385,7 +368,7 @@ class ViewRoute extends Component {
                   <MapView.Marker
                     key={idx}
                     coordinate={coords}
-                    pinColor='green'
+                    pinColor={redish}
                     style={{height: 10, width: 10, borderRadius: 10}}
                   >
                   </MapView.Marker>
@@ -467,7 +450,7 @@ class ViewRoute extends Component {
 
             {/*----POLYLINE/REGULAR----*/}
             {(this.state.view === 'polylineView' && this.state.type === "regular") &&
-              <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor='green' strokeWidth= {10} />
+              <MapView.Polyline coordinates={givenprops.personalCoords} strokeColor={redish} strokeWidth= {10} />
             }
 
 
@@ -475,26 +458,11 @@ class ViewRoute extends Component {
 
           </MapView>
 
-            <View style={styles.homeButton}>
-              <TouchableOpacity onPress={this.home}>
-                <Text>Home</Text>
-              </TouchableOpacity>
-            </View>
-          {!oldRoute &&
-            <View style={styles.submitRoute}>
-                <TouchableOpacity onPress={this.submitRoute}>
-                  <Text>Submit Run</Text>
-               </TouchableOpacity>
-            </View> }
-
-            <View style={styles.replayRoute}>
-                <TouchableOpacity onPress={this.replayRoute}>
-                  {!this.state.replayingRun ? <Text>Replay Run</Text> : <Text>Pause Replay</Text>}
-               </TouchableOpacity>
-            </View>
-            {this.state.replayingRun ? <View style={styles.replayTimer}>
-              <Text>{TimeFormatter(this.state.timer)}</Text>
-            </View> : null}
+          <BtnHome style={styles.homeButton}>
+            {/* <TouchableOpacity onPress={this.home}> */}
+              <Text onPress={this.home} >Home</Text>
+            {/* </TouchableOpacity> */}
+          </BtnHome>
 
 
           </View>
