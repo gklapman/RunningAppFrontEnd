@@ -24,7 +24,7 @@ import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } from './Utils'
 import {Btn, BtnHolder} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish, darkGrey, lightGrey} from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -66,6 +66,7 @@ class RunARoute extends Component {
 
 			isRunning: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
       showStart: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
+
 
   		timer: 0,
 			timerStart: 0,
@@ -125,7 +126,6 @@ class RunARoute extends Component {
     let rawPosition = {latitude: lat, longitude: lng}
     let rawPositionProm=Promise.resolve(rawPosition)
 
-
     // let snapProm= axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${lat},%20${lng}&key=AIzaSyBO0ViHL_ISFrF1Cizq5gZkmPhcyMk93dM`)
     //   .then(res => {
     //      // console.log('in snappedLoc block')
@@ -137,8 +137,6 @@ class RunARoute extends Component {
     //     if(err.message.includes('code 429') || err.message.includes('Network Error')){return rawPosition}//if googleapis returns a code 429 error (meaning we've reached our daily limit for requests), just return the rawposition
     //     else {throw err.message}
     //   })
-
-
 
     // snapProm
     rawPositionProm
@@ -359,7 +357,6 @@ class RunARoute extends Component {
       <View>
       	<View style={styles.mapcontainerNoNav}>
 
-
         <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
           <Btn>
@@ -382,6 +379,8 @@ class RunARoute extends Component {
 
       		</Btn>
         </BtnHolder>
+
+
        	 	<MapView
             region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .03, longitudeDelta: .03}}
           // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
@@ -389,20 +388,20 @@ class RunARoute extends Component {
 
             { phantomRacerCurrPos && <MapView.Marker
               coordinate={phantomRacerCurrPos}
-              pinColor='orange'
+              pinColor='black'
               title='phantom racer'
               identifier='3'
             />}
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
-              let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
+              let pinColor= idx < this.state.checkpointConvCoordsPointer ? darkGrey : yellowish
               return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint' />)
             })
             }
 
-           <MapView.Marker coordinate={position} pinColor='purple' title='human runner' identifier={JSON.stringify(this.props.user.id)} />
+           <MapView.Marker coordinate={position} pinColor={redish} title='human runner' identifier={JSON.stringify(this.props.user.id)} />
 
-    			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
+    			 <MapView.Polyline coordinates={convCoords} strokeColor={redish} strokeWidth= {5} />
 
            {this.showMessage()}
 
@@ -410,11 +409,22 @@ class RunARoute extends Component {
 
 
       	</View>
+        {//HERE'S THE POPUP MESSAGE, BELOW
+      }
+        <View style={{ position: 'absolute', top: 400}}>
+          <Image source={require('../assets/runningredPopup.gif')} />
+          <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -219}}></View>
+          <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>Faster!</Text>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>PHANTOM Gabi</Text>
+          <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>is on your tail!</Text>
+        </View>
 
       </View>
     )
   }
 }
+
+
 
 const mapDispatchToProps = null
 

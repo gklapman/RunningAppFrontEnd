@@ -39,7 +39,7 @@ import ViewRoute from './Components/ViewRoute'
 import ChooseYourOpponent from './Components/ChooseYourOpponent'
 import RunARoute from './Components/RunARoute'
 import Coordinates from './Components/Coordinates'
-import {redish, blueish, beige, yellowish, orangeish, darkGrey, lightGrey} from './Components/Constants'
+import {redish, blueish, beige, yellowish, orangeish, darkGrey, lightGrey, darkRed} from './Components/Constants'
 
 
 
@@ -53,9 +53,9 @@ const OurApp = TabNavigator({
   },
   {
   tabBarOptions: {
-    activeTintColor: 'black',
-    activeBackgroundColor: lightGrey,
-    inactiveTintColor: 'black',
+    activeTintColor: redish,
+    activeBackgroundColor: 'black',
+    inactiveTintColor: darkRed,
     labelStyle: {
       fontSize: 40,
       fontFamily: 'Magnum',
@@ -64,8 +64,8 @@ const OurApp = TabNavigator({
       textShadowRadius: 1
     },
     style: {
-      color: 'black',
-      backgroundColor: darkGrey
+      color: darkRed,
+      backgroundColor: 'black',
     }
   },
 });

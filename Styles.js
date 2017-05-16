@@ -3,7 +3,7 @@ import React from 'react';
 import {
   StyleSheet
 } from 'react-native';
-import {redish, blueish, yellowish} from './Components/Constants'
+import {redish, blueish, yellowish, lightGrey, darkGrey} from './Components/Constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -165,6 +165,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around'
   },
+  btnHolderVert: {
+    // borderWidth: 3,
+    // borderColor: 'red',
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1,
+    height: '100%',
+    width: '50%',
+    // backgroundColor: 'orange',
+    position: 'relative',
+    left: -100,
+    top: 20,
+    alignItems: 'flex-start',
+    justifyContent: 'space-around'
+  },
+  btnHolderLow: {
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1,
+    height: 20,
+    width: '100%',
+    // backgroundColor: 'orange',
+    position: 'absolute',
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'space-around'
+  },
   genRoute: {
     zIndex: 1,
     height: 50,
@@ -290,18 +317,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 30,
     left: 50,
-  }, 
+  },
   changeTypeHeartRate: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     top: 100,
     left: 10,
   },
   changeTypeSpeed: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
     width: 100 ,
     backgroundColor: 'green',
@@ -310,36 +337,36 @@ const styles = StyleSheet.create({
     left: 100,
   },
   changeTypeRegular: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 100 , 
+    width: 100 ,
     backgroundColor: 'green',
     position: 'absolute',
     top: 100,
     left: 190,
   },
    replayRoute: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'yellow',
     position: 'absolute',
     top: 100,
     right: 10,
   },
   homeButton: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'red',
     position: 'absolute',
     bottom: 200,
     left: 200,
   },
   replayTimer: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'purple',
     position: 'absolute',
     top: 100,
@@ -390,6 +417,24 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: yellowish
   },
+  scrollListHeader2: {
+    fontFamily: 'Magnum',
+    fontWeight: '900',
+    width: '48%',
+    height: 35,
+    color: yellowish,
+    textAlign: 'center',
+    fontSize: 25,
+    padding: 3,
+    paddingTop: 7,
+    backgroundColor: 'black',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: yellowish
+  },
   scrollListRow: {
     flex: 0,
     flexDirection: 'row',
@@ -416,7 +461,7 @@ const styles = StyleSheet.create({
   scrollListItem: {
     textAlign: 'center',
     fontFamily: 'Ghoulish Intent',
-    fontSize: 18,
+    fontSize: 25,
     color: yellowish,
     backgroundColor: 'transparent',
     width: '30%',
@@ -427,11 +472,58 @@ const styles = StyleSheet.create({
   scrollListItem2: {
     textAlign: 'center',
     fontFamily: 'Ghoulish Intent',
-    fontSize: 14,
+    fontSize: 30,
     color: yellowish,
     backgroundColor: 'transparent',
     width: '48%'
-  }
+  },
+  genRouteStatus:{
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 400,
+    left: 50,
+  },
+  setStartEnd: {
+    zIndex: 1,
+    height: 50,
+    width: 100 ,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    top: 200,
+    left: 50,
+  scrollListItemOppNameOdd: {
+    alignItems: 'center',
+    width: '48%',
+    backgroundColor: redish,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: yellowish,
+    margin: 1,
+  },
+  scrollListItemOppNameEven: {
+    alignItems: 'center',
+    width: '48%',
+    backgroundColor: blueish,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: yellowish,
+    margin: 1,
+  },
+  scrollListItemOppName: {
+    paddingTop: 3,
+    textAlign: 'center',
+    fontFamily: 'Magnum',
+    fontSize: 25,
+    color: yellowish,
+    width: '48%',
+    backgroundColor: 'transparent',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    textShadowOffset: {width : 1, height: 1}
+  },
 
   });
 
