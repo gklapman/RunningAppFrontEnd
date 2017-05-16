@@ -22,6 +22,7 @@ import config from '../config'
 import qs from 'qs'
 import  {Btn, BigBtn} from './Wrappers'
 import {redish, blueish, beige, yellowish, orangeish} from './Constants'
+import TimeFormatter from 'minutes-seconds-milliseconds'
 
 function OAuth(client_id, cb) {
 
@@ -158,7 +159,7 @@ class Stats extends Component {
                       <Text style={styles.scrollListItem}> {route.id} </Text>
                       <Text style={styles.scrollListItem}>{route.totalDist}</Text>
                       {route.routetimes.map(routetime => {
-                        let id = {routetimeId: routetime.id, personalCoords: routetime.personalCoords, personalTimeMarker: routetime.personalTimeMarker, startTime: routetime.startTime, endTime: routetime.endTime, phantomRacerRoutetimeId: routetime.routetimeId, heartrateInfo: routetime.heartrateInfo}
+                        let id = {routetimeId: routetime.id, personalCoords: routetime.personalCoords, personalTimeMarker: routetime.personalTimeMarker, startTime: routetime.startTime, endTime: routetime.endTime, phantomRacerRoutetimeId: routetime.RacerTimeId, heartrateInfo: routetime.heartrateInfo}
                         return (
                           <TouchableOpacity
                           style={styles.scrollListItem}
@@ -167,7 +168,7 @@ class Stats extends Component {
                               <Text style={{fontFamily: 'Ghoulish Intent', fontSize: 18, textAlign: 'right', color: yellowish,     textShadowColor: 'black',
                               textShadowOffset: {width: 3, height: 3},
                               textShadowRadius: 3,}}>
-                                 {routetime.runtime}
+                                 {TimeFormatter(routetime.runtime)}
                               </Text>
                           </TouchableOpacity>)
                       })}
@@ -191,11 +192,11 @@ class Stats extends Component {
             />
           </TouchableOpacity>
 
-//         <BigBtn>
-//           <Text onPress={this.connectToFitBit}>
-//             Connect to FitBit
-//           </Text>
-//         </BigBtn>
+{/*   <BigBtn>
+          <Text onPress={this.connectToFitBit}>
+            Connect to FitBit
+          </Text>
+        </BigBtn> */}
 
          </View>
       </View>

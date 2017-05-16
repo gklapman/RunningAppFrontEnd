@@ -40,12 +40,18 @@ class Run extends Component {
       adjList: {},
       generatedRoutes: [],
       genRouteNum: 0,
+      routesArr: [], 
+      showFilter: false, 
   }
     this.canMakeRequests= false
     this.scrollWaitInterval
     this.onRegionChange=this.onRegionChange.bind(this)
     this.genRoute= this.genRoute.bind(this)
     this.incrementRouteNum= this.incrementRouteNum.bind(this)
+    this.handleMinChange = this.handleMinChange.bind(this)
+    this.handleMaxChange = this.handleMaxChange.bind(this)
+    this.showFilter = this.showFilter.bind(this)
+    this.toggleFilter = this.toggleFilter.bind(this)
   }
 
   incrementRouteNum(){
@@ -94,6 +100,40 @@ class Run extends Component {
     //do nothing... we just want a listener so the thing woulD STOP FUCKING TELLING US IT'S SENDING LOCAITON WITH NO LISTENERS!!!
   }
 
+  handleMinChange(num){
+    if (!num){
+      this.setState({
+        routesArr: this.props.nearbyRoutes
+      })
+    } else {
+      
+      let routesArr = this.props.nearbyRoutes
+      routesArr = routesArr.filter(route => {
+        return route.totalDist > num
+      })
+      console.log('routesArr ', routesArr)
+      this.setState({
+        routesArr: routesArr
+      })
+    }
+  }
+
+  handleMaxChange(num){
+    if (!num){
+      this.setState({
+        routesArr: this.props.nearbyRoutes
+      })
+    } else {
+      let routesArr = this.props.nearbyRoutes
+      routesArr =routesArr.filter(route => {
+        return route.totalDist < num
+      })
+      this.setState({
+        routesArr: routesArr
+      })
+    }
+  }
+
   componentWillMount(){
     this.setState()
     BackgroundGeolocation.on('location', this.onLocation)
@@ -101,6 +141,21 @@ class Run extends Component {
 
   componentWillUnmount(){
     BackgroundGeolocation.un('location', this.onLocation)
+  }
+
+  showFilter(){
+    if (this.state.showFilter)
+      return (
+      <View style={styles.filterHolder}>
+          <Text>Min:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMinChange} />
+          <Text>Max:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
+        </View>)
+  }
+
+  toggleFilter(){
+    console.log('toggling ')
+    let filter = this.state.showFilter
+    this.setState({showFilter: !filter})
   }
 
   onRegionChange(region) {
@@ -113,7 +168,13 @@ class Run extends Component {
     this.scrollWaitInterval=setInterval(() => {//this now sets a new interval
       if(this.props && this.canMakeRequests){
         this.props.fetchNearbyRoutes(region)//this thunk will run AFTER .5 seconds, assuming the interval was not cleared by then (clears if user keeps scrolling), AND this.canMakeRequests is set to true
-          .then(()=>this.setState({region}))
+          .then(()=>{
+            this.setState({
+              region: region,
+              routesArr: this.props.nearbyRoutes
+              })
+            })
+          
           .catch(err=>console.error(err))
       }
       this.canMakeRequests= false;//set to false so that the axios request does not keep happening after the scrolling has stopped and fetchNearbyRoutes has already run once
@@ -123,7 +184,8 @@ class Run extends Component {
   render() {
   	const { navigate } = this.props.navigation;
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
-    let routesArr = this.props.nearbyRoutes;
+    let routesArr = this.state.routesArr
+    console.log('routeArr ', routesArr)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -146,9 +208,6 @@ class Run extends Component {
       console.log(this.state.adjList[id])
     }
 
-    const filter = () => {
-    	// console.log('this will be for filters')
-    }
 
     let intersectionMarkers= this.state.intersectionMarkers
     let streetLookup= this.state.streetLookup
@@ -156,6 +215,7 @@ class Run extends Component {
     let generatedRoutes= this.state.generatedRoutes
     let genRouteNum= this.state.genRouteNum
     console.log('this.state ',this.state.genRouteNum)
+    console.log('this si the filter ', this.state.showFilter)
 
     return (
       <View>
@@ -167,11 +227,19 @@ class Run extends Component {
           <Btn>
             <Text onPress={goToRouteMaker}>Create a Route</Text>
           </Btn>
-       	 	<Btn>
+       	 	{/*<Btn>
             <Text onPress={filter}>Filter Routes</Text>
-       	 	</Btn>
+       	 	</Btn>*/}
         </View>
 
+         <View style={styles.homeButton}>
+              <TouchableOpacity onPress={this.toggleFilter}>
+                <Text>Filter</Text>
+              </TouchableOpacity>
+            </View>
+        {this.showFilter()}
+
+       
         {/* <Btn>
           <Text onPress={goToRouteMaker}>Create a Route</Text>
         </Btn>
@@ -191,7 +259,7 @@ class Run extends Component {
 
        	 	<MapView style={styles.map}
             onRegionChange={this.onRegionChange}
-            initialRegion={{latitude: 41.88782633760493, longitude: -87.64045111093955, latitudeDelta: .005, longitudeDelta: .005}}>
+            initialRegion={{latitude: 41.88782633760493, longitude: -87.64045111093955, latitudeDelta: .01, longitudeDelta: .01}}>
 
           {querycoords.map(coord=>{
             return(<MapView.Marker
