@@ -46,7 +46,9 @@ class ViewRoute extends Component {
     midLng: {},
     deltaLat: 0,
     deltaLng: 0,
-
+    winner: '',
+    loser: '',
+    showWinnerLoser: true,
 
   }
 
@@ -95,6 +97,29 @@ class ViewRoute extends Component {
 }
 
   componentWillMount() {
+    // console.log("PROPS HERE!!!!!!!!!!!!!!!!", this.props)
+    // let humanWon = this.props.user.personalCoords[this.props.user.personalCoords.length - 1] < this.props.selectedRacer.personalCoords[this.props.selectedRacer.personalCoords.length - 1] ? true : false
+
+    // if (humanWon){
+    //   this.setState({
+    //     winner: 'You',
+    //   })
+    //   setTimeout(()=> {
+    //     this.setState({
+    //       showWinnerLoser: false
+    //     })
+    //   }, 5000)
+    // } else {
+    //   this.setState({
+    //     winner: 'Phantom ' + this.props.selectedRacer.username
+    //   })
+    //   setTimeout(()=> {
+    //     this.setState({
+    //       showWinnerLoser: false
+    //     })
+    //   }, 5000)
+    // }
+
     let givenprops = this.props.navigation.state.params
     // console.log('givenprops ', this.props.navigation.state.params )
     let heartrateInfo = givenprops.heartrateInfo
@@ -337,19 +362,19 @@ class ViewRoute extends Component {
             {
               this.state.replayingRun &&
               <View>
-              <BtnSuperSmall style={styles.replaySpeed1}>
+              <BtnSuperSmall >
                 <Text onPress={this.changeReplaySpeed.bind(this, 1)}>1x</Text>
               </BtnSuperSmall>
 
-              <BtnSuperSmall style={styles.replaySpeed2}>
+              <BtnSuperSmall >
                 <Text onPress={this.changeReplaySpeed.bind(this, 2)}>2x</Text>
               </BtnSuperSmall>
 
-              <BtnSuperSmall style={styles.replaySpeed4}>
+              <BtnSuperSmall >
                 <Text onPress={this.changeReplaySpeed.bind(this, 4)}>4x</Text>
               </BtnSuperSmall>
 
-              <BtnSuperSmall style={styles.replaySpeed10}>
+              <BtnSuperSmall >
                 <Text onPress={this.changeReplaySpeed.bind(this, 8)}>8x</Text>
               </BtnSuperSmall>
             </View>
@@ -526,12 +551,16 @@ class ViewRoute extends Component {
 
 
           </View>
-          {/* <View style={{ position: 'absolute', top: 410}}>
-            <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
-            <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
-            <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>CONSTRUCTING</Text>
-            <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>CITY LAYOUT</Text>
-          </View>  */}
+
+          {
+            ////MIGHT IMPLEMENT THIS LATER -"WINNER/LOSER" POPUP
+            // <View style={{ position: 'absolute', top: 410}}>
+            //   <Image source={require('../assets/runningredPopup.gif')} />
+            //   <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+            //   <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>CONSTRUCTING</Text>
+            //   <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>CITY LAYOUT</Text>
+            // </View>
+          }
 
         </View>
     )

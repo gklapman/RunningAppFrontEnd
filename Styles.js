@@ -373,9 +373,9 @@ const styles = StyleSheet.create({
     right: 100,
   },
    popUpMessage: {
-    zIndex: 1, 
+    zIndex: 1,
     height: 50,
-    width: 80 , 
+    width: 80 ,
     backgroundColor: 'purple',
     position: 'absolute',
     top: 100,
