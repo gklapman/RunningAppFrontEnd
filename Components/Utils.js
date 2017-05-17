@@ -49,6 +49,7 @@ TestRunner.prototype.moveOrNot= function (){
     this.timesArrPointer+=1
   }
   // console.log('testrunenr elapsedtime ', this.elapsedTime)
+  // console.log(origCoordsPointer, this.coordsPointer, this.timesArrPointer)
 
   return origCoordsPointer!==this.coordsPointer ? true : false
 }
@@ -76,7 +77,96 @@ export const testRoute2=
 timesArr:[0,1000,2000,5500,7000,8500,9000,12000]//faster
 }
 
-let testRoute3Coords=[[41.809590, -87.599837],[41.809590, -87.596837],[41.809686, -87.592427],[41.808071, -87.590689],[41.805676, -87.589218],[41.802476, -87.587889],[41.801058, -87.587528],[41.801058, -87.5874],[41.801058, -87.5873],[41.801058, -87.5872],[41.801058, -87.5871],[41.801058, -87.5870],[41.801058, -87.5869],[41.801058, -87.5868],[41.801058, -87.5867],[41.801058, -87.5866],[41.801058, -87.5865],[41.801058, -87.5864],[41.801058, -87.5863],[41.801058, -87.5862],[41.801058, -87.5861], [41.801058,-87.5857]]
+let testRoute3Coords=[
+           [
+              "41.80910",
+              "-87.596837"
+            ],
+            [
+              "41.80959",
+              "-87.596837"
+            ],
+            [
+              "41.809686",
+              "-87.592427"
+            ],
+            [
+              "41.808071",
+              "-87.590689"
+            ],
+            [
+              "41.805676",
+              "-87.589218"
+            ],
+            [
+              "41.802476",
+              "-87.587889"
+            ],
+            [
+              "41.801058",
+              "-87.587528"
+            ],
+            [
+              "41.801058",
+              "-87.5874"
+            ],
+            [
+              "41.801058",
+              "-87.5873"
+            ],
+            [
+              "41.801058",
+              "-87.5872"
+            ],
+            [
+              "41.801058",
+              "-87.5871"
+            ],
+            [
+              "41.801058",
+              "-87.587"
+            ],
+            [
+              "41.801058",
+              "-87.5869"
+            ],
+            [
+              "41.801058",
+              "-87.5868"
+            ],
+            [
+              "41.801058",
+              "-87.5867"
+            ],
+            [
+              "41.801058",
+              "-87.5866"
+            ],
+            [
+              "41.801058",
+              "-87.5865"
+            ],
+            [
+              "41.801058",
+              "-87.5864"
+            ],
+            [
+              "41.801058",
+              "-87.5863"
+            ],
+            [
+              "41.801058",
+              "-87.5862"
+            ],
+            [
+              "41.801058",
+              "-87.5861"
+            ],
+            [
+              "41.801058",
+              "-87.5855"
+            ]
+          ]
 let testRoute3ConvCoords=testRoute3Coords.map(coordpair=>{return {latitude: coordpair[0], longitude: coordpair[1]} })
 
 export const testRoute3=
@@ -144,3 +234,46 @@ export const flatten = (arr) => {
     return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
   }, []);
 }
+
+
+function generateNorthLat(lat, lat2, lng){
+  let finalArr = []
+  for (let i = lat; i< lat2; i+=0.0005){
+    console.log(i)
+   let nextVal = i.toFixed(6)
+    finalArr.push({latitude: +nextVal, longitude: lng})
+  }
+  return finalArr
+}
+
+function generateSouthLat(lat, lat2, lng){
+  let finalArr = []
+  for (let i = lat; i> lat2; i-=0.0005){
+    console.log(i)
+   let nextVal = i.toFixed(6)
+    finalArr.push({latitude: +nextVal, longitude: lng})
+  }
+  return finalArr
+}
+
+
+function generateWestLng(lat, lng, lng2){
+  let finalArr = []
+  for (let i = lng; i> lng2; i-=0.0005){
+   console.log(i)
+   let nextVal = i.toFixed(6)
+    finalArr.push({latitude: lat, longitude: +nextVal})
+  }
+  return finalArr
+}
+
+function generateEastLng(lat, lng, lng2){
+  let finalArr = []
+  for (let i = lng; i< lng2; i+=0.0005){
+    console.log(i)
+   let nextVal = i.toFixed(6)
+    finalArr.push({latitude: lat, longitude: +nextVal})
+  }
+  return finalArr
+}
+

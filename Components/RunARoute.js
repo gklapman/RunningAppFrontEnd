@@ -95,7 +95,7 @@ class RunARoute extends Component {
           let lng = position.coords.longitude
           let lat = position.coords.latitude
           position = {latitude: lat, longitude: lng}
-
+          console.log('THIS IS THE ORIGINAL POSITION', position)
           position= this.testRunner.moveAndGetPos().coords//for testrunner.. get rid of this if it you dont need it
 
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
@@ -143,6 +143,7 @@ class RunARoute extends Component {
       .then(position=>{
         position= this.testRunner.moveAndGetPos().coords //this is for testtt delete later
         // console.log('testrunner newposition ', position)
+        console.log('position inside of location change ', position, this.state.isRunning)
         this.setState({ currentPosition: position })
 
         let checkpoint = this.props.selectedRoute.checkpointConvCoords[this.state.checkpointConvCoordsPointer]
@@ -150,6 +151,8 @@ class RunARoute extends Component {
         // console.log('position is ', position)
         // console.log('checkpoint is ',checkpoint)
         // console.log('DIST', dist)
+
+     
 
         // THIS BLOCK OF CODE IS CHECKING IF USER IS AT THE **STARTING** CHECKPOINT (TO DISPLAY START BUTTON)
         // -----------------------------------------------------------------------------
@@ -168,6 +171,7 @@ class RunARoute extends Component {
           }
         }
         else if(this.state.isRunning){
+          console.log('RUNNING')
 
         // THIS BLOCK OF CODE IS FOR UPDATING ELAPSED TIME, PERSONALCOORDS, AND PERSONALTIMEMARKER (ONCE USER HAS STARTED RUNNING)
         // -----------------------------------------------------------------------------
@@ -188,19 +192,24 @@ class RunARoute extends Component {
           // -----------------------------------------------------------------------------
 
             if(dist < 50){
+
+
               let newcheckpointTimeMarker= this.state.checkpointTimeMarker.slice(0);
               newcheckpointTimeMarker.push(elapsedTime)
 
               // THIS BLOCK OF CODE IS FOR CHECKING IF USER HIT THE FINAL CHECKPOINT!!!!
               // -----------------------------------------------------------------------------
 
-              if(this.state.checkpointConvCoordsPointer === this.props.selectedRoute.checkpointConvCoords.length-1){
+              console.log('this state checkpointConvCoordsPointer', this.state.checkpointConvCoordsPointer, this.props.selectedRoute.checkpointCoords.length-1)
+
+              if(this.state.checkpointConvCoordsPointer === this.props.selectedRoute.checkpointCoords.length-1){
+                console.log('this is the last checkpoint')
                       this.setState({
                         isRunning: false,
                     })
 
 
-                    let routeId = this.selectedRoute.id
+                    let routeId = this.props.selectedRoute.id
                     let phantomRacerRouteTimeId = this.props.selectedRacer.routetimes[0].id //should this be the routetimeID of the opponent?
 
 
@@ -352,6 +361,8 @@ class RunARoute extends Component {
     // console.log('phantom racer pos ',phantomRacerCurrPos)
     // console.log('selectedRacer', this.props.selectedRacer)
     // console.log('selected route ', this.props.selectedRoute)
+    // console.log('route coords ', this.props.selectedRoute.convCoords)
+    // console.log('test runner coords ', testRunner.convCoords)
 
     return (
       <View>
@@ -374,8 +385,7 @@ class RunARoute extends Component {
       		<Btn>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
-      			{/* <Text>{position.latitude}</Text>
-      			<Text>{position.longitude}</Text> */}
+      	
 
       		</Btn>
         </BtnHolder>
