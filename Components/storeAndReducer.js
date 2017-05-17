@@ -28,8 +28,8 @@ const SET_FITBIT_TOKEN = "SET_FITBIT_TOKEN"
 
 ////CONFIG                          //CHANGE THIS TO MAKE ALL YOUR REQUESTS GO TO EITHER LOCALHOST OR THE DEPLOYED HEROKU SITE
 const localHostorHeroku=''
-// localHostorHeroku= localHost
-localHostorHeroku= herokuUrl
+localHostorHeroku= localHost
+// localHostorHeroku= herokuUrl
 
 
 ////ACTION CREATORS
