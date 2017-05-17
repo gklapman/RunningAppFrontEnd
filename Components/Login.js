@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
   Button,
-  Linking, 
+  Linking,
   KeyboardAvoidingView,
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
@@ -47,6 +47,7 @@ class Login extends Component {
   }
 
   componentWillMount(){
+    console.disableYellowBox = true;
     BackgroundGeolocation.configure({
       // Geolocation Config
       desiredAccuracy: 0,
@@ -77,13 +78,13 @@ class Login extends Component {
           console.log("- Start success");
         });
       }
-      
+
     });
 
     BackgroundGeolocation.on('location', this.onLocation)
   }
 
-  
+
   componentWillUnmount(){
     BackgroundGeolocation.un('location', this.onLocation)
   }
@@ -130,19 +131,19 @@ class Login extends Component {
           <View style={{position: 'relative', top: -30}}>
             {/* <Image source={require('../assets/runningred.gif')} /> */}
           </View>
-      
+
             <View style={{alignItems: 'center', position: 'relative', top: -50}}>
-            
+
               <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3}}>Email:</Text>
               <TextInput style={styles.input} onChangeText={this.changeTextHandlerEmail} />
               <Text style={{fontFamily: 'Magnum', fontSize: 30, fontWeight: '900', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, marginTop: 10}}>Password:</Text>
               <TextInput secureTextEntry={true} style={styles.input} onChangeText={this.changeTextHandlerPw} />
 
               <Text onPress={this.login} style={{fontFamily: 'Magnum', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', textAlign: 'right', marginRight: 5, marginTop: 10, position: 'relative', top: 10 }}>Login</Text>
-              <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35, borderColor: yellowish, borderWidth: 3}}></View>       
+              <View style={{height: 50, width: 200, backgroundColor: blueish, zIndex: -1, borderRadius: 100, position: 'relative', top: -35, borderColor: yellowish, borderWidth: 3}}></View>
             </View>
-       
-          
+
+
         </View>
 
       </View>
