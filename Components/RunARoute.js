@@ -57,15 +57,15 @@ class RunARoute extends Component {
 		super(props);
 		this.state = {
       saying: '',
-      showMessage: false, 
+      showMessage: false,
 			currentPosition: {latitude: 0, longitude: 0},
 
       checkpointConvCoordsPointer: 1,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
       phantomRacerPointer: 1,//this represents index of the !!!NEXT POINT!!! that the phantom phantomRacer will get to (it's index of BOTH the selected route coord AND +1 the phantomRacer's time array)
       // phantomRacerTimesArrPointer: 1,
 
-			isRunning: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
-      showStart: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
+			isRunning: false,
+      showStart: false,
 
 
   		timer: 0,
@@ -152,7 +152,7 @@ class RunARoute extends Component {
         // console.log('checkpoint is ',checkpoint)
         // console.log('DIST', dist)
 
-     
+
 
         // THIS BLOCK OF CODE IS CHECKING IF USER IS AT THE **STARTING** CHECKPOINT (TO DISPLAY START BUTTON)
         // -----------------------------------------------------------------------------
@@ -233,9 +233,9 @@ class RunARoute extends Component {
                 // THIS BLOCK OF CODE IS UPDATING USER ABOUT WHERE HE/SHE IS IN RELATION TO PHANTOM RACER !!!!
                 // -----------------------------------------------------------------------------
 
-                let YOUREAHEAD='You are slightly ahead of the phantom racer!';
-                let YOURENECKANDNECK='You are neck and neck with phantom racer!';
-                let YOUREBEHIND='You are slightly behind the phantom racer... PICK UP THE PACE!';
+                let YOUREAHEAD=['Faster!', `Phantom ${this.props.selectedRacer.username}` ,'is on your tail!'];
+                let YOURENECKANDNECK=["You\'re Neck & Neck!", '', ''];
+                let YOUREBEHIND=['Pick it up!', `Phantom ${this.props.selectedRacer.username}`, 'is just ahead of you!'];
 
                 let remainingDist = geolib.getPathLength(this.props.selectedRoute.checkpointConvCoords.slice(this.state.checkpointConvCoordsPointer))
                 let phantomRemainingDist = geolib.getPathLength(this.props.selectedRacer.routetimes[0].personalCoords.slice(this.state.phantomRacerPointer))
@@ -323,8 +323,12 @@ class RunARoute extends Component {
     showMessage(){
       // console.log('showing message ', this.state.showMessage)
       if (this.state.showMessage){
-      return (<View style={styles.popUpMessage}> 
-                 <Text>{this.state.saying}</Text>
+      return (<View style={{ position: 'absolute', top: 400}}>
+                <Image source={require('../assets/runningredPopup.gif')} />
+                <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -209}}></View>
+                <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>{this.state.saying[0]}</Text>
+                <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>{this.state.saying[1]}</Text>
+                <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>{this.state.saying[2]}</Text>
               </View>)
       } else {
         return <View></View>
@@ -385,7 +389,7 @@ class RunARoute extends Component {
       		<Btn>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
-      	
+
 
       		</Btn>
         </BtnHolder>
@@ -421,13 +425,7 @@ class RunARoute extends Component {
       	</View>
         {//HERE'S THE POPUP MESSAGE, BELOW
       }
-        <View style={{ position: 'absolute', top: 400}}>
-          <Image source={require('../assets/runningredPopup.gif')} />
-          <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -219}}></View>
-          <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>Faster!</Text>
-          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>PHANTOM Gabi</Text>
-          <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>is on your tail!</Text>
-        </View>
+
 
       </View>
     )

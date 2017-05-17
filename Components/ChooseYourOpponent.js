@@ -75,7 +75,7 @@ class OpponentsView extends Component {
           <ScrollView>
           {
             users && users.map((user, idx) =>{
-              let placeHolderNames = ['Gabi', 'Charles', 'Alyssa', 'Codi']
+              // let placeHolderNames = ['Gabi', 'Charles', 'Alyssa', 'Codi']
               let nameStyle = idx % 2 === 0 ? styles.scrollListItemOppNameEven : styles.scrollListItemOppNameOdd
               let userRuntime = user.routetimes[0].runtime
               let rowStyle = idx % 2 !== 0 ? styles.scrollListRowEven : styles.scrollListRowOdd
@@ -83,7 +83,7 @@ class OpponentsView extends Component {
                 <View key={user.id} style={rowStyle}>
                   {/* <Text style={styles.scrollListItem2} ref={idx} onPress={() => this.goToRace(idx)}>{user.username}</Text> CHANGE IT BACK TO THIS AFTER GETTING SHORTER USERNAMES*/}
                   <View style={nameStyle}>
-                    <Text style={styles.scrollListItemOppName} ref={idx} onPress={() => this.goToRace(idx)}>{placeHolderNames[idx]}</Text>
+                    <Text style={styles.scrollListItemOppName} ref={idx} onPress={() => this.goToRace(idx)}>{user.username}</Text>
                   </View>
                   <Text style={styles.scrollListItem2}>{TimeFormatter(userRuntime)}</Text>
 

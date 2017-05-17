@@ -38,7 +38,7 @@ export class Btn extends React.Component {
 export class BtnSuperSmall extends React.Component {
   render(){
     return(
-      <View style={{flexDirection: 'column', alignItems: 'flex-start', position: 'relative', top: -20, justifyContent: 'space-around'}}>
+      <View style={{flexDirection: 'column', alignItems: 'flex-start', height: 50, position: 'relative', top: -20, justifyContent: 'flex-start'}}>
         <Text style={{fontFamily: 'Magnum', fontSize: 22, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 26, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
         <View style={{height: 50, width: 70, backgroundColor: blueish, zIndex: -1, borderRadius: 100, borderWidth: 3, borderColor: yellowish, position: 'relative', left: -20 }}></View>
       </View>
@@ -71,8 +71,8 @@ export class BtnMakeRoute extends React.Component {
 export class BtnViewRoute extends React.Component {
   render(){
     return(
-      <View style={{alignItems: 'center', position: 'relative', top: -20, justifyContent: 'space-around'}}>
-        <Text style={{fontFamily: 'Magnum', fontSize: 22, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 35, textAlign: 'right', marginRight: 5 }}>{this.props.children}</Text>
+      <View style={{height: 60, width: 100, alignItems: 'center', position: 'relative', top: -20, justifyContent: 'space-around', marginLeft: 10}}>
+        <Text style={{width: 160, fontFamily: 'Magnum', fontSize: 20, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 25, textAlign: 'center', paddingTop: 10 }}>{this.props.children}</Text>
         <View style={{height: 50, width: 160, backgroundColor: redish, zIndex: -1, borderRadius: 100, borderWidth: 3, borderColor: yellowish}}></View>
       </View>
     )

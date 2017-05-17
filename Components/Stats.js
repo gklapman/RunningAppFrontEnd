@@ -146,7 +146,7 @@ class Stats extends Component {
         <Image source={require('../assets/chicagoSkylineSmaller.jpg')}>
         <View style={{ width: 375, height: 60, backgroundColor: 'transparent', alignItems: 'center', zIndex: 0}}>
           {/* <Text style={{color: 'black', fontFamily: 'budmo', fontSize: 60, backgroundColor: 'transparent', zIndex: 3, paddingTop: 10}}>{userStats.username}</Text> CHANGE IT BACK TO THIS AFTER ADDING USERS W/ SHORTER USERNAMES */}
-          <Text style={{color: 'black', fontFamily: 'budmo', fontSize: 60, backgroundColor: 'transparent', zIndex: 3, paddingTop: 10}}>HardCoded</Text>
+          <Text style={{color: 'black', fontFamily: 'budmo', fontSize: 60, backgroundColor: 'transparent', zIndex: 3, paddingTop: 10}}>{userStats.username}</Text>
           <Text style={{fontFamily: 'Magnum', fontSize: 65, color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: 10, left: -70, zIndex: 3 }}>{userStats.city}</Text>
         </View>
       </Image>
