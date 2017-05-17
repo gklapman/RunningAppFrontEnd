@@ -129,7 +129,13 @@ class Run extends Component {
         let generatedRoutes= genRoute.potentialRoutes
         console.log('intAdjList inst updated ', intAdjList)
         console.log('routes generated ',generatedRoutes)
-        this.setState({generatedRoutes, status: null})
+        this.setState({generatedRoutes, status: 'Finalizing'})
+        return
+      })
+      .then(()=>{
+        setTimeout(()=>{
+          this.setState({status: null, intersectionMarkers: [], streetLookup: {}})
+        }, 1000)
       })
       .catch(err=>console.error(err))
   }
@@ -241,7 +247,7 @@ class Run extends Component {
   	const { navigate } = this.props.navigation;
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
     let routesArr = this.state.routesArr
-    console.log('routeArr ', routesArr)
+    // console.log('routeArr ', routesArr)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -381,10 +387,11 @@ class Run extends Component {
             }
           }) }
 
-          {routesArr.map(routeObj=>{
+          {routesArr.map((routeObj,idx)=>{
             let routeID = ""+routeObj.id;
             let colorsArr = ['#610', '#134', '#D90', 'black']
             let routeColor = colorsArr[routeObj.id % 4]
+
             return(
               <View key={routeObj.id} >
 
@@ -394,9 +401,25 @@ class Run extends Component {
                  coordinates={routeObj.convCoords}
 
                    strokeColor={routeColor}
-                   strokeWidth= {10}
+                   strokeWidth= {5}
                    onPress={goToChooseYourOpponent.bind(this, routeObj.id)}
                  />
+
+
+                 {/* {routeObj.convCoords.map(coords=>{
+                   //USE THIS CODE FOR GET COORDINATES OF ROUTES (THAT YOU CAN CHANGE VIA PSQL LATER)
+                   //DO NOT DELETE THIS SECTION !!!!!
+                  //  let coords=coords.latitude+' '+coords.longitude
+                   return(
+                     <MapView.Marker
+                       coordinate={{latitude: coords.latitude, longitude: coords.longitude}}
+                       pinColor='grey'
+                       title={coords.latitude+' '+coords.longitude}
+                       // identifier={routeID}
+                       // onSelect={goToChooseYourOpponent}
+                     />
+                   )
+                 })} */}
 
                 <MapView.Marker
                   coordinate={{ latitude: routeObj.convCoords[0].latitude, longitude: routeObj.convCoords[0].longitude}}
@@ -424,7 +447,7 @@ class Run extends Component {
                     <MapView.Polyline
                       coordinates={route.map(intersectionNode=>{return {latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}})}
                       strokeColor='yellow'
-                      strokeWidth= {10}
+                      strokeWidth= {5}
                     />
 
                     {/* {route.map((intersectionNode,idx)=>{

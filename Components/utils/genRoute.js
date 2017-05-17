@@ -276,7 +276,7 @@ export function GenerateRoutes(start, end, distance, intersectADJLIST){//takes i
 }
 
 GenerateRoutes.prototype.getRoutes=function(){
-  console.log('getting routes from ',this.start, 'to ', this.end)
+  // console.log('getting routes from ',this.start, 'to ', this.end)
   try{
     this.run(null,null,this.start,[],{})
     this.sortPotentialRoutes
@@ -305,6 +305,23 @@ GenerateRoutes.prototype.setRouteNodesDist= function(){
 GenerateRoutes.prototype.sortPotentialRoutes= function(){
   this.potentialRoutes.sort(function(a,b){return a.length-b.length})
 }
+
+// GenerateRoutes.prototype.dijkstra=function(startPoint, endPoint){
+//   let nodeDistance=0
+//   let queue=[startPoint]
+//   let paths=[[startPoint]]
+//   let currentIntersect=startPoint
+//   while(!queue.length){
+//     queue=queue.concat(currentIntersect.connections.map(connectionObj=>{
+//       return connectionObj.node
+//     })
+//     queue.shift()
+//     //copy paths of index 0 (currentIntersect) to number of connections, and add those connected node to each:
+//     //[[startPoint]]=>[[startPoint],[startPoint],[startPoint],[startPoint]]=>[[startPoint, connectNode1],[startPoint, connectNode2],[startPoint, connectNode3],[startPoint, connectNode4]]
+//
+//     nodeDistance+=1
+//   }
+// }
 
 GenerateRoutes.prototype.memoize= function(routeNode, depth){
   //base case

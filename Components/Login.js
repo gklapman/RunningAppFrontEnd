@@ -47,6 +47,7 @@ class Login extends Component {
   }
 
   componentWillMount(){
+    console.disableYellowBox = true;
     BackgroundGeolocation.configure({
       // Geolocation Config
       desiredAccuracy: 0,
