@@ -19,7 +19,7 @@ import styles from '../Styles'
 import {fetchNearbyRoutes, fetchSelectedRoute} from './storeAndReducer'
 import RunARoute from './RunARoute';
 import {Btn, BtnHolder, BtnHolderVert, BtnRun} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish} from './Constants'
 import { IntersectADJLIST, GenerateRoutes } from './utils/genRoute'
 //CUSTOM IMAGES
 import intersectImgMajor from '../assets/IntersectionMajor.png'
@@ -61,7 +61,7 @@ class Run extends Component {
     this.incrementRouteNum= this.incrementRouteNum.bind(this)
     this.handleMinChange = this.handleMinChange.bind(this)
     this.handleMaxChange = this.handleMaxChange.bind(this)
-    this.showFilter = this.showFilter.bind(this)
+    // this.showFilter = this.showFilter.bind(this)
     this.toggleFilter = this.toggleFilter.bind(this)
     this.setStartEnd= this.setStartEnd.bind(this)
     this.setClickCoordinate= this.setClickCoordinate.bind(this)
@@ -74,6 +74,8 @@ class Run extends Component {
   }
 
   genRoute(startCoord, endCoord){//startCoord and endCoord are optional
+    this.setStartEnd()
+
     let region = this.state.region
     let startIntersect
     let endIntersect
@@ -96,7 +98,7 @@ class Run extends Component {
         let intersectionMarkers=Object.keys(intAdjList.adjList).map(key=>intAdjList.adjList[key])
         let streetLookup= intAdjList.streetLookup
         let adjList= intAdjList.adjList
-        console.dir(intAdjList, {depth: 5})
+        // console.dir(intAdjList, {depth: 5})
         this.setState({ intersectionMarkers, querycoords, streetLookup, adjList })
         return Promise.all([intAdjList.intersectQuery({latitude: region.latitude, longitude: region.longitude}),//this is not dry at all.. doing another query in the center -_-   .. fix this later
           startCoord && intAdjList.intersectQuery({latitude: startCoord.latitude, longitude: startCoord.longitude}),
@@ -203,14 +205,14 @@ class Run extends Component {
     BackgroundGeolocation.un('location', this.onLocation)
   }
 
-  showFilter(){
-    if (this.state.showFilter)
-      return (
-      <View style={styles.filterHolder}>
-          <Text>Min:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMinChange} />
-          <Text>Max:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
-        </View>)
-  }
+  // showFilter(){  //THIS FUNCTIONALITY SHOULD NOW BE HANDLED BY THE POP-UP
+  //   if (this.state.showFilter) return
+  //     // return (
+  //     // <View style={styles.filterHolder}>
+  //     //     <Text>Min:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMinChange} />
+  //     //     <Text>Max:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
+  //     //   </View>)
+  // }
 
   toggleFilter(){
     console.log('toggling ')
@@ -275,6 +277,11 @@ class Run extends Component {
     let generatedRoutes= this.state.generatedRoutes
     let genRouteNum= this.state.genRouteNum
 
+    //IF THE POPUP WORKS FINE, THESE LINES AND THE BUTTON ON 295 CAN BE DELETED
+    // let genRouteBtnText = this.state.setStartEndVal==='start' ? <BtnRun><Text onPress={this.setStartEnd}>Select Start</Text></BtnRun>
+    // : this.state.setStartEndVal==='end' ?  <BtnRun><Text onPress={this.setStartEnd}>Select End</Text></BtnRun>
+    // : null
+
     return (
       <View>
 
@@ -285,13 +292,15 @@ class Run extends Component {
             <Text onPress={goToRouteMaker}>Create a Route</Text>
           </BtnRun>
           <BtnRun>
-            <Text onPress={this.genRoute}>Generate Route</Text>
+            <Text onPress={this.setStartEnd}>Generate Route</Text>
           </BtnRun>
+          {/* {genRouteBtnText} */}
        	 	<BtnRun>
             <Text onPress={this.toggleFilter}>Filter Routes</Text>
        	 	</BtnRun>
+          {/* <BtnRun><Text onPress={this.setStartEnd}>{genRouteBtnText}</Text></BtnRun> */}
         </BtnHolderVert>
-      {this.showFilter()}
+      {/* {this.showFilter()} */}
 
         {/* <Btn>
           <Text onPress={goToRouteMaker}>Create a Route</Text>
@@ -306,15 +315,15 @@ class Run extends Component {
        	 		<Button onPress={this.genRoute} title="Generate Route"></Button>
        	 	</View> */}
 
-          <View style={styles.incrementRouteNum}>
+          {/* <View style={styles.incrementRouteNum}>
             <Button onPress={this.incrementRouteNum} title="See Next Gen Route"></Button>{/* This is a test button alyssa, no need to style this! */}
-          </View>
+          {/* </View> */}
 
-          <View style={styles.setStartEnd}>
+          {/* <View style={styles.setStartEnd}>
             <Button onPress={this.setStartEnd}
               title={this.state.setStartEndVal==='start' ? 'Press StartPoint' : this.state.setStartEndVal==='end' ? 'Press EndPoint' : 'Generate Route Start/End'}
               ></Button>
-          </View>
+          </View> */}
 
           { this.state.status ?
           <View style={styles.genRouteStatus}>
@@ -469,8 +478,67 @@ class Run extends Component {
        	 </MapView>
 
       	</View>
+        {//HERE'S THE POPUP MESSAGE, BELOW
+      }
 
-      </View>
+      {
+        this.state.setStartEndVal === null ? null :
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          { this.state.setStartEndVal==='start' ?
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>Starting where?</Text>
+          :
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>Ending where?</Text>
+          }
+          <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>Select on Map</Text>
+        </View>
+      }
+      { this.state.status === 'Constructing City Layout' ?
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>CONSTRUCTING</Text>
+          <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>CITY LAYOUT</Text>
+        </View> : null
+      }
+      { this.state.status === 'Generating Route' ?
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>GENERATING</Text>
+          <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>ROUTE</Text>
+        </View>: null
+      }
+      {/* { this.state.status === 'Finalizing' ? ///////////////////Comment in when this status exists
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>Finalizing...</Text>
+          <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}></Text>
+        </View> : null
+      } */}
+      {
+        this.state.showFilter ?
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 45, backgroundColor: 'transparent', textAlign: 'center', bottom: 290}}>Distance (miles)</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 270, marginRight: 10 }}>Min:</Text>
+              <TextInput style={{height: 45, width: 65, backgroundColor: 'black', position: 'relative', bottom: 270, borderRadius: 20, borderWidth: 5, borderColor: blueish, textAlign: 'center', fontFamily: 'Magnum', fontSize: 28, color: yellowish, paddingTop: 5}} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMinChange} />
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 270, marginRight: 10 }}>Max:</Text>
+              <TextInput style={{height: 45, width: 65, backgroundColor: 'black', position: 'relative', bottom: 270, borderRadius: 20, borderWidth: 5, borderColor: blueish, textAlign: 'center', fontFamily: 'Magnum', fontSize: 28, color: yellowish, paddingTop: 5}} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
+            </View>
+          </View>
+        </View>
+        : null
+      }
+
+    </View>
     )
   }
 }

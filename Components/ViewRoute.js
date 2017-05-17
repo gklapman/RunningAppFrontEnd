@@ -22,7 +22,7 @@ import styles from '../Styles'
 import {addNewRoute, fetchSelectedRacer} from './storeAndReducer'
 import {runDataCoords, runDataTimes} from './RunData'
 import {numToRGBConverter} from './Utils'
-import {Btn, BtnSm, BigBtn, BtnHolder, BtnHolderVert, BtnViewRoute, BtnHome} from './Wrappers'
+import {Btn, BtnSm, BigBtn, BtnHolder, BtnHolderVert, BtnViewRoute, BtnHome, BtnSuperSmall} from './Wrappers'
 import {redish, blueish, beige, yellowish} from './Constants'
 
 
@@ -45,7 +45,10 @@ class ViewRoute extends Component {
     midLat: {},
     midLng: {},
     deltaLat: 0,
-    deltaLng: 0
+    deltaLng: 0,
+    winner: '',
+    loser: '',
+    showWinnerLoser: true,
 
   }
 
@@ -94,6 +97,29 @@ class ViewRoute extends Component {
 }
 
   componentWillMount() {
+    // console.log("PROPS HERE!!!!!!!!!!!!!!!!", this.props)
+    // let humanWon = this.props.user.personalCoords[this.props.user.personalCoords.length - 1] < this.props.selectedRacer.personalCoords[this.props.selectedRacer.personalCoords.length - 1] ? true : false
+
+    // if (humanWon){
+    //   this.setState({
+    //     winner: 'You',
+    //   })
+    //   setTimeout(()=> {
+    //     this.setState({
+    //       showWinnerLoser: false
+    //     })
+    //   }, 5000)
+    // } else {
+    //   this.setState({
+    //     winner: 'Phantom ' + this.props.selectedRacer.username
+    //   })
+    //   setTimeout(()=> {
+    //     this.setState({
+    //       showWinnerLoser: false
+    //     })
+    //   }, 5000)
+    // }
+
     let givenprops = this.props.navigation.state.params
     // console.log('givenprops ', this.props.navigation.state.params )
     let heartrateInfo = givenprops.heartrateInfo
@@ -137,7 +163,7 @@ class ViewRoute extends Component {
     }
 
 
-    let nBound = +givenprops.personalCoords[0].latitude 
+    let nBound = +givenprops.personalCoords[0].latitude
     let sBound = +givenprops.personalCoords[0].latitude
     let eBound = +givenprops.personalCoords[0].longitude
     let wBound = +givenprops.personalCoords[0].longitude
@@ -160,7 +186,7 @@ class ViewRoute extends Component {
     console.log('midLat ', midLat, 'midLng ', midLng, 'deltaLat ', deltaLat, 'deltaLng ', deltaLng)
 
     this.setState({
-      routeCoordsArr: routeCoordsArr, 
+      routeCoordsArr: routeCoordsArr,
       midLat: midLat,
       midLng: midLng,
       deltaLat: deltaLat +0.001,
@@ -290,7 +316,7 @@ class ViewRoute extends Component {
     //console.log('this is the total distance', totalDistance)
 
     // I THREW THESE IN TO POSSIBLY HELP SET THE BOUNDS OF THE MAP BASED ON THE ROUTE'S COORDINATES, SO THE ENTIRE ROUTE WOULD BE IN VIEW BY DEFAULT
- 
+
 
     // console.log('routeCoordsArr ', routeCoordsArr)
     //HEARTRATE
@@ -305,29 +331,6 @@ class ViewRoute extends Component {
     return (
       <View>
 
-        <View style={styles.replaySpeed1}> 
-              <TouchableOpacity onPress={this.changeReplaySpeed.bind(this, 1)}>
-                    <Text>1x</Text>
-                </TouchableOpacity>
-        </View>
-
-        <View style={styles.replaySpeed2}> 
-              <TouchableOpacity onPress={this.changeReplaySpeed.bind(this, 2)}>
-                    <Text>2x</Text>
-                </TouchableOpacity>
-        </View>
-
-        <View style={styles.replaySpeed4}> 
-              <TouchableOpacity onPress={this.changeReplaySpeed.bind(this, 4)}>
-                    <Text>4x</Text>
-                </TouchableOpacity>
-        </View>
-
-         <View style={styles.replaySpeed10}> 
-              <TouchableOpacity onPress={this.changeReplaySpeed.bind(this, 8)}>
-                    <Text>8x</Text>
-                </TouchableOpacity>
-        </View>
 
 
          <View style={styles.mapcontainerNoNav}>
@@ -341,6 +344,9 @@ class ViewRoute extends Component {
                <BtnViewRoute>
                       <Text onPress={this.changeTypeRegular}>View Path</Text>
               </BtnViewRoute>
+              <BtnViewRoute>
+                     <Text onPress={this.changeViewButton}>{this.state.view == 'polylineView' ? 'Marker View' : 'Line View'}</Text>
+             </BtnViewRoute>
 
 
 
@@ -352,6 +358,27 @@ class ViewRoute extends Component {
               <BtnViewRoute style={styles.replayRoute}>
                     {!this.state.replayingRun ? <Text onPress={this.replayRoute}>Replay Run</Text> : <Text onPress={this.replayRoute}>Pause {TimeFormatter(this.state.timer)}</Text>}
               </BtnViewRoute>
+
+            {
+              this.state.replayingRun &&
+              <View>
+              <BtnSuperSmall >
+                <Text onPress={this.changeReplaySpeed.bind(this, 1)}>1x</Text>
+              </BtnSuperSmall>
+
+              <BtnSuperSmall >
+                <Text onPress={this.changeReplaySpeed.bind(this, 2)}>2x</Text>
+              </BtnSuperSmall>
+
+              <BtnSuperSmall >
+                <Text onPress={this.changeReplaySpeed.bind(this, 4)}>4x</Text>
+              </BtnSuperSmall>
+
+              <BtnSuperSmall >
+                <Text onPress={this.changeReplaySpeed.bind(this, 8)}>8x</Text>
+              </BtnSuperSmall>
+            </View>
+            }
 
             </BtnHolderVert>
 
@@ -524,6 +551,16 @@ class ViewRoute extends Component {
 
 
           </View>
+
+          {
+            ////MIGHT IMPLEMENT THIS LATER -"WINNER/LOSER" POPUP
+            // <View style={{ position: 'absolute', top: 410}}>
+            //   <Image source={require('../assets/runningredPopup.gif')} />
+            //   <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+            //   <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>CONSTRUCTING</Text>
+            //   <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>CITY LAYOUT</Text>
+            // </View>
+          }
 
         </View>
     )
