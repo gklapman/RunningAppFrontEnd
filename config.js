@@ -11,14 +11,21 @@ export const snapToRoads = 'https://roads.googleapis.com/v1/snapToRoads'
 // }
 
 
-//PERSONAL
+//PERSONAL (Gabi)
 // export default {
 //   client_id: '228J4S',
 //   client_secret: 'abebffafcd1d813e740975a09a6ec9a4'
 // }
 
-//PERSONAL 2
+//PERSONAL 2 (Nikki)
 export default {
   client_id: '228J2G',
   client_secret: '0337a65ec0fa9615cd7262023287a429'
 }
+
+
+//PERSONAL 3 (Charles' friend)
+// export default {
+//   client_id: '228JJL',
+//   client_secret: 'b1e02bbf9de818e55c5919cc76e67a43'
+// }
