@@ -260,7 +260,7 @@ export function GenerateRoutes(start, end, distance, intersectADJLIST){//takes i
   this.end=end
   this.distance=distance
   this.intersectADJLISTCOPY= intersectADJLIST
-  // this.intersectADJLISTCOPY=Object.assign({},intersectADJLIST)
+  // this.intersectADJLISTCOPY=Object.assign({},intersectADJLIST)//react native doesn't allow this?  somehting about enumerable keys?
   this.debugStats={
     toofar:0,
     toofardistExc:0,
@@ -306,22 +306,41 @@ GenerateRoutes.prototype.sortPotentialRoutes= function(){
   this.potentialRoutes.sort(function(a,b){return a.length-b.length})
 }
 
-// GenerateRoutes.prototype.dijkstra=function(startPoint, endPoint){
+// GenerateRoutes.prototype.breadthFirst=function(startPoint, endPoint){//badddddd... delete this when you have dikstras working
+//   let currentIntersect
 //   let nodeDistance=0
-//   let queue=[startPoint]
+//   // let queue=[startPoint]  //need to cut down on as many computations as possible
+//   let blah=[[startPoint]]
 //   let paths=[[startPoint]]
-//   let currentIntersect=startPoint
-//   while(!queue.length){
-//     queue=queue.concat(currentIntersect.connections.map(connectionObj=>{
-//       return connectionObj.node
+//   let loopCount=0
+//   while(loopCount<500 && loopCount < paths.length){
+//     let currentPath=paths[loopCount].slice(0)//the currentPath is the one next in line of the queue
+//     currentIntersect=currentPath[currentPath.length-1]
+//     console.log('currentIntersect ', currentIntersect)
+//     let newPath=currentIntersect.connections.map(connectionObj=>{
+//       return [...currentPath,connectionObj.node]
 //     })
-//     queue.shift()
+//     paths=paths.concat(newPath)
+//     console.log('paths after push ',paths)
+//     // queue=queue.concat(newPaths)
+//
 //     //copy paths of index 0 (currentIntersect) to number of connections, and add those connected node to each:
 //     //[[startPoint]]=>[[startPoint],[startPoint],[startPoint],[startPoint]]=>[[startPoint, connectNode1],[startPoint, connectNode2],[startPoint, connectNode3],[startPoint, connectNode4]]
 //
-//     nodeDistance+=1
+//     loopCount+=1
 //   }
+//
+//   console.log('final loopcount: ',loopCount)
+//   console.log('queue is: ',paths)
 // }
+
+GenerateRoutes.prototype.PriorityQueue=function(){//bahhh  https://github.com/mburst/dijkstras-algorithm/blob/master/dijkstras.js
+
+}
+
+GenerateRoutes.prototype.dijkstra=function(startPoint, endPoint){
+
+}
 
 GenerateRoutes.prototype.memoize= function(routeNode, depth){
   //base case
@@ -405,8 +424,6 @@ try{  this.debugStats.totalIterations+=1
   catch (e){
     console.log(e,'wtfff... ', this.currentPoint)
   }
-
-
   // return this.memo[currentPoint.id]
 }
 
