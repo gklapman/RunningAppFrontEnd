@@ -46,7 +46,7 @@ class Run extends Component {
 
       // routesArr: [],
       showFilter: false,
-      min: 0, 
+      min: 0,
       max: 1000,
 
       status: null,
@@ -126,14 +126,14 @@ class Run extends Component {
         }
 
         let genRoute= new GenerateRoutes(startingNode,endingNode,4800,intAdjList)
-        genRoute.dijkstra(startingNode, endingNode)
-        // genRoute.setRouteNodesDist()
-        // genRoute.getRoutes()
-        // genRoute.sortPotentialRoutes()
-        // let generatedRoutes= genRoute.potentialRoutes
-        // console.log('intAdjList inst updated ', intAdjList)
-        // console.log('routes generated ',generatedRoutes)
-        // this.setState({generatedRoutes, status: 'Finalizing'})
+        // genRoute.dijkstra(startingNode, endingNode)
+        genRoute.setRouteNodesDist()
+        genRoute.getRoutes()
+        genRoute.sortPotentialRoutes()
+        let generatedRoutes= genRoute.potentialRoutes
+        console.log('intAdjList inst updated ', intAdjList)
+        console.log('routes generated ',generatedRoutes)
+        this.setState({generatedRoutes, status: 'Finalizing'})
         return
       })
       .then(()=>{
@@ -251,7 +251,7 @@ class Run extends Component {
   }
 
   onRegionChange(region) {
-    
+
     //for onRegionChange... to prevent too many axios requests being made as a user is scrolling...  this is NOT part of state, and will NOT be changed via setState, because setting state may be too slow
     this.canMakeRequests=true;
     clearInterval(this.scrollWaitInterval);//this clears the LAST interval set
