@@ -44,8 +44,10 @@ class Run extends Component {
       generatedRoutes: [],
       genRouteNum: 0,
 
-      routesArr: [],
+      // routesArr: [],
       showFilter: false,
+      min: 0, 
+      max: 1000,
 
       status: null,
 
@@ -162,36 +164,63 @@ class Run extends Component {
     //do nothing... we just want a listener so the thing woulD STOP FUCKING TELLING US IT'S SENDING LOCAITON WITH NO LISTENERS!!!
   }
 
+  // handleMinChange(num){
+
+  //   if (!num){
+  //     this.setState({
+  //       routesArr: this.props.nearbyRoutes
+  //     })
+  //   } else {
+
+  //     let routesArr = this.props.nearbyRoutes
+  //     routesArr = routesArr.filter(route => {
+  //       return route.totalDist > num
+  //     })
+  //     // console.log('routesArr ', routesArr)
+  //     this.setState({
+  //       routesArr: routesArr
+  //     })
+  //   }
+  // }
+
+  // handleMaxChange(num){
+  //   console.log('this is the num ', num)
+  //   if (!num){
+  //     this.setState({
+  //       routesArr: this.props.nearbyRoutes
+  //     })
+  //   } else {
+  //     let routesArr = this.props.nearbyRoutes
+  //     routesArr =routesArr.filter(route => {
+  //       return route.totalDist < num
+  //     })
+  //     this.setState({
+  //       routesArr: routesArr
+  //     })
+  //   }
+  // }
+
   handleMinChange(num){
+
     if (!num){
       this.setState({
-        routesArr: this.props.nearbyRoutes
+        min: 0
       })
     } else {
-
-      let routesArr = this.props.nearbyRoutes
-      routesArr = routesArr.filter(route => {
-        return route.totalDist > num
-      })
-      console.log('routesArr ', routesArr)
       this.setState({
-        routesArr: routesArr
+        min: num
       })
     }
   }
-
   handleMaxChange(num){
+
     if (!num){
       this.setState({
-        routesArr: this.props.nearbyRoutes
+        max: 1000
       })
     } else {
-      let routesArr = this.props.nearbyRoutes
-      routesArr =routesArr.filter(route => {
-        return route.totalDist < num
-      })
       this.setState({
-        routesArr: routesArr
+        max: num
       })
     }
   }
@@ -221,9 +250,7 @@ class Run extends Component {
   }
 
   onRegionChange(region) {
-    //SOMETHING IS CHANGING THE FUCKING REGION FROM THE INITIAL ONE... I DONT KNOW WHAT THE FUCK IT IS BUT YOU NEED TO FUCKING FIND OUT
-    //AND FUCKING *** DESTROY *** THAT FUCKING PIECE OF SHIT CODE THAT IS FUCKING THIS SHIT UP
-
+    
     //for onRegionChange... to prevent too many axios requests being made as a user is scrolling...  this is NOT part of state, and will NOT be changed via setState, because setting state may be too slow
     this.canMakeRequests=true;
     clearInterval(this.scrollWaitInterval);//this clears the LAST interval set
@@ -246,7 +273,10 @@ class Run extends Component {
   render() {
   	const { navigate } = this.props.navigation;
     const gotoRouteSelect = () => Actions.routeSelectPage({text: 'this goes to route select page!'});
-    let routesArr = this.state.routesArr
+
+    let routesArr = this.props.nearbyRoutes.filter(route => {
+      return route.totalDist > this.state.min && route.totalDist < this.state.max
+    })
     // console.log('routeArr ', routesArr)
 
     navigator.geolocation.getCurrentPosition(
@@ -269,6 +299,8 @@ class Run extends Component {
       let id= evt.nativeEvent.id
       console.log(this.state.adjList[id])
     }
+
+    // console.log('this is the routes arr', routesArr)
 
 
     let intersectionMarkers= this.state.intersectionMarkers
