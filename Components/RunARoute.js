@@ -24,8 +24,7 @@ import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3, presentationTestRoute } from './Utils'
 import {Btn, BtnHolder} from './Wrappers'
-import {redish, blueish, beige, yellowish, darkGrey, lightGrey} from './Constants'
-
+import {redish, blueish, beige, yellowish, orangeish } from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -58,16 +57,15 @@ class RunARoute extends Component {
 		super(props);
 		this.state = {
       saying: '',
-      showMessage: false, 
+      showMessage: false,
 			currentPosition: {latitude: 0, longitude: 0},
 
       checkpointConvCoordsPointer: 1,//this represents the index of the selected route coord (which is the !!!NEXT point!!! that the runner will be running to.. that we'll check)
       phantomRacerPointer: 1,//this represents index of the !!!NEXT POINT!!! that the phantom phantomRacer will get to (it's index of BOTH the selected route coord AND +1 the phantomRacer's time array)
       // phantomRacerTimesArrPointer: 1,
 
-			isRunning: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
-      showStart: false,//ALYSSA SWITCHED THIS TO TRUE TO STYLE THE BUTTON
-
+			isRunning: false,
+      showStart: false,
 
   		timer: 0,
 			timerStart: 0,
@@ -75,7 +73,6 @@ class RunARoute extends Component {
 			personalTimeMarker: [],
       checkpointTimeMarker: [],
       personalCoords: [],
-
 		}
     this.startInterval
     this.interval
@@ -96,8 +93,8 @@ class RunARoute extends Component {
           let lng = position.coords.longitude
           let lat = position.coords.latitude
           position = {latitude: lat, longitude: lng}
-          console.log('THIS IS THE ORIGINAL POSITION', position)
-          position= this.testRunner.moveAndGetPos().coords//for testrunner.. get rid of this if it you dont need it
+          position= this.testRunner.moveAndGetPos().coords//TESTRUNNER.. UNCOMMENT TO HAVE PREDEFINED COORDINATES RATHER THAN GPS
+          console.log('check position ',position)
 
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
@@ -142,7 +139,7 @@ class RunARoute extends Component {
     // snapProm
     rawPositionProm
       .then(position=>{
-        position= this.testRunner.moveAndGetPos().coords //this is for testtt delete later
+        position= this.testRunner.moveAndGetPos().coords //TESTRUNNER.. UNCOMMENT TO HAVE PREDEFINED COORDINATES RATHER THAN GPS
         // console.log('testrunner newposition ', position)
         console.log('position inside of location change ', position, this.state.isRunning)
         this.setState({ currentPosition: position })
@@ -153,7 +150,7 @@ class RunARoute extends Component {
         // console.log('checkpoint is ',checkpoint)
         // console.log('DIST', dist)
 
-     
+
 
         // THIS BLOCK OF CODE IS CHECKING IF USER IS AT THE **STARTING** CHECKPOINT (TO DISPLAY START BUTTON)
         // -----------------------------------------------------------------------------
@@ -163,11 +160,11 @@ class RunARoute extends Component {
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
           // console.log("dist ", dist)
-          if (dist < 50 ){
-            // console.log('dist less than 50?')
+          if (dist < 25 ){
+            // console.log('dist less than 25?')
             this.setState({showStart: true})
           }
-          else if(dist >= 50){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
+          else if(dist >= 25){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
             this.setState({showStart: false})
           }
         }
@@ -192,16 +189,14 @@ class RunARoute extends Component {
           // THIS BLOCK OF CODE IS FOR CHECKING IF USER HIT A CHECKPOINT!!!!
           // -----------------------------------------------------------------------------
 
-            if(dist < 50){
-
-
+            if(dist < 25){
               let newcheckpointTimeMarker= this.state.checkpointTimeMarker.slice(0);
               newcheckpointTimeMarker.push(elapsedTime)
 
               // THIS BLOCK OF CODE IS FOR CHECKING IF USER HIT THE FINAL CHECKPOINT!!!!
               // -----------------------------------------------------------------------------
 
-              // console.log('this state checkpointConvCoordsPointer', this.state.checkpointConvCoordsPointer, this.props.selectedRoute.checkpointCoords.length-1)
+              console.log('this state checkpointConvCoordsPointer', this.state.checkpointConvCoordsPointer, this.props.selectedRoute.checkpointCoords.length-1)
 
               if(this.state.checkpointConvCoordsPointer === this.props.selectedRoute.checkpointCoords.length-1){
                 console.log('this is the last checkpoint')
@@ -234,9 +229,9 @@ class RunARoute extends Component {
                 // THIS BLOCK OF CODE IS UPDATING USER ABOUT WHERE HE/SHE IS IN RELATION TO PHANTOM RACER !!!!
                 // -----------------------------------------------------------------------------
 
-                let YOUREAHEAD='You are slightly ahead of the phantom racer!';
-                let YOURENECKANDNECK='You are neck and neck with phantom racer!';
-                let YOUREBEHIND='You are slightly behind the phantom racer... PICK UP THE PACE!';
+                let YOUREAHEAD=['Faster!', `Phantom ${this.props.selectedRacer.username}` ,'is on your tail!'];
+                let YOURENECKANDNECK=["You\'re Neck & Neck!", '', ''];
+                let YOUREBEHIND=['Pick it up!', `Phantom ${this.props.selectedRacer.username}`, 'is just ahead of you!'];
 
                 let remainingDist = geolib.getPathLength(this.props.selectedRoute.checkpointConvCoords.slice(this.state.checkpointConvCoordsPointer))
                 let phantomRemainingDist = geolib.getPathLength(this.props.selectedRacer.routetimes[0].personalCoords.slice(this.state.phantomRacerPointer))
@@ -251,30 +246,33 @@ class RunARoute extends Component {
                console.log('remainingDist-phantomRemainingDist is ',remainingDist-phantomRemainingDist)
 
               if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
-               if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
-               this.setState({saying: YOUREAHEAD, showMessage: true});
-               setTimeout(()=> {
-                 console.log('setting message!! ')
-                 this.setState({showMessage: false})
-               }, 5000)
+                console.log('this saying ', this.state.saying)
+               if(this.state.saying!==YOUREAHEAD) {
+                 this.setState({saying: YOUREAHEAD, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
              }
              else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
-               if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
-               this.setState({saying: YOURENECKANDNECK, showMessage: true});
-               setTimeout(()=> {
-                 console.log('setting message!! ')
-                 this.setState({showMessage: false})
-               }, 5000)
+               if(this.state.saying!==YOURENECKANDNECK) {
+                 this.setState({saying: YOURENECKANDNECK, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
              }
              else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
-               if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
-               this.setState({saying: YOUREBEHIND, showMessage: true});
-               setTimeout(()=> {
-                 console.log('setting message!! ')
-                 this.setState({showMessage: false})
-               }, 5000)
+               if(this.state.saying!==YOUREBEHIND) {
+                 this.setState({saying: YOUREBEHIND, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
              }
-
 
                 this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
               }
@@ -330,14 +328,17 @@ class RunARoute extends Component {
       console.log('showing message ', this.state.showMessage)
       console.log('this.saying is ', this.state.saying)
       if (this.state.showMessage){
-      return (<View style={styles.popUpMessage}> 
-                 <Text>{this.state.saying}</Text>
+      return (<View style={{ position: 'absolute', top: 400}}>
+                <Image source={require('../assets/runningredPopup.gif')} />
+                <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -209}}></View>
+                <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>{this.state.saying[0]}</Text>
+                <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>{this.state.saying[1]}</Text>
+                <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>{this.state.saying[2]}</Text>
               </View>)
       } else {
         return <View></View>
       }
     }
-
     viewRoute(){
         let personalCoords = this.state.personalCoords
         let userId = this.props.user.id
@@ -366,14 +367,11 @@ class RunARoute extends Component {
     const phantomRacerPointer= this.state.phantomRacerPointer
     const phantomRacerCurrPos= this.props.selectedRacer.routetimes[0].personalCoords[phantomRacerPointer-1]
     // console.log('phantom racer pos ',phantomRacerCurrPos)
-    // console.log('selectedRacer', this.props.selectedRacer)
-    // console.log('selected route ', this.props.selectedRoute)
-    // console.log('route coords ', this.props.selectedRoute.convCoords)
-    // console.log('test runner coords ', testRunner.convCoords)
 
     return (
       <View>
       	<View style={styles.mapcontainerNoNav}>
+
 
         <BtnHolder>
         {!this.state.isRunning && this.state.timerEnd !== 0 ?
@@ -392,23 +390,21 @@ class RunARoute extends Component {
       		<Btn>
       			<Text>{TimeFormatter(this.state.timer)}</Text>
 
-      	
+
 
       		</Btn>
         </BtnHolder>
-
-
        	 	<MapView
             region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .005, longitudeDelta: .005}}
           // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
 			    style={styles.map}>
-
+            {console.log('currpos ',phantomRacerCurrPos)}
             { phantomRacerCurrPos && <MapView.Marker
               coordinate={phantomRacerCurrPos}
               pinColor='orange'
               title='phantom racer'
               identifier='3'
-            /> }
+            />}
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
               let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
@@ -420,28 +416,14 @@ class RunARoute extends Component {
 
     			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
 
-           {this.showMessage()}
+          {this.showMessage()}
 
 			 </MapView>
-
-
       	</View>
-        {//HERE'S THE POPUP MESSAGE, BELOW
-      }
-        {/*<View style={{ position: 'absolute', top: 400}}>
-          <Image source={require('../assets/runningredPopup.gif')} />
-          <View style={{width: 375, height: 211, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -219}}></View>
-          <Text style={{fontFamily: 'Magnum', fontSize: 70, backgroundColor: 'transparent', textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, position: 'relative', top: -410}}>Faster!</Text>
-          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', top: -410}}>PHANTOM Gabi</Text>
-          <Text style={{fontFamily: 'Airstream', fontSize: 40, textAlign: 'center', color: yellowish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', top: -410, marginRight: 10 }}>is on your tail!</Text>
-        </View>*/}
-
       </View>
     )
   }
 }
-
-
 
 const mapDispatchToProps = null
 
