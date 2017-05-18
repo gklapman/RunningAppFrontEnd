@@ -24,7 +24,7 @@ import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3, presentationTestRoute } from './Utils'
 import {Btn, BtnHolder} from './Wrappers'
-import {redish, blueish, beige} from './Constants'
+import {redish, blueish, beige, yellowish } from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
@@ -81,6 +81,7 @@ class RunARoute extends Component {
     this.testRunner = new TestRunner(presentationTestRoute.convCoords, presentationTestRoute.timesArr)
     this.testRunner.startTimer()
     this.onLocation = this.onLocation.bind(this)
+    this.showMessage = this.showMessage.bind(this)
 	}
 
 
@@ -240,18 +241,34 @@ class RunARoute extends Component {
                // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
                // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
 
-              if(remainingDist-phantomRemainingDist < -150 && remainingDist-phantomRemainingDist > -350){
-                if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
-                this.setState({saying: YOUREAHEAD});
-              }
-              else if(remainingDist-phantomRemainingDist < 150 && remainingDist-phantomRemainingDist > -150 ){
-                if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
-                this.setState({saying: YOURENECKANDNECK});
-              }
-              else if(remainingDist-phantomRemainingDist > 150 && remainingDist-phantomRemainingDist < 350){
-                if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
-                this.setState({saying: YOUREBEHIND});
-              }
+               console.log('user remaningDist ',remainingDist)
+               console.log('phantom remaningDist ',phantomRemainingDist)
+               console.log('remainingDist-phantomRemainingDist is ',remainingDist-phantomRemainingDist)
+
+              if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
+               if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
+               this.setState({saying: YOUREAHEAD, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
+             else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
+               if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
+               this.setState({saying: YOURENECKANDNECK, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
+             else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
+               if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
+               this.setState({saying: YOUREBEHIND, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
 
                 this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
               }
@@ -304,7 +321,8 @@ class RunARoute extends Component {
     }
 
     showMessage(){
-      // console.log('showing message ', this.state.showMessage)
+      console.log('showing message ', this.state.showMessage)
+      console.log('this.saying is ', this.state.saying)
       if (this.state.showMessage){
       return (<View style={{ position: 'absolute', top: 400}}>
                 <Image source={require('../assets/runningredPopup.gif')} />
@@ -326,7 +344,7 @@ class RunARoute extends Component {
         let currentPosition = this.state.currentPosition
         let checkpointTimeMarker = this.state.checkpointTimeMarker
         let phantomRacerRouteTimeId = this.props.selectedRacer.routetimes[0].id
-        let routeId = this.selectedRoute.id
+        let routeId = this.props.selectedRoute.id
 
         const { navigate } = this.props.navigation;
         navigate('ViewRoute', {personalCoords, userId, personalTimeMarker, checkpointTimeMarker, startTime, endTime, phantomRacerRouteTimeId, routeId })
@@ -395,7 +413,7 @@ class RunARoute extends Component {
     			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
 
           {this.showMessage()}
-  
+
 			 </MapView>
       	</View>
       </View>
