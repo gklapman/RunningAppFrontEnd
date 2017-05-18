@@ -22,7 +22,7 @@ import geolib from 'geolib'
 //CUSTOM MODULES
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
-import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } from './Utils'
+import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3, presentationTestRoute } from './Utils'
 import {Btn, BtnHolder} from './Wrappers'
 import {redish, blueish, beige, yellowish, darkGrey, lightGrey} from './Constants'
 
@@ -81,7 +81,7 @@ class RunARoute extends Component {
     this.interval
 		this.startStopButton = this.startStopButton.bind(this)
     this.viewRoute = this.viewRoute.bind(this)
-    this.testRunner = new TestRunner(testRoute3.convCoords, testRoute3.timesArr)
+    this.testRunner = new TestRunner(presentationTestRoute.convCoords, presentationTestRoute.timesArr)
     this.testRunner.startTimer()
     this.onLocation = this.onLocation.bind(this)
     this.showMessage = this.showMessage.bind(this)
@@ -399,26 +399,26 @@ class RunARoute extends Component {
 
 
        	 	<MapView
-            region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .03, longitudeDelta: .03}}
+            region={{latitude: position.latitude, longitude: position.longitude, latitudeDelta: .005, longitudeDelta: .005}}
           // region={{latitude: 37.33019225, longitude: -122.02580206, latitudeDelta: .02, longitudeDelta: .02}} //for testing
 			    style={styles.map}>
 
             { phantomRacerCurrPos && <MapView.Marker
               coordinate={phantomRacerCurrPos}
-              pinColor='black'
+              pinColor='orange'
               title='phantom racer'
               identifier='3'
             />}
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
-              let pinColor= idx < this.state.checkpointConvCoordsPointer ? darkGrey : yellowish
+              let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
               return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint' />)
             })
             }
 
-           <MapView.Marker coordinate={position} pinColor={redish} title='human runner' identifier={JSON.stringify(this.props.user.id)} />
+           <MapView.Marker coordinate={position} pinColor='purple' title='human runner' identifier={JSON.stringify(this.props.user.id)} />
 
-    			 <MapView.Polyline coordinates={convCoords} strokeColor={redish} strokeWidth= {5} />
+    			 <MapView.Polyline coordinates={convCoords} strokeColor='green' strokeWidth= {5} />
 
            {this.showMessage()}
 

@@ -543,14 +543,14 @@ class Run extends Component {
           <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}>ROUTE</Text>
         </View>: null
       }
-      {/* { this.state.status === 'Finalizing' ? ///////////////////Comment in when this status exists
+      {  this.state.status === 'Finalizing' ? ///////////////////Comment in when this status exists
         <View style={{ position: 'absolute', top: 410}}>
           <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
           <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
           <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 40, backgroundColor: 'transparent', textAlign: 'center', bottom: 280}}>Finalizing...</Text>
           <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 260, marginRight: 10 }}></Text>
         </View> : null
-      } */}
+       }
       {
         this.state.showFilter ?
         <View style={{ position: 'absolute', top: 410}}>
