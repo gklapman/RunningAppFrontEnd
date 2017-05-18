@@ -400,7 +400,7 @@ class RunARoute extends Component {
               pinColor='orange'
               title='phantom racer'
               identifier='3'
-            />}
+            /> }
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
               let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
