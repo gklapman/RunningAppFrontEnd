@@ -32,6 +32,7 @@ import {redish, blueish, beige, yellowish, orangeish } from './Constants'
 //selected racer (user), with associated routetime //who you are racing against:
 //current user
 
+///TESTING
 
 //Dispatch functions this component will receive as props
 //addNewRoute
