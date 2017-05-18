@@ -76,6 +76,7 @@ class Run extends Component {
   }
 
   genRoute(startCoord, endCoord){//startCoord and endCoord are optional
+
     this.setStartEnd()
 
     let region = this.state.region
@@ -125,13 +126,14 @@ class Run extends Component {
         }
 
         let genRoute= new GenerateRoutes(startingNode,endingNode,4800,intAdjList)
-        genRoute.setRouteNodesDist()
-        genRoute.getRoutes()
-        genRoute.sortPotentialRoutes()
-        let generatedRoutes= genRoute.potentialRoutes
-        console.log('intAdjList inst updated ', intAdjList)
-        console.log('routes generated ',generatedRoutes)
-        this.setState({generatedRoutes, status: 'Finalizing'})
+        genRoute.dijkstra(startingNode, endingNode)
+        // genRoute.setRouteNodesDist()
+        // genRoute.getRoutes()
+        // genRoute.sortPotentialRoutes()
+        // let generatedRoutes= genRoute.potentialRoutes
+        // console.log('intAdjList inst updated ', intAdjList)
+        // console.log('routes generated ',generatedRoutes)
+        // this.setState({generatedRoutes, status: 'Finalizing'})
         return
       })
       .then(()=>{
@@ -157,7 +159,6 @@ class Run extends Component {
       this.setState({setStartEndVal: null})
       this.genRoute(this.state.startCoord, coord)
     }
-
   }
 
   onLocation(){

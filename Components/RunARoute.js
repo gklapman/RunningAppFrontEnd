@@ -26,6 +26,7 @@ import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3 } 
 import {Btn, BtnHolder} from './Wrappers'
 import {redish, blueish, beige, yellowish, darkGrey, lightGrey} from './Constants'
 
+
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
 
 //selected route: [["37.785834","-122.406417"],["37","-121.3"],["36.2","-121"],["36.5","-120"],["36.29","-119.7"],["36.25","-119.5"]];
@@ -102,7 +103,7 @@ class RunARoute extends Component {
           let dist = geolib.getDistance(initialcheckpoint, position)
           // console.log('DIST', dist)
 
-          if (dist > 1 && this.state.checkpointConvCoordsPointer === 1){ //This will trigger the start button to show
+          if (dist < 25 && this.state.checkpointConvCoordsPointer === 1){ //This will trigger the start button to show
             this.setState({
               showStart: true,
             })
@@ -245,33 +246,35 @@ class RunARoute extends Component {
                // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
                // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
 
-              if(remainingDist-phantomRemainingDist < -50 && remainingDist-phantomRemainingDist > -150){
-                if(this.state.saying!==YOUREAHEAD) {
-                  this.setState({saying: YOUREAHEAD, showMessage: true})
-                  setTimeout(()=> {
-                    console.log('setting message, AHEAD ')
-                    this.setState({showMessage: false})
-                  }, 5000)
-                }
-              }
-              else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -50 ){
-                if(this.state.saying!==YOURENECKANDNECK) {
-                  this.setState({saying: YOURENECKANDNECK, showMessage: true})
-                  setTimeout(()=> {
-                    console.log('setting message, NECK AND NECK ')
-                    this.setState({showMessage: false})
-                  }, 5000)
-                }
-              }
-              else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
-                if(this.state.saying!==YOUREBEHIND) { 
-                  this.setState({saying: YOUREBEHIND, showMessage: true})
-                  setTimeout(()=> {
-                    console.log('setting message, BEHIND ')
-                    this.setState({showMessage: false})
-                  }, 5000)
-                }
-              }
+               console.log('user remaningDist ',remainingDist)
+               console.log('phantom remaningDist ',phantomRemainingDist)
+               console.log('remainingDist-phantomRemainingDist is ',remainingDist-phantomRemainingDist)
+
+              if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
+               if(this.state.saying!==YOUREAHEAD) console.log(YOUREAHEAD);//we can change this parrt to make it cooler!  Make gabi do the voiceovers
+               this.setState({saying: YOUREAHEAD, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
+             else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
+               if(this.state.saying!==YOURENECKANDNECK) console.log(YOURENECKANDNECK);
+               this.setState({saying: YOURENECKANDNECK, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
+             else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
+               if(this.state.saying!==YOUREBEHIND) console.log(YOUREBEHIND);
+               this.setState({saying: YOUREBEHIND, showMessage: true});
+               setTimeout(()=> {
+                 console.log('setting message!! ')
+                 this.setState({showMessage: false})
+               }, 5000)
+             }
+
 
                 this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
               }
@@ -324,7 +327,8 @@ class RunARoute extends Component {
     }
 
     showMessage(){
-      // console.log('showing message ', this.state.showMessage)
+      console.log('showing message ', this.state.showMessage)
+      console.log('this.saying is ', this.state.saying)
       if (this.state.showMessage){
       return (<View style={styles.popUpMessage}> 
                  <Text>{this.state.saying}</Text>
