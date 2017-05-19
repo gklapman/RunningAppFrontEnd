@@ -23,7 +23,7 @@ import geolib from 'geolib'
 import styles from '../Styles'
 import {addNewRoute} from './storeAndReducer'
 import {promisifiedGetCurrPos, TestRunner, testRoute1, testRoute2, testRoute3, presentationTestRoute } from './Utils'
-import {Btn, BtnHolder} from './Wrappers'
+import {Btn, BtnHolder, Dot, DotGrey, DotBlack} from './Wrappers'
 import {redish, blueish, beige, yellowish, orangeish } from './Constants'
 
 //Data that this component will receive as props (statewise) (either from store or directly passed in from the run component):
@@ -101,7 +101,7 @@ class RunARoute extends Component {
           let dist = geolib.getDistance(initialcheckpoint, position)
           // console.log('DIST', dist)
 
-          if (dist < 25 && this.state.checkpointConvCoordsPointer === 1){ //This will trigger the start button to show
+          if (dist < 15 && this.state.checkpointConvCoordsPointer === 1){ //This will trigger the start button to show
             this.setState({
               showStart: true,
             })
@@ -161,11 +161,11 @@ class RunARoute extends Component {
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
           // console.log("dist ", dist)
-          if (dist < 25 ){
-            // console.log('dist less than 25?')
+          if (dist < 15 ){
+            // console.log('dist less than 15?')
             this.setState({showStart: true})
           }
-          else if(dist >= 25){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
+          else if(dist >= 15){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
             this.setState({showStart: false})
           }
         }
@@ -190,7 +190,7 @@ class RunARoute extends Component {
           // THIS BLOCK OF CODE IS FOR CHECKING IF USER HIT A CHECKPOINT!!!!
           // -----------------------------------------------------------------------------
 
-            if(dist < 25){
+            if(dist < 15){
               let newcheckpointTimeMarker= this.state.checkpointTimeMarker.slice(0);
               newcheckpointTimeMarker.push(elapsedTime)
 
@@ -246,34 +246,44 @@ class RunARoute extends Component {
                console.log('phantom remaningDist ',phantomRemainingDist)
                console.log('remainingDist-phantomRemainingDist is ',remainingDist-phantomRemainingDist)
 
-              if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
-                console.log('this saying ', this.state.saying)
-               if(this.state.saying!==YOUREAHEAD) {
-                 this.setState({saying: YOUREAHEAD, showMessage: true});
-                 setTimeout(()=> {
-                   console.log('setting message!! ')
-                   this.setState({showMessage: false})
-                 }, 5000)
-               }
-             }
-             else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
-               if(this.state.saying!==YOURENECKANDNECK) {
-                 this.setState({saying: YOURENECKANDNECK, showMessage: true});
-                 setTimeout(()=> {
-                   console.log('setting message!! ')
-                   this.setState({showMessage: false})
-                 }, 5000)
-               }
-             }
-             else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
-               if(this.state.saying!==YOUREBEHIND) {
-                 this.setState({saying: YOUREBEHIND, showMessage: true});
-                 setTimeout(()=> {
-                   console.log('setting message!! ')
-                   this.setState({showMessage: false})
-                 }, 5000)
-               }
-             }
+               if (this.state.checkpointConvCoordsPointer === 2){
+               this.setState({saying: YOUREBEHIND, showMessage: true});
+                setTimeout(()=> {
+                  console.log('setting message!!', this.state.saying)
+                  this.setState({showMessage: false})
+                }, 5000)
+              }
+
+               //******* COMMENT THISE BACK IN AFTER PRESENTATION
+
+            //   if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
+            //     console.log('this saying ', this.state.saying)
+            //    if(this.state.saying!==YOUREAHEAD) {
+            //      this.setState({saying: YOUREAHEAD, showMessage: true});
+            //      setTimeout(()=> {
+            //        console.log('setting message!! ')
+            //        this.setState({showMessage: false})
+            //      }, 5000)
+            //    }
+            //  }
+            //  else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
+            //    if(this.state.saying!==YOURENECKANDNECK) {
+            //      this.setState({saying: YOURENECKANDNECK, showMessage: true});
+            //      setTimeout(()=> {
+            //        console.log('setting message!! ')
+            //        this.setState({showMessage: false})
+            //      }, 5000)
+            //    }
+            //  }
+            //  else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
+            //    if(this.state.saying!==YOUREBEHIND) {
+            //      this.setState({saying: YOUREBEHIND, showMessage: true});
+            //      setTimeout(()=> {
+            //        console.log('setting message!! ')
+            //        this.setState({showMessage: false})
+            //      }, 5000)
+            //    }
+            //  }
 
                 this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
               }
@@ -406,10 +416,20 @@ class RunARoute extends Component {
               title='phantom racer'
               identifier='3'
             />}
+            {/* { phantomRacerCurrPos && <MapView.Marker
+              coordinate={phantomRacerCurrPos}
+              pinColor='orange'
+              title='phantom racer'
+              identifier='3'
+            ><Dot /></MapView.Marker>} */}
 
             {checkpointConvCoords.map((checkPoint,idx)=>{
-              let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
-              return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint' />)
+              // let pinColor= idx < this.state.checkpointConvCoordsPointer ? 'grey' : 'black'
+              // return (<MapView.Marker coordinate={checkPoint} pinColor={pinColor} title='checkpoint'><Dot /></MapView.Marker>)
+              return idx < this.state.checkpointConvCoordsPointer ?
+               (<MapView.Marker coordinate={checkPoint} title='checkpoint'><DotGrey /></MapView.Marker>)
+               :
+               (<MapView.Marker coordinate={checkPoint} title='checkpoint'><DotBlack /></MapView.Marker>)
             })
             }
 

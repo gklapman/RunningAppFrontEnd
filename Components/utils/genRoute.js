@@ -6,8 +6,8 @@ import { flatten } from '../Utils.js'
 
 
 const localHostorHeroku=''
-localHostorHeroku= localHost
-// localHostorHeroku= herokuUrl
+// localHostorHeroku= localHost
+localHostorHeroku= herokuUrl
 
 export function IntersectADJLIST(region){
   this.region= region

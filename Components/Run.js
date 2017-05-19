@@ -46,11 +46,12 @@ class Run extends Component {
 
       // routesArr: [],
       showFilter: false,
-      min: 0, 
+      min: 0,
       max: 1000,
 
       status: null,
 
+      genRouteDistance: false,
       startCoord: null,
       endCoord: null,
       setStartEndVal: null,
@@ -126,26 +127,32 @@ class Run extends Component {
         }
 
         let genRoute= new GenerateRoutes(startingNode,endingNode,4800,intAdjList)
-        genRoute.dijkstra(startingNode, endingNode)
-        // genRoute.setRouteNodesDist()
-        // genRoute.getRoutes()
-        // genRoute.sortPotentialRoutes()
-        // let generatedRoutes= genRoute.potentialRoutes
-        // console.log('intAdjList inst updated ', intAdjList)
-        // console.log('routes generated ',generatedRoutes)
-        // this.setState({generatedRoutes, status: 'Finalizing'})
+        // genRoute.dijkstra(startingNode, endingNode)
+        genRoute.setRouteNodesDist()
+        genRoute.getRoutes()
+        genRoute.sortPotentialRoutes()
+        let generatedRoutes= genRoute.potentialRoutes
+        console.log('intAdjList inst updated ', intAdjList)
+        console.log('routes generated ',generatedRoutes)
+        this.setState({generatedRoutes, status: 'Finalizing'})
         return
       })
       .then(()=>{
         setTimeout(()=>{
           this.setState({status: null, intersectionMarkers: [], streetLookup: {}})
-        }, 1000)
+        }, 1500)
       })
       .catch(err=>console.error(err))
   }
 
   setStartEnd(){
-    if(!this.state.setStartEndVal) {this.setState({setStartEndVal: 'start'})}
+    if(!this.state.setStartEndVal) {
+      this.setState({genRouteDistance: true})
+      setTimeout(()=>{
+        this.setState({genRouteDistance: false, setStartEndVal: 'start'})
+      }, 2500)
+      // this.setState({setStartEndVal: 'start'})
+    }
     else this.setState({setStartEndVal: null})
   }
 
@@ -251,7 +258,7 @@ class Run extends Component {
   }
 
   onRegionChange(region) {
-    
+
     //for onRegionChange... to prevent too many axios requests being made as a user is scrolling...  this is NOT part of state, and will NOT be changed via setState, because setting state may be too slow
     this.canMakeRequests=true;
     clearInterval(this.scrollWaitInterval);//this clears the LAST interval set
@@ -413,8 +420,8 @@ class Run extends Component {
                 <MapView.Polyline
                   coordinates={streetLineArr}
                   // coordinates={[{latitude: 41.88782633760493, longitude: -87.64045111093955}, {latitude: 41.88782633760493, longitude: -87.64085111093955}]}
-                  strokeColor='grey'
-                  strokeWidth= {2}
+                  strokeColor='yellow'
+                  strokeWidth= {5}
                 />
               )
             }
@@ -479,7 +486,7 @@ class Run extends Component {
                   <View key={idx} >
                     <MapView.Polyline
                       coordinates={route.map(intersectionNode=>{return {latitude: intersectionNode.latitude, longitude: intersectionNode.longitude}})}
-                      strokeColor='yellow'
+                      strokeColor={yellowish}
                       strokeWidth= {5}
                     />
 
@@ -495,12 +502,12 @@ class Run extends Component {
 
                 <MapView.Marker
                   coordinate={{ latitude: route[0].latitude, longitude: route[0].longitude}}
-                  pinColor='red'
+                  pinColor={yellowish}
                   title='Start'
                 />
                 <MapView.Marker
                   coordinate={{latitude: route[route.length-1].latitude, longitude: route[route.length-1].longitude}}
-                  pinColor='blue'
+                  pinColor={yellowish}
                   title='End'
                 />
               </View>
@@ -513,7 +520,25 @@ class Run extends Component {
       	</View>
         {//HERE'S THE POPUP MESSAGE, BELOW
       }
-
+      {
+        this.state.genRouteDistance ?
+        <View style={{ position: 'absolute', top: 410}}>
+          <Image source={require('../assets/chicagoSkylineSmaller.jpg')} />
+          <View style={{width: 375, height: 156, backgroundColor: 'transparent', borderColor: 'black', borderWidth: 10, position: 'relative', top: -156}}></View>
+          <Text style={{fontFamily: 'BudmoJiggler-Regular', fontSize: 45, backgroundColor: 'transparent', textAlign: 'center', bottom: 290}}>Distance (miles)</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 270, marginRight: 10 }}>Specify:</Text>
+              <TextInput style={{height: 45, width: 65, backgroundColor: 'black', position: 'relative', bottom: 270, borderRadius: 20, borderWidth: 5, borderColor: blueish, textAlign: 'center', fontFamily: 'Magnum', fontSize: 28, color: yellowish, paddingTop: 5}} maxLength={4} keyboardType={'decimal-pad'} />
+            </View>
+            {/* <View style={{flexDirection: 'row'}}>
+              <Text style={{fontFamily: 'Magnum', fontSize: 50, textAlign: 'center', color: blueish, textShadowColor: 'black', textShadowOffset: {width: 3, height: 3}, textShadowRadius: 3, backgroundColor: 'transparent', position: 'relative', bottom: 270, marginRight: 10 }}>Max:</Text>
+              <TextInput style={{height: 45, width: 65, backgroundColor: 'black', position: 'relative', bottom: 270, borderRadius: 20, borderWidth: 5, borderColor: blueish, textAlign: 'center', fontFamily: 'Magnum', fontSize: 28, color: yellowish, paddingTop: 5}} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
+            </View> */}
+          </View>
+        </View>
+        : null
+      }
       {
         this.state.setStartEndVal === null ? null :
         <View style={{ position: 'absolute', top: 410}}>

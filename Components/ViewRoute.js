@@ -32,7 +32,7 @@ class ViewRoute extends Component {
 		super(props);
     this.state ={
     view: 'polylineView',
-    type: 'speed',
+    type: 'regular',
     currentRunnerPointer: 0,
     phantomRacerPointer: 0,
     replayTimerStart: 0,
@@ -339,10 +339,10 @@ class ViewRoute extends Component {
 
               {this.showHeartRate()}
               <BtnViewRoute>
+                     <Text onPress={this.changeTypeRegular}>View Path</Text>
+             </BtnViewRoute>
+              <BtnViewRoute>
                       <Text onPress={this.changeTypeSpeed}>View Speed</Text>
-              </BtnViewRoute>
-               <BtnViewRoute>
-                      <Text onPress={this.changeTypeRegular}>View Path</Text>
               </BtnViewRoute>
               <BtnViewRoute>
                      <Text onPress={this.changeViewButton}>{this.state.view == 'polylineView' ? 'Marker View' : 'Line View'}</Text>
