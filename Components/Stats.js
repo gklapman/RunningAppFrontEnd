@@ -90,6 +90,7 @@ class Stats extends Component {
 
    viewRoute(event){
         let {personalCoords, personalTimeMarker, startTime, endTime, phantomRacerRoutetimeId, routetimeId, heartrateInfo} = event //the touchable opacity is bound to the route.id to use that as an identifier... it comes out as event
+        phantomRacerRoutetimeId = 35 //TAKE THIS OUT AFTER PRESENTATION!!!! **************
         let userId = this.props.user.id
         let oldRoute = true
         // let heartRateInfo;

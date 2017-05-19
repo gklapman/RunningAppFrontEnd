@@ -524,7 +524,25 @@ const styles = StyleSheet.create({
     textShadowColor: 'black',
     textShadowRadius: 1,
     textShadowOffset: {width : 1, height: 1}
-  }
+  },
+    dot: {
+     width: 10,
+     height: 10,
+     borderRadius: 5,
+     backgroundColor: redish
+   },
+   dotBlack: {
+   width: 10,
+   height: 10,
+   borderRadius: 5,
+   backgroundColor: 'black'
+   },
+   dotGrey: {
+     width: 10,
+     height: 10,
+     borderRadius: 5,
+     backgroundColor: lightGrey
+   },
 
   });
 
