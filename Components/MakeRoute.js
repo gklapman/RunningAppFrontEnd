@@ -256,10 +256,10 @@ class MakeRoute extends Component {
          onSelect={goToRaceView}
        /> */}
 
-       { unsnappedPosCoords.map((coord,idx)=>{
+       {/* { unsnappedPosCoords.map((coord,idx)=>{
         //  console.log('marker at ',coord,' idx at ', idx)
          return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
-       })}
+       })} */}
 
       {this.state.snappedTesting && this.state.isRunning ?
         //BELOW IS FOR *BOTH* SNAPPED AND UNSNAPPED (snapped is green polyline.. unsnapped are markers) .. note if google maps api not working there will only be unsnapped positions)
@@ -274,7 +274,7 @@ class MakeRoute extends Component {
               // console.log('marker at ',coord,' idx at ', idx)
               return(<MapView.Marker coordinate={coord} title={JSON.stringify(coord)} key={''+idx}/>)
             })} */}
-      
+
         </View> :
         //BELOW IS FOR ONLY UNSNAPPED POSITIONS
         <MapView.Polyline coordinates={routerDisplayCoords} strokeColor={redish} strokeWidth= {10} />

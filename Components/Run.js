@@ -129,7 +129,9 @@ class Run extends Component {
         let genRoute= new GenerateRoutes(startingNode,endingNode,4800,intAdjList)
         // genRoute.dijkstra(startingNode, endingNode)
         genRoute.setRouteNodesDist()
+        console.log('here')
         genRoute.getRoutes()
+        console.log('here2')
         genRoute.sortPotentialRoutes()
         let generatedRoutes= genRoute.potentialRoutes
         console.log('intAdjList inst updated ', intAdjList)
@@ -373,7 +375,7 @@ class Run extends Component {
        	 	<MapView style={styles.map}
             onPress={this.state.setStartEndVal ? this.setClickCoordinate : null}
             onRegionChange={this.onRegionChange}
-            initialRegion={{latitude: 41.88782633760493, longitude: -87.64045111093955, latitudeDelta: .01, longitudeDelta: .01}}>
+            initialRegion={{latitude: 41.87422592117329, longitude: -87.62272224597562, latitudeDelta: .01, longitudeDelta: .01}}>
 
           {/* {querycoords.map(coord=>{
             return(<MapView.Marker
