@@ -3,9 +3,17 @@ import React from 'react';
 import {
   StyleSheet
 } from 'react-native';
-import {redish, blueish, yellowish, lightGrey, darkGrey} from './Components/Constants'
+// import {redish, blueish, yellowish, lightGrey, darkGrey} from './Components/Constants'
+import {redish, blueish, yellowish, lightGrey, darkGrey, tempLoginViewRedish} from './Components/Constants'
 
 const styles = StyleSheet.create({
+  containerLogin: {
+   // display: 'flex',
+   flex: 1,
+   justifyContent: 'center',
+   alignItems: 'center',
+   backgroundColor: tempLoginViewRedish,
+  },
   container: {
     // display: 'flex',
     flex: 1,

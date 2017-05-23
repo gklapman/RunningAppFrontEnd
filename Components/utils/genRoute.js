@@ -276,7 +276,6 @@ export function GenerateRoutes(start, end, distance, intersectADJLIST){//takes i
 }
 
 GenerateRoutes.prototype.getRoutes=function(){
-  // console.log('getting routes from ',this.start, 'to ', this.end)
   try{
     this.run(null,null,this.start,[],{})
     this.sortPotentialRoutes
@@ -334,18 +333,18 @@ GenerateRoutes.prototype.sortPotentialRoutes= function(){
 //   console.log('queue is: ',paths)
 // }
 
-GenerateRoutes.prototype.PriorityQueue=function(){//bahhh  https://github.com/mburst/dijkstras-algorithm/blob/master/dijkstras.js
-
-}
-
-GenerateRoutes.prototype.dijkstra=function(startPoint, endPoint){
-
-}
-
-GenerateRoutes.prototype.memoize= function(routeNode, depth){
-  //base case
-
-}
+// GenerateRoutes.prototype.PriorityQueue=function(){//bahhh  https://github.com/mburst/dijkstras-algorithm/blob/master/dijkstras.js
+//
+// }
+//
+// GenerateRoutes.prototype.dijkstra=function(startPoint, endPoint){
+//
+// }
+//
+// GenerateRoutes.prototype.memoize= function(routeNode, depth){
+//   //base case
+//
+// }
 
 GenerateRoutes.prototype.run= function(prevprevPoint, prevPoint, currentPoint, route, pointsPassed, turnBackCount=0, depth=0, distanceTraveled=0){
 try{  this.debugStats.totalIterations+=1

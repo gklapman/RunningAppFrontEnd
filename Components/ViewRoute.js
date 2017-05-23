@@ -242,7 +242,8 @@ class ViewRoute extends Component {
     // console.log('inside of replay and this is the info ', givenprops)
 
       this.timerInterval = setInterval (()=> {//purely for visual purposes
-        this.setState({timer: Date.now() - this.state.replayTimer})
+        this.setState({timer: (Date.now() - this.state.replayTimer)*this.state.replaySpeed})
+        // this.setState({timer: Date.now() - this.state.replayTimer})
       }, 50)
     // console.log('given props ', givenprops)
       // let selectedRacer= this.props.selectedRacer
@@ -416,7 +417,7 @@ class ViewRoute extends Component {
 
                 idx > 0 ? speed = geolib.getSpeed(routeCoordsArr[idx-1], coords, {unit: 'mph'}) : speed = 0
                 // console.log("SPEED", speed)
-                let speedColor = numToRGBConverter(speed,22, 100, 220, false)
+                let speedColor = numToRGBConverter(speed,6, 100, 220, false)
                 return (
                   <MapView.Marker
                     key={idx}
@@ -434,7 +435,7 @@ class ViewRoute extends Component {
               {(this.state.view === 'markerView' && this.state.type === 'heartrate') &&
               heartrateCoordsArr.map((info, idx) =>{
                   // console.log('info if ', info)
-                  let heartrateColor = numToRGBConverter(info.heartrate, 100, 100, 220, false)
+                  let heartrateColor = numToRGBConverter(info.heartrate, 70, 100, 220, false)
 
                 return (
                   <MapView.Marker
@@ -474,7 +475,7 @@ class ViewRoute extends Component {
                 speed = (idx > 0) ? geolib.getSpeed(routeCoordsArr[idx-1], routeCoordsArr[idx], {unit: 'mph'}) : 0
                 // console.log('routecoordsarr ',routeCoordsArr)
                 // console.log("SPEED", speed)
-                let speedColor = numToRGBConverter(speed, 22, 5, 13, true)
+                let speedColor = numToRGBConverter(speed, 6, 5, 13, true)
                 // console.log("SPEEDCOLOR", speedColor)
 
                 let firstCoord = personalCoords[idx - 1] || coords
@@ -503,7 +504,7 @@ class ViewRoute extends Component {
 
                heartrateCoordsArr.map((info, idx) => {
                 // console.log('this is the info ', info, idx, heartrateCoordsArr[idx + 1])
-               let heartrateColor = numToRGBConverter(info.heartrate, 100, 100, 220, false)
+               let heartrateColor = numToRGBConverter(info.heartrate, 70, 100, 220, false)
                let firstCoord = heartrateCoordsArr[idx].coords
                let nextCoord;
                if (heartrateCoordsArr[idx + 1]){

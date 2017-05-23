@@ -117,7 +117,7 @@ class Login extends Component {
   render(){
 
     return (
-      <View style={styles.container}>
+      <View style={styles.containerLogin}>
 
         <View style={{ position: 'relative', top: 35}}>
           <Image source={require('../assets/runningred.gif')} />
