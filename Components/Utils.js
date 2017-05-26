@@ -33,7 +33,6 @@ TestRunner.prototype.startTimer= function(){
   this.start=Date.now()
   this.intervalID=setInterval(() => {
     this.elapsedTime=Date.now()-this.start
-    // console.log(' test runner elapsed time is ', this.elapsedTime)
     if(this.elapsedTime > this.timesArr[this.timesArr.length-1]+1000) clearInterval(this.intervalID)
   },100)
 }
@@ -48,14 +47,12 @@ TestRunner.prototype.moveOrNot= function (){
     this.coordsPointer+=1
     this.timesArrPointer+=1
   }
-  // console.log('testrunenr elapsedtime ', this.elapsedTime)
-  // console.log(origCoordsPointer, this.coordsPointer, this.timesArrPointer)
+
 
   return origCoordsPointer!==this.coordsPointer ? true : false
 }
 
 TestRunner.prototype.getPosition= function (){
-  // console.log('testrunner coordinates ', this.convCoords[this.coordsPointer])
   return {coords: this.convCoords[this.coordsPointer]}
 }
 

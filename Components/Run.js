@@ -174,41 +174,6 @@ class Run extends Component {
     //do nothing... we just want a listener so the thing woulD STOP FUCKING TELLING US IT'S SENDING LOCAITON WITH NO LISTENERS!!!
   }
 
-  // handleMinChange(num){
-
-  //   if (!num){
-  //     this.setState({
-  //       routesArr: this.props.nearbyRoutes
-  //     })
-  //   } else {
-
-  //     let routesArr = this.props.nearbyRoutes
-  //     routesArr = routesArr.filter(route => {
-  //       return route.totalDist > num
-  //     })
-  //     // console.log('routesArr ', routesArr)
-  //     this.setState({
-  //       routesArr: routesArr
-  //     })
-  //   }
-  // }
-
-  // handleMaxChange(num){
-  //   console.log('this is the num ', num)
-  //   if (!num){
-  //     this.setState({
-  //       routesArr: this.props.nearbyRoutes
-  //     })
-  //   } else {
-  //     let routesArr = this.props.nearbyRoutes
-  //     routesArr =routesArr.filter(route => {
-  //       return route.totalDist < num
-  //     })
-  //     this.setState({
-  //       routesArr: routesArr
-  //     })
-  //   }
-  // }
 
   handleMinChange(num){
 
@@ -244,15 +209,7 @@ class Run extends Component {
     BackgroundGeolocation.un('location', this.onLocation)
   }
 
-  // showFilter(){  //THIS FUNCTIONALITY SHOULD NOW BE HANDLED BY THE POP-UP
-  //   if (this.state.showFilter) return
-  //     // return (
-  //     // <View style={styles.filterHolder}>
-  //     //     <Text>Min:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMinChange} />
-  //     //     <Text>Max:</Text><TextInput style={styles.filterInput} maxLength={4} keyboardType={'decimal-pad'} onChangeText={this.handleMaxChange} />
-  //     //   </View>)
-  // }
-
+  
   toggleFilter(){
     console.log('toggling ')
     let filter = this.state.showFilter
@@ -310,7 +267,7 @@ class Run extends Component {
       console.log(this.state.adjList[id])
     }
 
-    // console.log('this is the routes arr', routesArr)
+  
 
 
     let intersectionMarkers= this.state.intersectionMarkers

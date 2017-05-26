@@ -31,13 +31,10 @@ function OAuth(client_id, cb) {
  // Listen to redirection
 Linking.addEventListener('url', handleUrl);
 function handleUrl(event){
-  // console.log(event.url);
   Linking.removeEventListener('url', handleUrl);
   const [, query_string] = event.url.match(/\#(.*)/);
-  // console.log(query_string);
 
   const query = qs.parse(query_string);
-  // console.log(`query: ${JSON.stringify(query)}`);
 
   store.dispatch(setFitBitToken(query.access_token))
   cb(query.access_token);
@@ -53,7 +50,6 @@ const oauthurl = 'https://www.fitbit.com/oauth2/authorize?'+
             expires_in: '31536000',
             //state,
           });
-// console.log(oauthurl);
 Linking.openURL(oauthurl).catch(err => console.error('Error processing linking', err));
 }
 
@@ -93,13 +89,10 @@ class Stats extends Component {
         phantomRacerRoutetimeId = 35 //TAKE THIS OUT AFTER PRESENTATION!!!! **************
         let userId = this.props.user.id
         let oldRoute = true
-        // let heartRateInfo;
-        // console.log('this props ', this.props, heartrateInfo)
         if (this.props.fitbitAccessToken && !heartrateInfo){
           console.log('about to fetch')
         return this.props.fetchFitBitHeartrateInfo(startTime, endTime, routetimeId)
         .then((heartRateInfoReceived) => {
-          // console.log('and we got this info ', heartRateInfoReceived)
           if (typeof(heartRateInfoReceived) === 'string'){
             alert('Your heartrate data is not available yet')
           }
