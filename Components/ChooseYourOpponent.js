@@ -38,7 +38,7 @@ class OpponentsView extends Component {
     }
 
     render(){
-      console.log('this is props ', this.props)
+  
 
     const users = this.props.selectedRoute.users
     const filterStyle = {width: 5, height: 5, backgroundColor: 'skyblue'}

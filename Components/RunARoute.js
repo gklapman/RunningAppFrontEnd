@@ -47,10 +47,6 @@ import {redish, blueish, beige, yellowish, orangeish } from './Constants'
 
 
 
-//INFO WE NEED:
-// checkpointConvCords - this.props.selectedRoute.checkpointConvCoords
-// checkpointTimeMarkerCoords (phantom) - this.props.selectedRacer.checkpointTimeMarkerCoords /// ??? should we get phantom checkpoints time markers or phantom personalTimemarkers (and phantom personalCoords?)
-
 
 
 class RunARoute extends Component {
@@ -155,14 +151,11 @@ class RunARoute extends Component {
 
         // THIS BLOCK OF CODE IS CHECKING IF USER IS AT THE **STARTING** CHECKPOINT (TO DISPLAY START BUTTON)
         // -----------------------------------------------------------------------------
-        // console.log('isrunning ', this.state.isRunning, 'convcoordspoiter ', this.state.checkpointConvCoordsPointer)
+     
         if(!this.state.isRunning && this.state.checkpointConvCoordsPointer === 1){
-          // console.log('initial checkpoint pointer at ', this.props.selectedRoute.checkpointConvCoords[0])
           let initialcheckpoint = this.props.selectedRoute.checkpointConvCoords[0]
           let dist = geolib.getDistance(initialcheckpoint, position)
-          // console.log("dist ", dist)
           if (dist < 15 ){
-            // console.log('dist less than 15?')
             this.setState({showStart: true})
           }
           else if(dist >= 15){//this is to ensure the button would also stop showing if user has NOT started running, AND LEFT the starting checkpoint
@@ -197,7 +190,6 @@ class RunARoute extends Component {
               // THIS BLOCK OF CODE IS FOR CHECKING IF USER HIT THE FINAL CHECKPOINT!!!!
               // -----------------------------------------------------------------------------
 
-              console.log('this state checkpointConvCoordsPointer', this.state.checkpointConvCoordsPointer, this.props.selectedRoute.checkpointCoords.length-1)
 
               if(this.state.checkpointConvCoordsPointer === this.props.selectedRoute.checkpointCoords.length-1){
                 console.log('this is the last checkpoint')
@@ -216,7 +208,7 @@ class RunARoute extends Component {
                     let userId = this.props.user.id
                     let startTime = this.state.timerStart
                     let endTime = Date.now()//Not in setState because we need it right away
-                    // let currentPosition = position //Not going to pass in the new position because we will view the route based on the start position
+                    
 
                     const { navigate } = this.props.navigation;
 
@@ -237,53 +229,50 @@ class RunARoute extends Component {
                 let remainingDist = geolib.getPathLength(this.props.selectedRoute.checkpointConvCoords.slice(this.state.checkpointConvCoordsPointer))
                 let phantomRemainingDist = geolib.getPathLength(this.props.selectedRacer.routetimes[0].personalCoords.slice(this.state.phantomRacerPointer))
 
-                // console.log('distances ', remainingDist, phantomRemainingDist )
-
-               // console.log('comparing routepointer ', selectedRoutePointer-1, 'with racercoordspointer ', racerCoordsPointer)
-               // console.log('(selectedRoutePointer)-racerCoordsPointer is ', (selectedRoutePointer)-racerCoordsPointer)
+             
 
                console.log('user remaningDist ',remainingDist)
                console.log('phantom remaningDist ',phantomRemainingDist)
                console.log('remainingDist-phantomRemainingDist is ',remainingDist-phantomRemainingDist)
 
-               if (this.state.checkpointConvCoordsPointer === 2){
-               this.setState({saying: YOUREBEHIND, showMessage: true});
-                setTimeout(()=> {
-                  console.log('setting message!!', this.state.saying)
-                  this.setState({showMessage: false})
-                }, 5000)
-              }
+              //  if (this.state.checkpointConvCoordsPointer === 2){
+              //  this.setState({saying: YOUREBEHIND, showMessage: true});
+              //   setTimeout(()=> {
+              //     console.log('setting message!!', this.state.saying)
+              //     this.setState({showMessage: false})
+              //   }, 5000)
+              // }
 
                //******* COMMENT THISE BACK IN AFTER PRESENTATION
 
-            //   if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
-            //     console.log('this saying ', this.state.saying)
-            //    if(this.state.saying!==YOUREAHEAD) {
-            //      this.setState({saying: YOUREAHEAD, showMessage: true});
-            //      setTimeout(()=> {
-            //        console.log('setting message!! ')
-            //        this.setState({showMessage: false})
-            //      }, 5000)
-            //    }
-            //  }
-            //  else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
-            //    if(this.state.saying!==YOURENECKANDNECK) {
-            //      this.setState({saying: YOURENECKANDNECK, showMessage: true});
-            //      setTimeout(()=> {
-            //        console.log('setting message!! ')
-            //        this.setState({showMessage: false})
-            //      }, 5000)
-            //    }
-            //  }
-            //  else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
-            //    if(this.state.saying!==YOUREBEHIND) {
-            //      this.setState({saying: YOUREBEHIND, showMessage: true});
-            //      setTimeout(()=> {
-            //        console.log('setting message!! ')
-            //        this.setState({showMessage: false})
-            //      }, 5000)
-            //    }
-            //  }
+              if(remainingDist-phantomRemainingDist < -120 && remainingDist-phantomRemainingDist > -150){
+                console.log('this saying ', this.state.saying)
+               if(this.state.saying!==YOUREAHEAD) {
+                 this.setState({saying: YOUREAHEAD, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
+             }
+             else if(remainingDist-phantomRemainingDist < 50 && remainingDist-phantomRemainingDist > -120 ){
+               if(this.state.saying!==YOURENECKANDNECK) {
+                 this.setState({saying: YOURENECKANDNECK, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
+             }
+             else if(remainingDist-phantomRemainingDist > 50 && remainingDist-phantomRemainingDist < 150){
+               if(this.state.saying!==YOUREBEHIND) {
+                 this.setState({saying: YOUREBEHIND, showMessage: true});
+                 setTimeout(()=> {
+                   console.log('setting message!! ')
+                   this.setState({showMessage: false})
+                 }, 5000)
+               }
+             }
 
                 this.setState({checkpointConvCoordsPointer: this.state.checkpointConvCoordsPointer+1, checkpointTimeMarker: newcheckpointTimeMarker})
               }

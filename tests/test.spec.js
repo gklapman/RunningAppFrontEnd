@@ -14,7 +14,7 @@ describe('RunningAppFrontEnd Test Specs', function (){
     })
 
     it('2 + 2 should equal ...', () => {
-      expect(a+a).to.be.equal(4)//it equals 4!!! well no shittt!
+      expect(a+a).to.be.equal(4)
     })
 
     describe('Testing IntersectADJLIST, centered near (and super zoomed in near) Chicago and Wabash', () => {
